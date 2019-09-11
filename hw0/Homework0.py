@@ -61,7 +61,7 @@ def list_sum(l):
     # replace the line below with your code
     total = 0
     for num in l:
-        total += l
+        total += num
     return total
 
 
