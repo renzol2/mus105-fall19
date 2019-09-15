@@ -37,7 +37,18 @@ def is_palindrome(s):
     :return: whether or not s is a palindrome
     :rtype: bool
     """
-    pass
+    new_list = []
+    new_str = ""
+    for i in range(0, len(s)):  # add all chars in s to new_list
+        new_list.append(s[i])
+    reverse_list = new_list[::-1]  # reverses the chars in new_list
+    for c in range(0, len(s)):  # adds all chars in reverse_list to a new string
+        new_str += reverse_list[c]
+    if new_str == s:  # compares the original and reversed string
+        return True
+    else:
+        return False
+
 
 def is_in(a, b):
     """
@@ -46,6 +57,11 @@ def is_in(a, b):
         is_in('cab', 'aabbcc') should output true
         is_in('hello world', 'helo world') should output false
 
+    1. put all of chars from A and B to separate lists
+    2. iterate through all of A and B
+    3. when there's a match, remove the matching item from both A and B and break immediately
+    4. if A is empty, is_in returns true; else, returns false
+
     :param a: string to try and construct
     :type a: str
     :param b: string to clip characters from
@@ -53,7 +69,33 @@ def is_in(a, b):
     :return: whether or not a can be constructed from b
     :rtype: bool
     """
-    pass
+
+    list_a = []  # creates lists for both a and b
+    list_b = []
+    for chars_a in a:
+        list_a.append(chars_a)
+    for chars_b in b:
+        list_b.append(chars_b)
+
+    length_list_a_before = len(list_a)  # setting up variables for the loop
+    length_list_a_after = len(list_a) - 1
+
+    while length_list_a_after != length_list_a_before:  # if no chars were similar the last time, stop checking
+        length_list_a_before = len(list_a)
+        for i in range(0, len(list_b)):  # iterates through every char in b and compares it to every char in a
+            for j in range(0, len(list_a)):
+                if list_a[j] == list_b[i]:  # if a similar char is found, removes the char from both lists
+                    list_a.remove(list_a[j])
+                    list_b.remove(list_b[i])
+                    break  # immediately breaks checking
+            break
+        length_list_a_after = len(list_a)  # updates the length of list a
+
+    if len(list_a) == 0:  # if a was in b, then all the chars in list_a should be gone
+        return True
+    else:
+        return False
+
 
 def is_set(l):
     """
@@ -65,7 +107,17 @@ def is_set(l):
     :return: whether or not l is a set
     :rtype: bool
     """
-    pass
+    not_unique = False
+    for i in range(0, len(l)):  # compares every item in list to every other item in list
+        for j in range(0, len(l)):
+            if i != j and l[i] == l[j]:  # if two items are not same index but are similar, list is not unique
+                not_unique = True
+                break
+    if not_unique:
+        return False
+    else:
+        return True
+
 
 def str_to_int2(num_string):
     """
@@ -82,7 +134,25 @@ def str_to_int2(num_string):
     :return: an integer with the value denoted by the string
     :rtype: int
     """
-    pass
+
+    if num_string.isalnum():
+        if num_string.isnumeric():
+            answer = int(num_string, 10)
+        elif len(num_string) < 2:
+            raise ValueError("unrecognized base")
+        elif num_string.find("0b") != -1 and num_string[2:len(num_string)].isnumeric():
+            # second conditional checks if there are letters after the first two chars
+            answer = int(num_string, 2)
+        elif num_string.find("0o") != -1 and num_string[2:len(num_string)].isnumeric():
+            answer = int(num_string, 8)
+        elif num_string.find("0x") != -1 and num_string[2:len(num_string)].isalnum():
+            answer = int(num_string, 16)
+        else:
+            raise ValueError("incorrect formatting")
+    else:
+        raise ValueError("incorrect formatting")
+    return answer
+
 
 def nth_element(n, my_list):
     """
@@ -103,7 +173,11 @@ def nth_element(n, my_list):
     :return: nth element in my_list
     :rtype: float
     """
-    pass
+    try:
+        return my_list[n - 1]
+    except IndexError:
+        raise TypeError("Cannot find nth element of inputs ({}, {})".format(n, my_list))
+
 
 class Course:
     """
@@ -128,7 +202,7 @@ class Course:
     of the functions.
     """
 
-    university = ""
+    university = "UIUC"
 
     @staticmethod
     def print_school():
@@ -136,6 +210,8 @@ class Course:
         This function takes no parameters and returns nothing. The only thing it should do is print:
             "The University is: {Course.university}"
         """
+        print("The University is: " + Course.university)
+
     def __init__(self, code, crn, description):
         """
         Initializer, your code should set instance variables with the same name as the parameters to their respective
@@ -152,6 +228,8 @@ class Course:
         """
 
         self.code = code
+        self.crn = crn
+        self.description = description
 
     def add_student(self, student):
         """
@@ -180,3 +258,6 @@ class Course:
         :rtype: str
         """
 
+
+CS125 = Course("125", 1, "hi")
+CS125.print_school()
