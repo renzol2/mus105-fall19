@@ -80,6 +80,7 @@ def is_in(a, b):
 
     length_list_a_before = len(list_a)  # setting up variables for the loop
     length_list_a_after = len(list_a) - 1
+    is_found = False
 
     while length_list_a_after != length_list_a_before:  # if no chars were similar the last time, stop checking
         length_list_a_before = len(list_a)
@@ -88,9 +89,12 @@ def is_in(a, b):
                 if list_a[j] == list_b[i]:  # if a similar char is found, removes the char from both lists
                     list_a.remove(list_a[j])
                     list_b.remove(list_b[i])
+                    is_found = True
                     break  # immediately breaks checking
-            break
+            if is_found:
+                break
         length_list_a_after = len(list_a)  # updates the length of list a
+        is_found = False
 
     if len(list_a) == 0:  # if a was in b, then all the chars in list_a should be gone
         return True
@@ -269,6 +273,4 @@ class Course:
         :rtype: str
         """
         return self.description
-
-
 
