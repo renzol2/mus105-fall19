@@ -23,6 +23,7 @@
 #
 #############################################################################################################
 
+
 def is_palindrome(s):
     """
     given a string s, output whether or not s is a palindrome. A palindrome is defined as a string that is identical
@@ -173,10 +174,11 @@ def nth_element(n, my_list):
     :return: nth element in my_list
     :rtype: float
     """
-    try:
-        return my_list[n - 1]
-    except IndexError:
+    my_list.sort()
+    if n > len(my_list):
         raise TypeError("Cannot find nth element of inputs ({}, {})".format(n, my_list))
+    else:
+        return my_list[n - 1]
 
 
 class Course:
@@ -250,17 +252,23 @@ class Course:
         :param student: netID of student to remove
         :type student: str
         """
-        try:
+        is_enrolled = False
+        for entry in self.roster:
+            if entry == student:
+                is_enrolled = True
+            else:
+                is_enrolled = False
+        if is_enrolled:
             self.roster.remove(student)
-        except ValueError:
-            print("student is not enrolled in this course")
+        else:
+            raise ValueError("student is not enrolled in this course")
 
     def get_description(self):
         """
-
         :return: a description of the course, as described above
         :rtype: str
         """
         return self.description
+
 
 
