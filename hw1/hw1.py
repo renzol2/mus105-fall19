@@ -230,6 +230,7 @@ class Course:
         self.code = code
         self.crn = crn
         self.description = description
+        self.roster = []
 
     def add_student(self, student):
         """
@@ -238,7 +239,7 @@ class Course:
         :param student: netID of student to add
         :type student: str
         """
-        pass
+        self.roster.append(student)
 
     def remove_student(self, student):
         """
@@ -249,7 +250,10 @@ class Course:
         :param student: netID of student to remove
         :type student: str
         """
-        pass
+        try:
+            self.roster.remove(student)
+        except ValueError:
+            print("student is not enrolled in this course")
 
     def get_description(self):
         """
@@ -257,7 +261,6 @@ class Course:
         :return: a description of the course, as described above
         :rtype: str
         """
+        return self.description
 
 
-CS125 = Course("125", 1, "hi")
-CS125.print_school()
