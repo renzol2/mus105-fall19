@@ -33,7 +33,16 @@ import math
 #  is not a positive number or does not produce a valid
 #  midi key number.
 def hertz_to_midi(hertz):
-    pass
+    if hertz < 0:
+        raise ValueError("The value {} failed because it is negative. Choose a positive value.".format(hertz))
+    elif hertz < midi_to_hertz(0):
+        raise ValueError("The value {} failed because it is too low. "
+                         "The frequency of the lowest possible MIDI note is ~8.18 Hz".format(hertz))
+    elif hertz > midi_to_hertz(127):
+        raise ValueError("The value {} failed because it is too high. "
+                         "The frequency of the highest possible MIDI note is ~12,543.85 Hz".format(hertz))
+    else:
+        return round(69 + math.log2(hertz/440.0) * 12)
 
 
 ## Returns the hertz value for a given midi key number.
@@ -45,7 +54,10 @@ def hertz_to_midi(hertz):
 #  The function should raise a ValueError if the input
 #  is not a valid midi key number.
 def midi_to_hertz(midi):
-    pass
+    if midi < 0 or midi > 127:
+        raise ValueError("{} is not a valid MIDI value. MIDI values include integer values from 0 to 127.".format(midi))
+    else:
+        return 440.0 * 2 ** ((midi-69)/12)
 
 
 ## Returns the pitch class integer for a given midi key number.
@@ -57,7 +69,11 @@ def midi_to_hertz(midi):
 #  The function should raise a ValueError if the input is not valid
 #  midi key number.
 def midi_to_pc(midi):
-    pass
+    if midi < 0 or midi > 127:
+        raise ValueError("{} is not a valid MIDI value. MIDI values include integer values from 0 to 127.".format(midi))
+    else:
+        return midi % 12
+
 
 ## Converts a pitch name into a midi key number. The BNF grammar of a
 #  pitch string is:
@@ -83,7 +99,38 @@ def midi_to_pc(midi):
 #  The function should signal a ValueError if the input is not a valid
 #  pitch name or produces an invalid midi key number.
 def pitch_to_midi(pitch):
-    pass
+    # check if pitch starts with letter name
+    if pitch[0].capitalize().isalnum():
+        pitch_classes = {
+            "C": 0, "D": 2, "E": 4, "F": 5, "G": 7, "A": 9, "B": 11
+        }
+        # check if pitch has sharps or flats
+        if pitch.find("#") == pitch.find("s") == pitch.find("b") == pitch.find("f") == -1:
+            # this case is for naturals
+            # check if second char is numeric
+            if pitch[1].isnumeric():
+                # check if octave is 00 or otherwise
+                if pitch.find("00") == -1:
+                    # this case is for 0-9
+                    octave = int(pitch[1]) + 1
+                    pitch_class = pitch_classes[pitch[0]]
+                else:
+                    # this case is for 00
+                    pass
+            else:
+                raise ValueError("{} is not a valid pitch name."
+                                 "\nFor sharps, use # or s after letter name (C#4, Ds5, E##2, Fss0)"
+                                 "\nFor flats, use b or f after letter name (Db2, Gf5, Ebb7, Aff2)"
+                                 "\nFor naturals, use an octave in range 00, 1, 2, ... 8, 9 immediately"
+                                 " after letter name")
+        else:
+            # this case is for accidentals
+            pass
+
+        # compute & return the midi int once all information is gathered from pitch str
+        return octave * 12 + pitch_class
+    else:
+        raise ValueError("{} is not a valid pitch name. A pitch name starts with a pitch letter A-G".format(pitch))
 
 
 ## Returns a pitch name for the given key number.
@@ -150,8 +197,6 @@ def pitch_to_hertz(pitch):
 
 if __name__ == '__main__':
     print("Testing...")
-    
-    # add whatever test code you want here!
-
+    print(pitch_to_midi("Ca4"))
     print("Done!")
 
