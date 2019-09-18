@@ -256,16 +256,10 @@ class Course:
         :param student: netID of student to remove
         :type student: str
         """
-        is_enrolled = False
-        for entry in self.roster:
-            if entry == student:
-                is_enrolled = True
-            else:
-                is_enrolled = False
-        if is_enrolled:
+        try:
             self.roster.remove(student)
-        else:
-            print("student is not enrolled in this course")
+        except ValueError:
+            print("student is not enrolled in course")
 
     def get_description(self):
         """
@@ -274,5 +268,4 @@ class Course:
         """
         return self.code + "(" + str(self.crn) + "):\n" + self.description + "\n" + str(len(self.roster)) + \
                " students: " + ", ".join(map(str, self.roster))
-
 
