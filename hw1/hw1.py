@@ -265,12 +265,14 @@ class Course:
         if is_enrolled:
             self.roster.remove(student)
         else:
-            raise ValueError("student is not enrolled in this course")
+            print("student is not enrolled in this course")
 
     def get_description(self):
         """
         :return: a description of the course, as described above
         :rtype: str
         """
-        return self.description
+        return self.code + "(" + str(self.crn) + "):\n" + self.description + "\n" + str(len(self.roster)) + \
+               " students: " + ", ".join(map(str, self.roster))
+
 
