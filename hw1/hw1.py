@@ -269,10 +269,3 @@ class Course:
         return self.code + "(" + str(self.crn) + "):\n" + self.description + "\n" + str(len(self.roster)) + \
                " students: " + ", ".join(map(str, self.roster))
 
-
-mus105 = Course("MUS105", 65879, "Computation and Music 1")
-mus105.add_student("renzol2")
-mus105.add_student("cwulf2")
-mus105.remove_student("cwulf3")
-print(mus105.get_description())
-
