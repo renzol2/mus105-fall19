@@ -112,15 +112,18 @@ def pitch_to_midi(pitch):
         if pitch.find("#") == pitch.find("s") == pitch.find("b") == pitch.find("f") == -1:
             has_accidental = False
             accidental_modifier = 0
+            if len(pitch) > 3:
+                raise ValueError(f"{pitch} is not a valid pitch name."
+                                 "\nValid octave numbers range from 00, 0, 1, 2, ..., 8, 9")
         else:
             has_accidental = True
-            if pitch[1:3] == "##" or pitch[1:3] == "ss":
+            if (pitch[1:3] == "##" or pitch[1:3] == "ss") and pitch.find("b") == pitch.find("f") == -1:
                 accidental_modifier = 2
-            elif pitch[1:3] == "bb" or pitch[1:3] == "ff":
+            elif (pitch[1:3] == "bb" or pitch[1:3] == "ff") and pitch.find("#") == pitch.find("s") == -1:
                 accidental_modifier = -2
-            elif pitch[1] == "#" or pitch[1] == "s":
+            elif (pitch[1] == "#" or pitch[1] == "s") and pitch.find("b") == pitch.find("f") == -1:
                 accidental_modifier = 1
-            elif pitch[1] == "b" or pitch[1] == "f":
+            elif (pitch[1] == "b" or pitch[1] == "f") and pitch.find("#") == pitch.find("s") == -1:
                 accidental_modifier = -1
             else:
                 raise ValueError("{} is not a valid pitch name."
@@ -131,7 +134,12 @@ def pitch_to_midi(pitch):
             # check if octave is 00 or otherwise
             if pitch.find("00") == -1:
                 # this case is for 0-9
-                octave = int(pitch[len(pitch) - 1]) + 1
+                if pitch[len(pitch) - 2].isnumeric() or len(pitch) > 4:
+                    raise ValueError(f"{pitch} is not a valid pitch name."
+                                     "\nAccidentals can only go up to double sharps (## or ss) or flats (bb or ff)"
+                                     "\nValid octave numbers range from 00, 0, 1, 2, ..., 8, 9")
+                else:
+                    octave = int(pitch[len(pitch) - 1]) + 1
             else:
                 octave = 0
             pitch_class = pitch_classes[pitch[0]]
@@ -139,16 +147,16 @@ def pitch_to_midi(pitch):
             raise ValueError("{} is not a valid pitch name."
                              "\nFor sharps, use # or s after letter name (C#4, Ds5, E##2, Fss0)"
                              "\nFor flats, use b or f after letter name (Db2, Gf5, Ebb7, Aff2)"
-                             "\nFor naturals, use an octave in range 00, 1, 2, ... 8, 9 immediately"                                 
+                             "\nUse an octave in range 00, 0, 1, 2, ... 8, 9 immediately"                                 
                              " after letter name".format(pitch))
 
         # compute & return the midi int once all information is gathered from pitch str
         midi_val = octave * 12 + pitch_class + accidental_modifier
-        if 0 <= midi_val <= 127 and 1 <= len(pitch) <= 4:
+        if 0 <= midi_val <= 127 and 1 <= len(pitch) <= 5:
             return midi_val
         else:
             raise ValueError("{} is not a valid pitch name. \nThe lowest possible pitch is 'C00' (key number 0) "
-                             "\nand the highest is 'Abb9' (key number 127 spelled with a double flat)")
+                             "\nand the highest is 'Abb9' (key number 127 spelled with a double flat)".format(pitch))
     else:
         raise ValueError("{} is not a valid pitch name. A pitch name starts with a pitch letter A-G".format(pitch))
 
@@ -166,6 +174,7 @@ def pitch_to_midi(pitch):
 #  is invalid or if the pitch requested does not support the specified
 #  accidental.
 def midi_to_pitch(midi, accidental=None):
+    # should be done
     octave_names = ['00', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     pitch_classes = {
         0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5: "F",
@@ -188,23 +197,33 @@ def midi_to_pitch(midi, accidental=None):
             pitch_classes = {
                 0: "B#", 1: "C#", 3: "D#", 5: "E#", 6: "F#", 8: "G#", 10: "A#"
             }
+            if pitch_class == 0:
+                octave_int -= 1
         elif accidental == "##":
             pitch_classes = {
                 1: "B##", 2: "C##", 4: "D##", 6: "E##", 7: "F##", 9: "G##", 11: "A##"
             }
+            if pitch_class == 0:
+                octave_int -= 1
         elif accidental == "b":
             pitch_classes = {
                 1: "Db", 3: "Eb", 4: "Fb", 6: "Gb", 8: "Ab", 10: "Bb", 11: "Cb"
             }
+            if pitch_class == 11:
+                octave_int += 1
         elif accidental == "bb":
             pitch_classes = {
                 0: "Dbb", 2: "Ebb", 3: "Fbb", 5: "Gbb", 7: "Abb", 9: "Bbb", 10: "Cbb"
             }
+            if pitch_class == 10:
+                octave_int += 1
         else:
             raise ValueError(f"{accidental} is not a valid accidental value."
                              f"\nPlease use #, ##, b, or bb for accidentals")
+
     if pitch_classes.get(pitch_class, -1) == -1:
         raise ValueError(f"{accidental} is not a valid accidental for the midi value {midi}")
+
     pitch = pitch_classes[pitch_class] + octave_names[octave_int]
     return pitch
 
@@ -214,7 +233,9 @@ def midi_to_pitch(midi, accidental=None):
 #  @param hertz  The integer midi key number to convert.
 #  @returns A floating point hertz value.
 def hertz_to_pitch(hertz):
-    pass
+    # should be done
+    midi_val = hertz_to_midi(hertz)
+    return midi_to_pitch(midi_val)
 
 
 ## Returns a hertz value for the given pitch.
@@ -222,6 +243,7 @@ def hertz_to_pitch(hertz):
 #  @param pitch  The pitch name to convert.
 #  @returns A floating point hertz value.
 def pitch_to_hertz(pitch):
+    # should be done
     midi_val = pitch_to_midi(pitch)
     return midi_to_hertz(midi_val)
 
@@ -259,6 +281,6 @@ def pitch_to_hertz(pitch):
 
 if __name__ == '__main__':
     print("Testing...")
-    print(midi_to_pitch(72))
+    
     print("Done!")
 
