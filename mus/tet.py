@@ -33,6 +33,7 @@ import math
 #  is not a positive number or does not produce a valid
 #  midi key number.
 def hertz_to_midi(hertz):
+    # done
     if hertz < 0:
         raise ValueError("The value {} failed because it is negative. Choose a positive value.".format(hertz))
     elif hertz < midi_to_hertz(0):
@@ -54,7 +55,8 @@ def hertz_to_midi(hertz):
 #  The function should raise a ValueError if the input
 #  is not a valid midi key number.
 def midi_to_hertz(midi):
-    if midi < 0 or midi > 127:
+    # done
+    if midi < 0 or midi > 127 or type(midi) != int:
         raise ValueError("{} is not a valid MIDI value. MIDI values include integer values from 0 to 127.".format(midi))
     else:
         return 440.0 * 2 ** ((midi-69)/12)
@@ -69,6 +71,7 @@ def midi_to_hertz(midi):
 #  The function should raise a ValueError if the input is not valid
 #  midi key number.
 def midi_to_pc(midi):
+    # done
     if midi < 0 or midi > 127:
         raise ValueError("{} is not a valid MIDI value. MIDI values include integer values from 0 to 127.".format(midi))
     else:
@@ -99,6 +102,7 @@ def midi_to_pc(midi):
 #  The function should signal a ValueError if the input is not a valid
 #  pitch name or produces an invalid midi key number.
 def pitch_to_midi(pitch):
+    # should be done
     # check if pitch starts with letter name
     if pitch[0].capitalize().isalpha():
         pitch_classes = {
@@ -162,18 +166,48 @@ def pitch_to_midi(pitch):
 #  is invalid or if the pitch requested does not support the specified
 #  accidental.
 def midi_to_pitch(midi, accidental=None):
-    pitch_class = midi_to_pc(midi)
-    octave_int = midi // 12
-    accidental_val = 0
     octave_names = ['00', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
     pitch_classes = {
-        0: "C", 2: "D", 4: "E", 5: "F", 7: "G", 9: "A", 11: "B"
+        0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5: "F",
+        6: "F#", 7: "G", 8: "Ab", 9: "A", 10: "Bb", 11: "B"
     }
+    pitch_class = midi_to_pc(midi)
+    octave_int = midi // 12
+    # handling accidentals:
+    # pitch classes represented with #
+    #   0 (not at 00 octave), 1, 3, 5, 6, 8, 10
+    # pitch classes represented with ##
+    #   1 (not at 00 octave), 2, 4, 6, 7, 9, 11
+    # pitch classes represented with b
+    #   1, 3, 4, 6, 8, 10, 11
+    # pitch classes represented with bb
+    #   0, 2, 3, 5, 7, 9, 10
+
+    if accidental is not None:
+        if accidental == "#":
+            pitch_classes = {
+                0: "B#", 1: "C#", 3: "D#", 5: "E#", 6: "F#", 8: "G#", 10: "A#"
+            }
+        elif accidental == "##":
+            pitch_classes = {
+                1: "B##", 2: "C##", 4: "D##", 6: "E##", 7: "F##", 9: "G##", 11: "A##"
+            }
+        elif accidental == "b":
+            pitch_classes = {
+                1: "Db", 3: "Eb", 4: "Fb", 6: "Gb", 8: "Ab", 10: "Bb", 11: "Cb"
+            }
+        elif accidental == "bb":
+            pitch_classes = {
+                0: "Dbb", 2: "Ebb", 3: "Fbb", 5: "Gbb", 7: "Abb", 9: "Bbb", 10: "Cbb"
+            }
+        else:
+            raise ValueError(f"{accidental} is not a valid accidental value."
+                             f"\nPlease use #, ##, b, or bb for accidentals")
+    if pitch_classes.get(pitch_class, -1) == -1:
+        raise ValueError(f"{accidental} is not a valid accidental for the midi value {midi}")
     pitch = pitch_classes[pitch_class] + octave_names[octave_int]
     return pitch
 
-    # get pitch class
-    # get octave
 
 ## Returns a pitch name for the given hertz value.
 #  Hint: first convert the hertz value to midi.
@@ -225,6 +259,6 @@ def pitch_to_hertz(pitch):
 
 if __name__ == '__main__':
     print("Testing...")
-    print(midi_to_pitch(2))
+    print(midi_to_pitch(72))
     print("Done!")
 
