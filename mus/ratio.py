@@ -40,7 +40,9 @@ class Ratio:
             if type(num) == int:
                 self.num = num
             elif type(num) == float:
-                pass
+                nums = num.as_integer_ratio()
+                self.num = nums[0]
+                self.den = nums[1]
             elif type(num) == str:
                 # check if a backslash is used and that at least two values are used
                 if num.find("/") != -1 and len(num) > 2:
@@ -49,9 +51,16 @@ class Ratio:
                     if len(vals) == 2:
                         # check if both num and den are numbers
                         # !!!!!! NEED TO HANDLE NEGATIVE VALUES IN STRING
+                        negatives = [1, 1]
+                        for i in range(len(vals)):
+                            if vals[i].find("-") != -1:
+                                negatives[i] *= -1
+                                vals[i] = vals[i].replace("-", "")
                         if vals[0].isnumeric() is True and vals[1].isnumeric() is True:
-                            num_val = int(vals[0])
-                            den_val = int(vals[1])
+                            if negatives[0] == negatives[1] == -1:
+                                negatives[0] = negatives[1] = 1
+                            num_val = int(vals[0]) * negatives[0]
+                            den_val = int(vals[1]) * negatives[1]
                             self.num = num_val // math.gcd(num_val, den_val)
                             self.den = den_val // math.gcd(num_val, den_val)
                         else:
@@ -182,7 +191,6 @@ class Ratio:
     def __sub__(self, other):
         # i think this is done? not sure
         return self.__add__(other.__neg__())
-        pass
 
     # Implements int - ratio and float-ratio (right side subtraction).
     #  @returns A new Ratio.
@@ -196,7 +204,10 @@ class Ratio:
     # Implements ratio % ratio.
     #  @returns A new Ratio.
     def __mod__(self, other):
-        pass
+        if type(other) == Ratio:
+            return Ratio((self * 1.0) % (other * 1.0))
+        else:
+            raise TypeError("Modulus operations with Ratios can only be performed in Ratio % Ratio format")
 
     # Implements Ratio**int, Ratio**float, and Ratio**Ratio.
     #  @returns If the exponent is a positive or negative int
@@ -215,27 +226,69 @@ class Ratio:
 
     # Implements Ratio < Ratio, Ratio < int, Ratio < float. See: compare().
     def __lt__(self, other):
-        pass
+        if type(other) == Ratio:
+            compare_value = Ratio.compare(self, other)
+        else:
+            compare_value = Ratio.compare(self, Ratio(other))
+        if compare_value < 0:
+            return True
+        else:
+            return False
 
     # Implements Ratio <= Ratio, Ratio <= int, Ratio <= float. See: compare().
     def __le__(self, other):
-        pass
+        if type(other) == Ratio:
+            compare_value = Ratio.compare(self, other)
+        else:
+            compare_value = Ratio.compare(self, Ratio(other))
+        if compare_value <= 0:
+            return True
+        else:
+            return False
 
     # Implements Ratio <= Ratio, Ratio <= int, Ratio <= float. See: compare().
     def __eq__(self, other):
-        pass
+        if type(other) == Ratio:
+            compare_value = Ratio.compare(self, other)
+        else:
+            compare_value = Ratio.compare(self, Ratio(other))
+        if compare_value == 0:
+            return True
+        else:
+            return False
 
     # Implements Ratio != Ratio, Ratio != int, Ratio != float. See: compare().
     def __ne__(self, other):
-        pass
+        if type(other) == Ratio:
+            compare_value = Ratio.compare(self, other)
+        else:
+            compare_value = Ratio.compare(self, Ratio(other))
+        if compare_value != 0:
+            return True
+        else:
+            return False
 
     # Implements Ratio >= Ratio, Ratio >= int, Ratio >= float. See: compare().
     def __ge__(self, other):
-        pass
+        if type(other) == Ratio:
+            compare_value = Ratio.compare(self, other)
+        else:
+            compare_value = Ratio.compare(self, Ratio(other))
+        if compare_value >= 0:
+            return True
+        else:
+            return False
 
     # Implements Ratio>Ratio, Ratio > int, Ratio > float. See: compare().
     def __gt__(self, other):
-        pass
+        if type(other) == Ratio:
+            compare_value = Ratio.compare(self, other)
+        else:
+            compare_value = Ratio.compare(self, Ratio(other))
+        if compare_value > 0:
+            return True
+        else:
+            return False
 
     # Returns a single integer hash value for the ratio: (num<<16 + den)
     def __hash__(self):
@@ -310,5 +363,5 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    r = Ratio(7, 8)
-    print(r.dotted())
+    print(5.6 % 2.5)
+    print(Ratio(5.6) % Ratio(5/2))
