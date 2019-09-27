@@ -12,7 +12,7 @@ import math
 
 class Ratio:
     num = 0
-    den = 0
+    den = 1
 
     # Creates a Ratio from integers, a floating point number, or a string name.
     #  * Ratio(int, int) - creates a ratio from an integer numerator and denominator.
@@ -38,35 +38,66 @@ class Ratio:
     def __init__(self, num, den=None):
         if den is None:
             if type(num) == int:
-                pass
+                self.num = num
             elif type(num) == float:
                 pass
             elif type(num) == str:
-                pass
+                # check if a backslash is used and that at least two values are used
+                if num.find("/") != -1 and len(num) > 2:
+                    vals = num.split("/")  # separate num and den
+                    # check if only one backslash is used
+                    if len(vals) == 2:
+                        # check if both num and den are numbers
+                        # !!!!!! NEED TO HANDLE NEGATIVE VALUES IN STRING
+                        if vals[0].isnumeric() is True and vals[1].isnumeric() is True:
+                            num_val = int(vals[0])
+                            den_val = int(vals[1])
+                            self.num = num_val // math.gcd(num_val, den_val)
+                            self.den = den_val // math.gcd(num_val, den_val)
+                        else:
+                            raise ValueError(f"{num} is not a valid parameter"
+                                             "\nWhen instantiating a Ratio with a string, "
+                                             "only use integer values for the numerator "
+                                             "and denominator.")
+                    else:
+                        raise ValueError(f"{num} is not a valid parameter."
+                                         "\nWhen instantiating a Ratio with a string, "
+                                         "only use one backslash '/'.")
+                else:
+                    raise ValueError(f"{num} is not a valid parameter."
+                                     "\nWhen instantiating a Ratio with a string, "
+                                     "it must follow the format 'a/b', where a and b "
+                                     "are integers.")
             else:
                 raise TypeError(f"{num} is not a valid parameter."
-                                "\nWhen instantiating a Ratio with just a numerator,"
-                                "\nvalid types only include integers, floating point"
-                                "\nnumbers, and strings.")
+                                "\nWhen instantiating a Ratio with just a numerator, "
+                                "valid types only include integers, floating point "
+                                "numbers, and strings.")
         else:
             if type(num) == type(den) == int:
                 if den == 0:
-                    raise ValueError("The denominator cannot be 0.")
-                pass
+                    raise ZeroDivisionError("The denominator cannot be 0.")
+                if num < 0 and den < 0:
+                    num *= -1
+                    den *= -1
+                self.num = num // math.gcd(num, den)
+                self.den = den // math.gcd(num, den)
             else:
                 raise TypeError(f"{num} and {den} are not valid parameters."
                                 "\nWhen instantiating a Ratio with a numerator and "
-                                "\ndenominator, both parameters must be integers.")
+                                "denominator, both parameters must be integers.")
 
     # Returns a string showing the ratio's fraction and the hex
     #  hex value of the ratio's memory address.
     #  Example: <Ratio: 1/4 0x10610d2b0>
     def __str__(self):
-        pass
+        # should be done
+        return "<Ratio: " + str(self.num) + "/" + str(self.den) + " " + self.__hash__() + ">"
 
     # Returns a string expression that will evaluate to this ratio.
     def __repr__(self):
-        pass
+        # should be done
+        return "Ratio(" + str(self.num) + "/" + str(self.den) + ")"
 
     # Implements Ratio*Ratio, Ratio*int and Ratio*float.
     # @param other An Ratio, int or float.
@@ -74,10 +105,19 @@ class Ratio:
     #
     # A TypeError should be raised if other is not a Ratio, int or float.
     def __mul__(self, other):
-        pass
+        # should be done
+        if type(other) == Ratio:
+            return Ratio(self.num * other.num, self.den * other.den)
+        elif type(other) == int:
+            return Ratio(self.num * other, self.den)
+        elif type(other) == float:
+            return (self.num / self.den) * other
+        else:
+            raise TypeError("Ratios can only be multiplied by other Ratios, integers, or floats.")
 
     # Implements right side multiplication by calling __mul__
-    #_rmul__ = __mul__
+    __rmul__ = __mul__
+    # should be done
 
     # Implements Ratio/Ratio, Ratio/int and Ratio/float.
     # @param other A Ratio, int or float.
@@ -85,45 +125,73 @@ class Ratio:
     #
     # A TypeError should be raised if other is not a Ratio, int or float.
     def __truediv__(self, other):
-        pass
+        # should be done
+        if type(other) == Ratio:
+            return self * other.reciprocal()
+        elif type(other) == int:
+            return Ratio(self.num, self.den * other)
+        elif type(other) == float:
+            return (self.num / self.den) / other
+        else:
+            raise TypeError("Ratios on the left can only be divided by other Ratios, integers, or floats.")
 
     # Implements int / Ratio or float / Ratio (right side division).
     #  @returns A new Ratio.
     def __rtruediv__(self, other):
-        pass
+        # should be done
+        if type(other) == int:
+            return Ratio(other * self.den, self.num)
+        elif type(other) == float:
+            return other / (self.num / self.den)
+        else:
+            raise TypeError("Ratios on the right can only be divided integers or floats.")
 
     # Implements 1 / ratio (reciprocal).
     #  @returns A new Ratio.
     def __invert__(self):
-        pass
+        # should be done
+        return Ratio(self.den, self.num)
 
     # Implements Ratio + Ratio, Ratio + int and Ratio + float. In order to
     #  add two ratios their denominators must be converted to the
     #  least common multiple of the current denominator. See: lcm().
     #  @returns A new Ratio.
     def __add__(self, other):
-        pass
+        if type(other) == Ratio:
+            return Ratio(self.num * Ratio.lcm(self.den, other.den) // self.den +
+                         other.num * Ratio.lcm(self.den, other.den) // other.den,
+                         Ratio.lcm(self.den, other.den))
+        elif type(other) == int:
+            return Ratio(self.num, self.den) + Ratio(other)
+        elif type(other) == float:
+            return (self.num / self.den) + other
+        else:
+            raise TypeError("Ratios can only be added on or subtracted by other Ratios, integers, or floats.")
 
     # Implements right side addition by calling __add__.
     #  @returns A new Ratio.
-    #__radd__ = __add__
+    __radd__ = __add__
 
     # Implements -ratio (negation).
     #  @returns A new Ratio.
     def __neg__(self):
-        pass
+        return Ratio(-self.num, self.den)
 
     # Implements ratio - ratio, ratio - int and ratio - float.
     #  @returns A new Ratio.
     def __sub__(self, other):
+        # i think this is done? not sure
         return self.__add__(other.__neg__())
         pass
 
     # Implements int - ratio and float-ratio (right side subtraction).
     #  @returns A new Ratio.
     def __rsub__(self, other):
-        # other is the LEFT side non-ratio operand.
-        pass
+        # i think this is done? not sure
+        if type(other) == int or type(other) == float:
+            return other + -self
+        else:
+            raise ValueError("Ratios on the right can only subtract from integers or floats.")
 
     # Implements ratio % ratio.
     #  @returns A new Ratio.
@@ -171,27 +239,27 @@ class Ratio:
 
     # Returns a single integer hash value for the ratio: (num<<16 + den)
     def __hash__(self):
-        pass
+        return str(hex(self.num)) + str(self.den)
 
     # Helper method implements ratio comparison. Returns 0 if the ratios are equal,
     # a negative value if self is less than other and a positive value if self is
-    # GEQ other. Given two ratios the comparison is (num1*den2) - (num2/den1)
+    # GEQ other. Given two ratios the comparison is (num1*den2) - (num2*den1)
     def compare(self, other):
-        pass
+        return self.num * other.den - other.num * self.den
 
     # A static method that returns the lowest common multiple of two integers
     # a and b. lcm be calculated using gcd(): (a*b) // gcd(a,b)
     @staticmethod
     def lcm(a, b):
-        pass
+        return (a * b) // math.gcd(a, b)
 
     # Returns the string name of the ratio 'num/den'.
     def string(self):
-        pass
+        return str(self.num) + "/" + str(self.den)
 
     # Returns 1/ratio.
     def reciprocal(self):
-        pass
+        return Ratio(self.den, self.num)
 
     # Returns the musical 'dotted' value of the ratio, e.g. 1/4 with
     #  one dot is 1/4 + 1/8 = 3/8.
@@ -201,7 +269,12 @@ class Ratio:
 
     # The method should raise a ValueError if dots is not a positive integer.
     def dotted(self, dots=1):
-        pass
+        if dots < 1 or type(dots) != int:
+            raise TypeError("The number of dots must be a positive integer")
+        ratio = self
+        for i in range(dots):
+            ratio += Ratio(self.num, self.den * 2 ** (i + 1))
+        return ratio
 
     # Returns a list of num sub-divisions (metric 'tuples') that sum to
     #  value of ratio*num.
@@ -226,7 +299,7 @@ class Ratio:
 
     # Returns the ratio as a floating point number.
     def float(self):
-        pass
+        return float(self.num / self.den)
 
     # Converts the ratio to floating point seconds according to a
     #  given tempo and beat:
@@ -236,6 +309,6 @@ class Ratio:
         pass
 
 
-
 if __name__ == '__main__':
-    pass
+    r = Ratio(7, 8)
+    print(r.dotted())
