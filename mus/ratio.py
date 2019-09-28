@@ -214,7 +214,14 @@ class Ratio:
     #  a Ratio should be returned. Otherwise for Ratio or float
     #  exponents a float should be returned. See: math.pow().
     def __pow__(self, other):
-        pass
+        if type(other) == int:
+            return Ratio((self * 1.0) ** other)
+        elif type(other) == Ratio:
+            return math.pow(self * 1.0, other * 1.0)
+        elif type(other) == float:
+            return math.pow(self * 1.0, other)
+        else:
+            raise TypeError("Ratios can only be raised to powers of integers, floats, or other Ratios")
 
     # Implements an int**ratio or float**ratio
     #  @param other  The base integer or float.
@@ -222,7 +229,12 @@ class Ratio:
     #
     #  The function can be implemented using math.pow().
     def __rpow__(self, other):
-        pass
+        if type(other) == int:
+            return math.pow(other, self * 1.0)
+        elif type(other) == float:
+            return math.pow(other, self * 1.0)
+        else:
+            raise TypeError("Only integers and floats can be raised to Ratio powers")
 
     # Implements Ratio < Ratio, Ratio < int, Ratio < float. See: compare().
     def __lt__(self, other):
@@ -292,6 +304,7 @@ class Ratio:
 
     # Returns a single integer hash value for the ratio: (num<<16 + den)
     def __hash__(self):
+        # i didn't do this right lol
         return str(hex(self.num)) + str(self.den)
 
     # Helper method implements ratio comparison. Returns 0 if the ratios are equal,
@@ -340,7 +353,14 @@ class Ratio:
     #  which sum to Ratio(1,4).  Ratio(1,4).tuplets(3,2) returns three
     #  tuplets [1/6, 1/6, 1/6] which sum to ratio*2, or 1/2.
     def tuplets(self, num, intimeof=1):
-        pass
+        if type(num) == int and type(intimeof) == int:
+            list_tuplets = []
+            for i in range(num):
+                list_tuplets.append(self * intimeof / num)
+            return list_tuplets
+        else:
+            raise TypeError("Number of tuples must be an integer")
+
 
     # Returns the ratio representing num divisions of this ratio.
     #  @param num  The number to divide this ratio by.
@@ -348,7 +368,8 @@ class Ratio:
     #
     #  Example:  Ratio(1,4).tup(5) is 1/20
     def tup(self, num):
-        pass
+        if type(num) == int or type(num) == float:
+            return Ratio(self.num, self.den * num)
 
     # Returns the ratio as a floating point number.
     def float(self):
@@ -359,9 +380,15 @@ class Ratio:
     #  @param tempo  The tempo in beats per minute. Defaults to 60.
     #  @param beat  A ratio representing the beat. Defaults to 1/4 (quarter note).
     def seconds(self, tempo=60, beat=None):
-        pass
+        if (type(tempo) == float or type(tempo) == int) and (type(beat) == Ratio or beat is None):
+            if beat is None:
+                beat = Ratio(1/4)
+            total_beats_passed = self / beat
+            total_seconds_passed = (total_beats_passed * 60 / tempo) * 1.0
+            return total_seconds_passed
+        else:
+            raise TypeError("The tempo must be in BPM (integer or floats). The beat must be a Ratio")
 
 
 if __name__ == '__main__':
-    print(5.6 % 2.5)
-    print(Ratio(5.6) % Ratio(5/2))
+    pass
