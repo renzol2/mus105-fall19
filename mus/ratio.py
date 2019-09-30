@@ -8,6 +8,7 @@
 #  Ratios are compared and combined using the standard math operators.
 
 import math
+from decimal import Decimal
 
 
 class Ratio:
@@ -40,7 +41,7 @@ class Ratio:
             if type(num) == int:
                 self.num = num
             elif type(num) == float:
-                nums = num.as_integer_ratio()
+                nums = Decimal(f"{num}").as_integer_ratio()
                 self.num = nums[0]
                 self.den = nums[1]
             elif type(num) == str:
@@ -305,7 +306,7 @@ class Ratio:
     # Returns a single integer hash value for the ratio: (num<<16 + den)
     def __hash__(self):
         # i didn't do this right lol
-        return str(hex(self.num)) + str(self.den)
+        return hex(id(self))
 
     # Helper method implements ratio comparison. Returns 0 if the ratios are equal,
     # a negative value if self is less than other and a positive value if self is
@@ -391,4 +392,4 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    print(Ratio(1/2))
+    print(Ratio(4.5))
