@@ -174,7 +174,7 @@ class Ratio:
         elif type(other) == int:
             return Ratio(self.num, self.den) + Ratio(other)
         elif type(other) == float:
-            return (self.num / self.den) + other
+            return Ratio((self.num / self.den) + other)
         else:
             raise TypeError("Ratios can only be added on or subtracted by other Ratios, integers, or floats.")
 
@@ -205,6 +205,8 @@ class Ratio:
     # Implements ratio % ratio.
     #  @returns A new Ratio.
     def __mod__(self, other):
+        if other.num == 0:
+            raise ZeroDivisionError("Cannot divide/modulo by 0")
         if type(other) == Ratio:
             return Ratio((self * 1.0) % (other * 1.0))
         else:
@@ -392,4 +394,4 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    print(Ratio(4.5))
+    pass
