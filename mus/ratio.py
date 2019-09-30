@@ -101,7 +101,7 @@ class Ratio:
     #  Example: <Ratio: 1/4 0x10610d2b0>
     def __str__(self):
         # should be done
-        return "<Ratio: " + str(self.num) + "/" + str(self.den) + " " + self.__hash__() + ">"
+        return "<Ratio: " + str(self.num) + "/" + str(self.den) + " " + str(hex(id(self))) + ">"
 
     # Returns a string expression that will evaluate to this ratio.
     def __repr__(self):
@@ -391,4 +391,4 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    pass
+    print(Ratio(1/2))
