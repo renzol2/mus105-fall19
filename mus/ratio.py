@@ -397,4 +397,4 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    print(Ratio("15/-25"))
+    print(Ratio(3, 5).string())
