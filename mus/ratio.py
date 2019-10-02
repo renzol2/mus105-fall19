@@ -87,7 +87,7 @@ class Ratio:
             if type(num) == type(den) == int:
                 if den == 0:
                     raise ZeroDivisionError("The denominator cannot be 0.")
-                if num < 0 and den < 0:
+                if (num < 0 and den < 0) or (num > 0 and den < 0):
                     num *= -1
                     den *= -1
                 self.num = num // math.gcd(num, den)
@@ -394,4 +394,4 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    pass
+    print(Ratio(15, -25))
