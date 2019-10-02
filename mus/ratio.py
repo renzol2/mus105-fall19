@@ -60,6 +60,9 @@ class Ratio:
                         if vals[0].isnumeric() is True and vals[1].isnumeric() is True:
                             if negatives[0] == negatives[1] == -1:
                                 negatives[0] = negatives[1] = 1
+                            elif negatives[0] == 1 and negatives[1] == -1:
+                                negatives[0] *= -1
+                                negatives[1] *= -1
                             num_val = int(vals[0]) * negatives[0]
                             den_val = int(vals[1]) * negatives[1]
                             self.num = num_val // math.gcd(num_val, den_val)
@@ -394,4 +397,4 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    print(Ratio(15, -25))
+    print(Ratio("15/-25"))
