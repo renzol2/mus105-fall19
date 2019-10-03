@@ -397,4 +397,4 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    print(repr(Ratio(1, 4)))
+    pass
