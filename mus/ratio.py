@@ -177,7 +177,7 @@ class Ratio:
         elif type(other) == int:
             return Ratio(self.num, self.den) + Ratio(other)
         elif type(other) == float:
-            return Ratio((self.num / self.den) + other)
+            return Ratio((self.num / self.den) + other).float()
         else:
             raise TypeError("Ratios can only be added on or subtracted by other Ratios, integers, or floats.")
 
@@ -211,7 +211,13 @@ class Ratio:
         if other.num == 0:
             raise ZeroDivisionError("Cannot divide/modulo by 0")
         if type(other) == Ratio:
-            return Ratio((self * 1.0) % (other * 1.0))
+            if other > self:
+                return self
+            elif other == self:
+                return Ratio(0)
+            self_num = self.num * Ratio.lcm(self.den, other.den) // self.den
+            other_num = other.num * Ratio.lcm(self.den, other.den) // other.den
+            return Ratio(self_num - other_num * (self_num // other_num), Ratio.lcm(self.den, other.den))
         else:
             raise TypeError("Modulus operations with Ratios can only be performed in Ratio % Ratio format")
 
@@ -397,5 +403,5 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    r = Ratio(21, 23) % Ratio(1, 3)
+    r = 5 % -4
     print(r)
