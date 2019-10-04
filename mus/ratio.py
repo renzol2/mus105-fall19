@@ -105,12 +105,12 @@ class Ratio:
     #  Example: <Ratio: 1/4 0x10610d2b0>
     def __str__(self):
         # should be done
-        return "'<Ratio: " + str(self.num) + "/" + str(self.den) + " " + str(hex(id(self))) + ">'"
+        return "<Ratio: " + str(self.num) + "/" + str(self.den) + " " + str(hex(id(self))) + ">"
 
     # Returns a string expression that will evaluate to this ratio.
     def __repr__(self):
         # should be done
-        return '\'Ratio("' + str(self.num) + '/' + str(self.den) + '")\''
+        return 'Ratio("' + str(self.num) + '/' + str(self.den) + '")'
 
     # Implements Ratio*Ratio, Ratio*int and Ratio*float.
     # @param other An Ratio, int or float.
@@ -397,4 +397,5 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    pass
+    r = Ratio(21, 23) % Ratio(1, 3)
+    print(r)
