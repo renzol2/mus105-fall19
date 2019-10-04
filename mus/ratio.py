@@ -227,7 +227,7 @@ class Ratio:
     #  exponents a float should be returned. See: math.pow().
     def __pow__(self, other):
         if type(other) == int:
-            return Ratio((self * 1.0) ** other)
+            return Ratio(self.num ** other, self.den ** other)
         elif type(other) == Ratio:
             return math.pow(self * 1.0, other * 1.0)
         elif type(other) == float:
@@ -403,5 +403,4 @@ class Ratio:
 
 
 if __name__ == '__main__':
-    r = 5 % -4
-    print(r)
+    pass
