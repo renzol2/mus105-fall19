@@ -216,8 +216,11 @@ class Ratio:
             elif other == self:
                 return Ratio(0)
             self_num = self.num * Ratio.lcm(self.den, other.den) // self.den
+            print(self_num)
             other_num = other.num * Ratio.lcm(self.den, other.den) // other.den
+            print(other_num)
             return Ratio(self_num - other_num * (self_num // other_num), Ratio.lcm(self.den, other.den))
+            # (91 - 11(91 // 11))
         else:
             raise TypeError("Modulus operations with Ratios can only be performed in Ratio % Ratio format")
 
@@ -404,3 +407,4 @@ class Ratio:
 
 if __name__ == '__main__':
     pass
+
