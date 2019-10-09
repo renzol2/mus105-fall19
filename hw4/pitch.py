@@ -23,7 +23,9 @@ class Pitch:
     #  python enum name be sure to use only the 'safe versions' of the accidental
     #  names: 'ff' upto 'ss'. The enum values are the one byte integers containing
     #  the letter and accidental indexes: (letter << 4) + accidental.
-    pnums = IntEnum('Pnum', [])
+    names = [l + a for l in ['C', 'D', 'E', 'F', 'G', 'A', 'B'] for a in ['ff', 'f', '', 's', 'ss']]
+    values = [(l << 4) + a for l in range(7) for a in range(5)]
+    pnums = IntEnum('Pnum', 0)
 
     # CONSTRUCTOR
     # Creates a Pitch from a string or list, if neither is provided
@@ -355,7 +357,7 @@ class Pitch:
     #  is invalid or if the pitch requested does not support the specified
     #  accidental.
     @classmethod
-    def from_keynum(cls, keynum, acci=None):  # @TODO
+    def from_keynum(cls, keynum, acci=None):
         if isinstance(keynum, int) and 0 <= keynum <= 127:
             octave_names = ['00', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
             pitch_classes = {
