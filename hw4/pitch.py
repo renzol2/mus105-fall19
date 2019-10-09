@@ -12,7 +12,6 @@ from math import pow
 
 
 class Pitch:
-
     ## A class variable that holds an IntEnum of all possible letter-and-accidental
     #  combinations Cff up to Bss. Each pnum encodes its letter and accidental index
     #  as a one byte value 'llllaaaa', where 'llll' is its letter index 0-6, and
@@ -64,7 +63,155 @@ class Pitch:
     # Pitch([0,3,6]), Pitch()
 
     def __init__(self, ref=None):
-        pass
+        if ref is None:
+            self.letter = None
+            self.accidental = None
+            self.octave = None
+            self.midi_val = None
+            self.pitch_class = None
+            self.pitch_string = None
+        elif type(ref) == str:
+            # check if pitch starts with letter name
+            if ref[0].isalpha():
+                pitch_classes = {
+                    "C": 0, "D": 2, "E": 4, "F": 5, "G": 7, "A": 9, "B": 11
+                }
+                # check if pitch has sharps or flats
+                if ref.find("#") == ref.find("s") == ref.find("b") == ref.find("f") == -1:
+                    has_accidental = False
+                    accidental_modifier = 0
+                    self.accidental = 2
+                    if len(ref) > 3:
+                        raise ValueError(f"{ref} is not a valid pitch string."
+                                         "\nValid octave numbers range from 00, 0, 1, 2, ..., 8, 9")
+                else:
+                    has_accidental = True
+                    if (ref[1:3] == "##" or ref[1:3] == "ss") and ref.find("b") == ref[1:3].find("f") == -1:
+                        accidental_modifier = 2
+                        self.accidental = 4
+                    elif (ref[1:3] == "bb" or ref[1:3] == "ff") and ref.find("#") == ref.find("s") == -1:
+                        accidental_modifier = -2
+                        self.accidental = 0
+                    elif (ref[1] == "#" or ref[1] == "s") and ref.find("b") == ref[1:3].find("f") == -1:
+                        accidental_modifier = 1
+                        self.accidental = 3
+                    elif (ref[1] == "b" or ref[1] == "f") and ref.find("#") == ref.find("s") == -1:
+                        accidental_modifier = -1
+                        self.accidental = 1
+                    else:
+                        raise ValueError("{} is not a valid pitch string."
+                                         "\nFor sharps, use # or s after letter name (C#4, Ds5, E##2, Fss0)"
+                                         "\nFor flats, use b or f after letter name (Db2, Gf5, Ebb7, Aff2)"
+                                         .format(ref))
+
+                if has_accidental or ref[1].isnumeric():
+                    # check if octave is 00 or otherwise
+                    if ref.find("00") == -1:
+                        # this case is for 0-9
+                        if ref[len(ref) - 2].isnumeric() or len(ref) > 4:
+                            raise ValueError(f"{ref} is not a valid pitch string."
+                                             "\nAccidentals can only go up to double sharps (## or ss) or flats (bb or ff)"
+                                             "\nValid octave numbers range from 00, 0, 1, 2, ..., 8, 9")
+                        else:
+                            octave = int(ref[len(ref) - 1]) + 1
+                            self.octave = int(ref[len(ref) - 1]) + 1
+                    else:
+                        octave = 0
+                        self.octave = 0
+                    pitch_class = pitch_classes[ref[0].capitalize()]
+                    letter_classes = {
+                        "C": 0, "D": 1, "E": 2, "F": 3, "G": 4, "A": 5, "B": 6
+                    }
+                    self.letter = letter_classes[ref[0].capitalize()]
+                else:
+                    raise ValueError("{} is not a valid pitch string."
+                                     "\nFor sharps, use # or s after letter name (C#4, Ds5, E##2, Fss0)"
+                                     "\nFor flats, use b or f after letter name (Db2, Gf5, Ebb7, Aff2)"
+                                     "\nUse an octave in range 00, 0, 1, 2, ... 8, 9 immediately"
+                                     " after letter name".format(ref))
+
+                # compute & return the midi int once all information is gathered from pitch str
+                midi_val = octave * 12 + pitch_class + accidental_modifier
+                if 0 <= midi_val <= 127 and 1 <= len(ref) <= 5:
+                    self.midi_val = midi_val
+                    self.pitch_class = self.midi_val % 12
+                    # assign and clean up pitch string
+                    temp_pitch_string = ref
+                    temp_pitch_string = temp_pitch_string.capitalize()
+                    temp_pitch_string = temp_pitch_string.replace('s', '#')
+                    temp_pitch_string = temp_pitch_string.replace('f', 'b')
+                    self.pitch_string = temp_pitch_string
+                else:
+                    raise ValueError(
+                        "{} is not a valid pitch string. \nThe lowest possible pitch is 'C00' (key number 0) "
+                        "\nand the highest is 'Abb9' (key number 127 spelled with a double flat)".format(ref))
+            else:
+                raise ValueError(
+                    "{} is not a valid pitch string. A pitch name starts with a pitch letter A-G".format(ref))
+        elif type(ref) == list:
+            if len(ref) == 3:
+                if isinstance(ref[0], int) and isinstance(ref[1], int) and isinstance(ref[2], int):
+                    if 0 < ref[0] < 6 and 0 < ref[1] < 4 and 0 < ref[2] < 10:
+                        self.letter = ref[0]
+                        self.accidental = ref[1]
+                        self.octave = ref[2]
+                        # this changes the parameter (with A-G corresponding to 0-6) to be measured in a
+                        # pitch class that is easier to use when calculating a MIDI value
+                        letter_class_to_pitch_class = {
+                            0: 0, 1: 2, 2: 4, 3: 5, 4: 7, 5: 9, 6: 11
+                        }
+                        self.midi_val = self.octave * 12 + letter_class_to_pitch_class[self.letter] + (self.accidental - 2)
+                        self.pitch_class = self.midi_val % 12
+                        # set up for pitch string conversion from midi
+                        octave_names = ['00', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+                        pitch_classes = {
+                            0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5: "F",
+                            6: "F#", 7: "G", 8: "Ab", 9: "A", 10: "Bb", 11: "B"
+                        }
+                        if self.accidental == 3:
+                            pitch_classes = {
+                                0: "B#", 1: "C#", 3: "D#", 5: "E#", 6: "F#", 8: "G#", 10: "A#"
+                            }
+                            if self.pitch_class == 0:
+                                self.octave -= 1
+                        elif self.accidental == 4:
+                            pitch_classes = {
+                                1: "B##", 2: "C##", 4: "D##", 6: "E##", 7: "F##", 9: "G##", 11: "A##"
+                            }
+                            if self.pitch_class == 1:
+                                self.octave -= 1
+                        elif self.accidental == 3:
+                            pitch_classes = {
+                                1: "Db", 3: "Eb", 4: "Fb", 6: "Gb", 8: "Ab", 10: "Bb", 11: "Cb"
+                            }
+                            if self.pitch_class == 11:
+                                self.octave += 1
+                        elif self.accidental == 0:
+                            pitch_classes = {
+                                0: "Dbb", 2: "Ebb", 3: "Fbb", 5: "Gbb", 7: "Abb", 9: "Bbb", 10: "Cbb"
+                            }
+                            if self.pitch_class == 10:
+                                self.octave += 1
+
+                        pitch_string = pitch_classes[self.pitch_class] + octave_names[self.octave]
+                        self.pitch_string = pitch_string
+                    else:
+                        raise ValueError("All values in a pitch list must be integers."
+                                         "\nThe first value is for letters, which includes indices 0-6."
+                                         "\nThe second value is for accidentals, which includes indices 0-4."
+                                         "\nThe third value is for octaves, which includes indices 0-10.")
+                else:
+                    raise ValueError("All values in a pitch list must be integers."
+                                     "\nThe first value is for letters, which includes indices 0-6."
+                                     "\nThe second value is for accidentals, which includes indices 0-4."
+                                     "\nThe third value is for octaves, which includes indices 0-10.")
+            else:
+                raise ValueError(f"The parameter is not a valid pitch list."
+                                 f"\nThe pitch list must have 3 integer values "
+                                 f"for a letter, accidental, and octave index.")
+        else:
+            raise TypeError(f"{ref} is not a valid parameter. Create a Pitch object with a pitch string, pitch list,"
+                            f"\nor without any value (creates an empty Pitch).")
         ## A letter index 0-6.
         # self.letter = None
         ## An accidental index 0-4.
@@ -79,13 +226,13 @@ class Pitch:
     #  empty the string will show '<Pitch: empty 0x10f263b50>'.
     #  See also: string().
     def __str__(self):
-        return ''
+        return f'<Pitch: {self.pitch_string} {hex(id(self))}>'
 
     ## Prints the external form of the Pitch that, if evaluated
     #  would create a Pitch with the same content as this pitch.
     #  Examples: 'Pitch("C#7")' and Pitch().  See also string().
     def __repr__(self):
-        return ''
+        return f'Pitch("{self.pitch_string}")'
 
     ## Implements Pitch < Pitch.
     # @param other The pitch to compare with this pitch.
@@ -196,4 +343,3 @@ class Pitch:
     @classmethod
     def from_keynum(cls, keynum, acci=None):
         pass
-
