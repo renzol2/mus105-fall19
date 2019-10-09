@@ -6,7 +6,7 @@ from math import pow
 # A class that implements musical pitches.
 #
 # The Pitch class represent equal tempered pitches and returns information
-# in hertz, keynum, pitch class, Pnum  and pitch name formats.  Pitches
+# in hertz, keynum, pitch class, Pnum and pitch name formats.  Pitches
 # can be compared using standard math relations and maintain proper spelling
 # when complemented or transposed by an Interval.
 
@@ -25,7 +25,7 @@ class Pitch:
     #  the letter and accidental indexes: (letter << 4) + accidental.
     names = [l + a for l in ['C', 'D', 'E', 'F', 'G', 'A', 'B'] for a in ['ff', 'f', '', 's', 'ss']]
     values = [(l << 4) + a for l in range(7) for a in range(5)]
-    pnums = IntEnum('Pnum', 0)
+    pnums = IntEnum("Pnum", [(names[i], values[i]) for i in range(len(names))])
 
     # CONSTRUCTOR
     # Creates a Pitch from a string or list, if neither is provided
