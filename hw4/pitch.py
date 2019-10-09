@@ -25,6 +25,7 @@ class Pitch:
     #  the letter and accidental indexes: (letter << 4) + accidental.
     pnums = IntEnum('Pnum', [])
 
+    # CONSTRUCTOR
     # Creates a Pitch from a string or list, if neither is provided
     #  an empty Pitch is returned.
     #  * Pitch(string) - creates a Pitch from a pitch name string.
@@ -157,7 +158,7 @@ class Pitch:
         elif type(ref) == list:
             if len(ref) == 3:
                 if isinstance(ref[0], int) and isinstance(ref[1], int) and isinstance(ref[2], int):
-                    if 0 < ref[0] < 6 and 0 < ref[1] < 4 and 0 < ref[2] < 10:
+                    if 0 <= ref[0] <= 6 and 0 <= ref[1] <= 4 and 0 <= ref[2] <= 10:
                         self.letter = ref[0]
                         self.accidental = ref[1]
                         self.octave = ref[2]
@@ -168,41 +169,13 @@ class Pitch:
                         }
                         self.midi_val = self.octave * 12 + letter_class_to_pitch_class[self.letter] + (
                                     self.accidental - 2)
+                        if self.midi_val < 0 or self.midi_val > 127:
+                            raise ValueError(
+                                "The integer values made a MIDI value that is out of range."
+                                "\nThe lowest possible pitch is 'C00' (key number 0) "
+                                "\nand the highest is 'Abb9' (key number 127 spelled with a double flat)")
                         self.pitch_class = self.midi_val % 12
-
-                        # set up for pitch string conversion from midi
-                        octave_names = ['00', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-                        pitch_classes = {
-                            0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5: "F",
-                            6: "F#", 7: "G", 8: "Ab", 9: "A", 10: "Bb", 11: "B"
-                        }
-                        if self.accidental == 3:
-                            pitch_classes = {
-                                0: "B#", 1: "C#", 3: "D#", 5: "E#", 6: "F#", 8: "G#", 10: "A#"
-                            }
-                            if self.pitch_class == 0:
-                                self.octave -= 1
-                        elif self.accidental == 4:
-                            pitch_classes = {
-                                1: "B#", 2: "C#", 4: "D#", 6: "E#", 7: "F#", 9: "G#", 11: "A#"
-                            }
-                            if self.pitch_class == 1:
-                                self.octave -= 1
-                        elif self.accidental == 3:
-                            pitch_classes = {
-                                1: "Db", 3: "Eb", 4: "Fb", 6: "Gb", 8: "Ab", 10: "Bb", 11: "Cb"
-                            }
-                            if self.pitch_class == 11:
-                                self.octave += 1
-                        elif self.accidental == 0:
-                            pitch_classes = {
-                                0: "Dbb", 2: "Ebb", 3: "Fbb", 5: "Gbb", 7: "Abb", 9: "Bbb", 10: "Cbb"
-                            }
-                            if self.pitch_class == 10:
-                                self.octave += 1
-
-                        pitch_string = pitch_classes[self.pitch_class] + octave_names[self.octave]
-                        self.pitch_string = pitch_string
+                        self.pitch_string = Pitch.from_keynum(self.midi_val, self.accidental)
                     else:
                         raise ValueError("All values in a pitch list must be integers."
                                          "\nThe first value is for letters, which includes indices 0-6."
@@ -242,8 +215,14 @@ class Pitch:
     #
     # This method should call self.pos() and other.pos() to get the
     # two values to compare. See: pos().
-    def __lt__(self, other):  # @TODO
-        pass
+    def __lt__(self, other):
+        if isinstance(other, Pitch):
+            if self.pos() < other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Pitch comparisons can only be performed between two Pitches.")
 
     # Implements Pitch <= Pitch.
     # @param other The pitch to compare with this pitch.
@@ -252,8 +231,14 @@ class Pitch:
     # A TypeError should be raised if other is not a Pitch.
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
-    def __le__(self, other):  # @TODO
-        pass
+    def __le__(self, other):
+        if isinstance(other, Pitch):
+            if self.pos() <= other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Pitch comparisons can only be performed between two Pitches.")
 
     # Implements Pitch == Pitch.
     # @param other The pitch to compare with this pitch.
@@ -262,8 +247,14 @@ class Pitch:
     # A TypeError should be raised if other is not a Pitch.
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
-    def __eq__(self, other):  # @TODO
-        pass
+    def __eq__(self, other):
+        if isinstance(other, Pitch):
+            if self.pos() == other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Pitch comparisons can only be performed between two Pitches.")
 
     # Implements Pitch != Pitch.
     # @param other The pitch to compare with this pitch.
@@ -272,8 +263,14 @@ class Pitch:
     # A TypeError should be raised if other is not a Pitch.
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
-    def __ne__(self, other):  # @TODO
-        pass
+    def __ne__(self, other):
+        if isinstance(other, Pitch):
+            if self.pos() != other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Pitch comparisons can only be performed between two Pitches.")
 
     # Implements Pitch >= Pitch.
     # @param other The pitch to compare with this pitch.
@@ -282,8 +279,14 @@ class Pitch:
     # A TypeError should be raised if other is not a Pitch.
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
-    def __ge__(self, other):  # @TODO
-        pass
+    def __ge__(self, other):
+        if isinstance(other, Pitch):
+            if self.pos() >= other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Pitch comparisons can only be performed between two Pitches.")
 
     # Implements Pitch > Pitch.
     # @param other The pitch to compare with this pitch.
@@ -292,31 +295,40 @@ class Pitch:
     # A TypeError should be raised if other is not a Pitch.
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
-    def __gt__(self, other):  # @TODO
-        pass
+    def __gt__(self, other):
+        if isinstance(other, Pitch):
+            if self.pos() > other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Pitch comparisons can only be performed between two Pitches.")
 
     # Returns a unique integer representing this pitch's position in
     #  the octave-letter-accidental space. The expression to calculate
     #  this value is (octave<<8) + (letter<<4) + accidental.
-    def pos(self):  # @TODO
-        pass
+    def pos(self):
+        return (self.octave << 8) + (self.letter << 4) + self.accidental
 
     # Returns true if the Pitch is empty. A pitch is empty if its
     # letter, accidental and octave attributes are None. Only one of
     # these attributes needs to be checked because __init__ will only
     # create a Pitch if all three are legal values or all three are None.
-    def is_empty(self):  # @TODO
-        pass
+    def is_empty(self):
+        if self.letter is None:
+            return True
+        else:
+            return False
 
     # Returns a string containing the pitch name including the
     #  letter, accidental, and octave.  For example,
     #  Pitch("C#7").string() would return 'C#7'.
-    def string(self):  # @TODO
-        pass
+    def string(self):
+        return self.pitch_string
 
     # Returns the midi key number of the Pitch.
-    def keynum(self):  # @TODO
-        pass
+    def keynum(self):
+        return self.midi_val
 
     # Returns the pnum (pitch class enum) of the Pitch. Pnums enumerate
     #  and order the letter and accidental of a Pitch so they can be compared,
@@ -325,12 +337,12 @@ class Pitch:
         pass
 
     # Returns the pitch class (0-11) of the Pitch.
-    def pc(self):  # @TODO
-        pass
+    def pc(self):
+        return self.pitch_class
 
     # Returns the hertz value of the Pitch.
-    def hertz(self):  # @TODO
-        pass
+    def hertz(self):
+        return 440.0 * 2 ** ((self.midi_val - 69) / 12)
 
     # A @classmethod that creates a Pitch for the specified
     #  midi key number.
@@ -344,4 +356,48 @@ class Pitch:
     #  accidental.
     @classmethod
     def from_keynum(cls, keynum, acci=None):  # @TODO
-        pass
+        if isinstance(keynum, int) and 0 <= keynum <= 127:
+            octave_names = ['00', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+            pitch_classes = {
+                0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5: "F",
+                6: "F#", 7: "G", 8: "Ab", 9: "A", 10: "Bb", 11: "B"
+            }
+            pitch_class = keynum % 12
+            octave_int = keynum // 12
+            if acci is not None:
+                if acci == "#" or acci == 's' or acci == 3:
+                    pitch_classes = {
+                        0: "B#", 1: "C#", 3: "D#", 5: "E#", 6: "F#", 8: "G#", 10: "A#"
+                    }
+                    if pitch_class == 0:
+                        octave_int -= 1
+                elif acci == "##" or acci == 'ss' or acci == 4:
+                    pitch_classes = {
+                        1: "B##", 2: "C##", 4: "D##", 6: "E##", 7: "F##", 9: "G##", 11: "A##"
+                    }
+                    if pitch_class == 0:
+                        octave_int -= 1
+                elif acci == "b" or acci == 'f' or acci == 1:
+                    pitch_classes = {
+                        1: "Db", 3: "Eb", 4: "Fb", 6: "Gb", 8: "Ab", 10: "Bb", 11: "Cb"
+                    }
+                    if pitch_class == 11:
+                        octave_int += 1
+                elif acci == "bb" or acci == 'ff' or acci == 0:
+                    pitch_classes = {
+                        0: "Dbb", 2: "Ebb", 3: "Fbb", 5: "Gbb", 7: "Abb", 9: "Bbb", 10: "Cbb"
+                    }
+                    if pitch_class == 10:
+                        octave_int += 1
+                else:
+                    raise ValueError(f"{acci} is not a valid accidental value."
+                                     f"\nPlease use #, ##, b, or bb for accidentals")
+
+            if pitch_classes.get(pitch_class, -1) == -1:
+                raise ValueError(f"{acci} is not a valid accidental for the midi value {keynum}")
+
+            pitch = pitch_classes[pitch_class] + octave_names[octave_int]
+            return Pitch(pitch)
+        else:
+            raise TypeError("The MIDI key number must be an integer in range 0-127.")
+
