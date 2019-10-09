@@ -175,7 +175,7 @@ class Pitch:
                                 "\nThe lowest possible pitch is 'C00' (key number 0) "
                                 "\nand the highest is 'Abb9' (key number 127 spelled with a double flat)")
                         self.pitch_class = self.midi_val % 12
-                        self.pitch_string = Pitch.from_keynum(self.midi_val, self.accidental)
+                        self.pitch_string = Pitch.from_keynum(self.midi_val, self.accidental).pitch_string
                     else:
                         raise ValueError("All values in a pitch list must be integers."
                                          "\nThe first value is for letters, which includes indices 0-6."
@@ -364,7 +364,7 @@ class Pitch:
             }
             pitch_class = keynum % 12
             octave_int = keynum // 12
-            if acci is not None:
+            if acci is not None and acci != 2:
                 if acci == "#" or acci == 's' or acci == 3:
                     pitch_classes = {
                         0: "B#", 1: "C#", 3: "D#", 5: "E#", 6: "F#", 8: "G#", 10: "A#"
