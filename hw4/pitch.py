@@ -25,7 +25,7 @@ class Pitch:
     #  the letter and accidental indexes: (letter << 4) + accidental.
     names = [l + a for l in ['C', 'D', 'E', 'F', 'G', 'A', 'B'] for a in ['ff', 'f', '', 's', 'ss']]
     values = [(l << 4) + a for l in range(7) for a in range(5)]
-    pnums = IntEnum("Pnum", [(names[i], values[i]) for i in range(len(names))])
+    # pnums = IntEnum("Pnum", [(names[i], values[i]) for i in range(len(names))])  # @TODO why won't this work??
 
     # CONSTRUCTOR
     # Creates a Pitch from a string or list, if neither is provided
@@ -336,6 +336,10 @@ class Pitch:
     #  and order the letter and accidental of a Pitch so they can be compared,
     #  e.g.: C < C# < Dbb. See also: pnums.
     def pnum(self):  # @TODO
+        # the letter and accidental values are located in the enum_value
+        # bitshift them to the right and compare them to self.letter and self.accidental
+        # then return the enum that matches with self
+        # if only IntEnum would work lmao
         pass
 
     # Returns the pitch class (0-11) of the Pitch.
