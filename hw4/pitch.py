@@ -12,6 +12,8 @@ from math import pow
 
 names = [l + a for l in ['C', 'D', 'E', 'F', 'G', 'A', 'B'] for a in ['ff', 'f', '', 's', 'ss']]
 values = [(l << 4) + a for l in range(7) for a in range(5)]
+
+
 class Pitch:
     # A class variable that holds an IntEnum of all possible letter-and-accidental
     #  combinations Cff up to Bss. Each pnum encodes its letter and accidental index
@@ -218,6 +220,8 @@ class Pitch:
     #  would create a Pitch with the same content as this pitch.
     #  Examples: 'Pitch("C#7")' and Pitch().  See also string().
     def __repr__(self):
+        if self.is_empty():
+            return 'Pitch()'
         return f'Pitch("{self.pitch_string}")'
 
     # Implements Pitch < Pitch.
@@ -353,7 +357,6 @@ class Pitch:
             accidental_val = pnum & 0b1111
             if accidental_val == self.accidental and letter_val == self.letter:
                 return pnum
-
 
     # Returns the pitch class (0-11) of the Pitch.
     def pc(self):
