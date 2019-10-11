@@ -73,7 +73,7 @@ class Pitch:
             self.octave = None
             self.midi_val = None
             self.pitch_class = None
-            self.pitch_string = None
+            self.pitch_string = 'empty'
 
         # SECOND CASE: a pitch string will be parsed and converted into all instance values
         elif type(ref) == str:
@@ -83,6 +83,9 @@ class Pitch:
                     "C": 0, "D": 2, "E": 4, "F": 5, "G": 7, "A": 9, "B": 11
                 }
                 # check if pitch has sharps or flats
+                # but first get rid of n's because those are the same as having nothing
+                if ref.find('n') != -1:
+                    ref = ref.replace('n', '')
                 if ref.find("#") == ref.find("s") == ref.find("b") == ref.find("f") == -1:
                     has_accidental = False
                     accidental_modifier = 0
@@ -91,8 +94,15 @@ class Pitch:
                         raise ValueError(f"{ref} is not a valid pitch string."
                                          "\nValid octave numbers range from 00, 0, 1, 2, ..., 8, 9")
                 else:
+                    # check that the string does not mix # and s
+                    if ref.find('#') != -1 and ref.find('s') != -1:
+                        raise ValueError(f"{ref} is not a valid pitch string."
+                                         f"\nUse only # or s - do not use them together.")
+                    elif ref.find('b') != -1 and ref.find('f') != -1:
+                        raise ValueError(f"{ref} is not a valid pitch string."
+                                         f"\nUse only b or f - do not use them together.")
                     has_accidental = True
-                    if (ref[1:3] == "#" or ref[1:3] == "ss") and ref.find("b") == ref[1:3].find("f") == -1:
+                    if (ref[1:3] == "##" or ref[1:3] == "ss") and ref.find("b") == ref[1:3].find("f") == -1:
                         accidental_modifier = 2
                         self.accidental = 4
                     elif (ref[1:3] == "bb" or ref[1:3] == "ff") and ref.find("#") == ref.find("s") == -1:
@@ -138,7 +148,7 @@ class Pitch:
 
                 # compute & return the midi int once all information is gathered from pitch str
                 midi_val = octave * 12 + pitch_class + accidental_modifier
-                if 0 <= midi_val <= 127 and 1 <= len(ref) <= 5:
+                if -2 <= midi_val <= 127 and 1 <= len(ref) <= 5:
                     self.midi_val = midi_val
                     self.pitch_class = self.midi_val % 12
                     # assign and clean up pitch string
@@ -171,7 +181,7 @@ class Pitch:
                         }
                         self.midi_val = self.octave * 12 + letter_class_to_pitch_class[self.letter] + (
                                     self.accidental - 2)
-                        if self.midi_val < 0 or self.midi_val > 127:
+                        if self.midi_val < -2 or self.midi_val > 127:
                             raise ValueError(
                                 "The integer values made a MIDI value that is out of range."
                                 "\nThe lowest possible pitch is 'C00' (key number 0) "
@@ -362,7 +372,7 @@ class Pitch:
     #  accidental.
     @classmethod
     def from_keynum(cls, keynum, acci=None):
-        if isinstance(keynum, int) and 0 <= keynum <= 127:
+        if isinstance(keynum, int) and -2 <= keynum <= 127:
             octave_names = ['00', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
             pitch_classes = {
                 0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5: "F",
