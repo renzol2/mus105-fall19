@@ -10,7 +10,8 @@ from math import pow
 # can be compared using standard math relations and maintain proper spelling
 # when complemented or transposed by an Interval.
 
-
+names = [l + a for l in ['C', 'D', 'E', 'F', 'G', 'A', 'B'] for a in ['ff', 'f', '', 's', 'ss']]
+values = [(l << 4) + a for l in range(7) for a in range(5)]
 class Pitch:
     # A class variable that holds an IntEnum of all possible letter-and-accidental
     #  combinations Cff up to Bss. Each pnum encodes its letter and accidental index
@@ -23,9 +24,7 @@ class Pitch:
     #  python enum name be sure to use only the 'safe versions' of the accidental
     #  names: 'ff' upto 'ss'. The enum values are the one byte integers containing
     #  the letter and accidental indexes: (letter << 4) + accidental.
-    names = [l + a for l in ['C', 'D', 'E', 'F', 'G', 'A', 'B'] for a in ['ff', 'f', '', 's', 'ss']]
-    values = [(l << 4) + a for l in range(7) for a in range(5)]
-    # pnums = IntEnum("Pnum", [(names[i], values[i]) for i in range(len(names))])  # @TODO why won't this work??
+    pnums = IntEnum("Pnum", [(names[i], values[i]) for i in range(len(names))])  # @TODO
 
     # CONSTRUCTOR
     # Creates a Pitch from a string or list, if neither is provided
@@ -148,7 +147,7 @@ class Pitch:
 
                 # compute & return the midi int once all information is gathered from pitch str
                 midi_val = octave * 12 + pitch_class + accidental_modifier
-                if -2 <= midi_val <= 127 and 1 <= len(ref) <= 5:
+                if 0 <= midi_val <= 127 and 1 <= len(ref) <= 5:
                     self.midi_val = midi_val
                     self.pitch_class = self.midi_val % 12
                     # assign and clean up pitch string
@@ -181,7 +180,7 @@ class Pitch:
                         }
                         self.midi_val = self.octave * 12 + letter_class_to_pitch_class[self.letter] + (
                                     self.accidental - 2)
-                        if self.midi_val < -2 or self.midi_val > 127:
+                        if self.midi_val < 0 or self.midi_val > 127:
                             raise ValueError(
                                 "The integer values made a MIDI value that is out of range."
                                 "\nThe lowest possible pitch is 'C00' (key number 0) "
@@ -345,12 +344,16 @@ class Pitch:
     # Returns the pnum (pitch class enum) of the Pitch. Pnums enumerate
     #  and order the letter and accidental of a Pitch so they can be compared,
     #  e.g.: C < C# < Dbb. See also: pnums.
-    def pnum(self):  # @TODO
+    def pnum(self):
         # the letter and accidental values are located in the enum_value
         # bitshift them to the right and compare them to self.letter and self.accidental
         # then return the enum that matches with self
-        # if only IntEnum would work lmao
-        pass
+        for pnum in list(self.pnums):
+            letter_val = (pnum & 0b11110000) >> 4
+            accidental_val = pnum & 0b1111
+            if accidental_val == self.accidental and letter_val == self.letter:
+                return pnum
+
 
     # Returns the pitch class (0-11) of the Pitch.
     def pc(self):
@@ -372,7 +375,7 @@ class Pitch:
     #  accidental.
     @classmethod
     def from_keynum(cls, keynum, acci=None):
-        if isinstance(keynum, int) and -2 <= keynum <= 127:
+        if isinstance(keynum, int) and 0 <= keynum <= 127:
             octave_names = ['00', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
             pitch_classes = {
                 0: "C", 1: "C#", 2: "D", 3: "Eb", 4: "E", 5: "F",
