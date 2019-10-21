@@ -584,15 +584,15 @@ class Interval:
 
     # Returns true if the interval is minor, otherwise false.
     def is_minor(self):
-        pass
+        return self.qual == Interval._minor_qual
 
     # Returns true if the interval is perfect, otherwise false.
     def is_perfect(self):
-        pass
+        return self.qual == Interval._perfect_qual
 
     # Returns true if the interval is major, otherwise false.
     def is_major(self):
-        pass
+        return self.qual == Interval._major_qual
 
     # Returns a 'augmentation count' 1-5 if the interval is augmented else False.
     # For example, if the interval is doubly-augmented then 2 is returned.
@@ -614,7 +614,7 @@ class Interval:
     # Returns true if this is a simple interval, i.e. its span is
     #  less-than-or-equal to an octave.
     def is_simple(self):
-        pass
+        return self.xoct == 0
 
     # Returns true if this is a compound interval, i.e. its span is
     #  more than an octave (an octave is a simple interval).
