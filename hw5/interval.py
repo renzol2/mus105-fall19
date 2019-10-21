@@ -204,7 +204,7 @@ class Interval:
             # edge case D
             if self.xoct > 10:
                 raise ValueError("Invalid interval. Interval is too big (10+ octaves)")
-            else:
+            elif self.xoct == 10:
                 if self.span > Interval._sixth_span:
                     raise ValueError("Invalid interval. Interval is too big (Greater than sixth at 10 octaves)")
                 else:
@@ -258,6 +258,8 @@ class Interval:
             # Replace safe with symbolics
             temp_arg = temp_arg.replace('d', 'o')
             temp_arg = temp_arg.replace('a', '+')
+            temp_arg = temp_arg.replace('D', 'o')
+            temp_arg = temp_arg.replace('A', '+')
 
             # First check for descending intervals
             if temp_arg.find('-') != -1:
