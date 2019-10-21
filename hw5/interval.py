@@ -417,7 +417,7 @@ class Interval:
     # values to compare. See: pos().
     def __ge__(self, other):
         if isinstance(other, Interval):
-            if self.pos() > other.pos():
+            if self.pos() >= other.pos():
                 return True
             else:
                 return False
@@ -433,7 +433,7 @@ class Interval:
     # values to compare. See: pos().
     def __gt__(self, other):
         if isinstance(other, Interval):
-            if self.pos() >= other.pos():
+            if self.pos() > other.pos():
                 return True
             else:
                 return False
@@ -683,7 +683,6 @@ class Interval:
             if self.qual < Interval._minor_qual:
                 semitones -= 1
             return semitones
-
 
     # Adds a specified interval to this interval.
     #  @return  a new interval expressing the total span of both intervals.
