@@ -59,6 +59,7 @@ class Interval:
     spans_to_names = {_unison_span: "unison", _second_span: "second", _third_span: "third", _fourth_span: "fourth",
                       _fifth_span: "fifth", _sixth_span: "sixth", _seventh_span: "seventh", _octave_span: "octave"}
 
+
     # Creates an Interval from a string, list, or two Pitches.
     #  * Interval(string) - creates an Interval from a pitch string.
     #  * Interval([s, q, x, s]) - creates a Pitch from a list of four
@@ -651,18 +652,38 @@ class Interval:
     # the maximum span index (the octave index). To invert the  quality subtract
     # it from the maximum quality index (quintuply augmented).
     def complemented(self):
-        pass
+        return Interval([Interval._octave_span - self.span, Interval._5aug_qual - self.qual, self.xoct, self.sign])
 
     # Returns the number of semitones in the interval. It is possible
     # to determine the number of semitones by looking at the span and
     # quality indexes. For example, if the span is a perfect fifth
     # (span index 4) and the quality is perfect (quality index 6)
-    # then the semitones will be 5 and augmented or diminished fifths
+    # then the semitones will be 7 and augmented or diminished fifths
     # will add or subtract semitones accordingly.
     #
     # This value will be negative for descending intervals otherwise positive.
     def semitones(self):
-        pass
+        quals_to_semitones = {Interval._5dim_qual: -5, Interval._4dim_qual: -4, Interval._3dim_qual: -3,
+                              Interval._2dim_qual: -2, Interval._dim_qual: -1,
+                              # since we're basing imperfect intervals on MAJOR intervals, major will be 0 and
+                              # minor will be -1. When we're accounting for diminished qualities with imperfect
+                              # intervals, we will have to subtract 1 from the final semitonal count
+                              Interval._minor_qual: -1, Interval._perfect_qual: 0, Interval._major_qual: 0,
+                              Interval._aug_qual: 1, Interval._2aug_qual: 2, Interval._3aug_qual: 3,
+                              Interval._4aug_qual: 4, Interval._5aug_qual: 5}
+        if self.is_perfect_type():
+            spans_to_semitones = {Interval._unison_span: 0, Interval._fourth_span: 5,
+                                  Interval._fifth_span: 7, Interval._octave_span: 12}
+            return self.sign * spans_to_semitones[self.span] + quals_to_semitones[self.qual]
+        else:
+            # lets try basing it off of major
+            spans_to_semitones = {Interval._second_span: 2, Interval._third_span: 4,
+                                  Interval._sixth_span: 9, Interval._seventh_span: 11}
+            semitones = self.sign * spans_to_semitones[self.span] + quals_to_semitones[self.qual]
+            if self.qual < Interval._minor_qual:
+                semitones -= 1
+            return semitones
+
 
     # Adds a specified interval to this interval.
     #  @return  a new interval expressing the total span of both intervals.
