@@ -1,8 +1,8 @@
-###############################################################################
+########################################
 
 from .pitch import Pitch
 
-## A class that implements musical intervals.
+# A class that implements musical intervals.
 #
 #  An Interval measures the distance between two Pitches. Interval distance
 #  can be measured in different ways, for example using lines-and-spaces,
@@ -24,8 +24,32 @@ from .pitch import Pitch
 
 
 class Interval:
+    # qualities
+    _5dim_qual, _4dim_qual, _3dim_qual, _2dim_qual, _dim_qual, _minor_qual, _perfect_qual, _major_qual, \
+        _aug_qual, _2aug_qual, _3aug_qual, _4aug_qual, _5aug_qual = range(13)
 
-    ## Creates an Interval from a string, list, or two Pitches.
+    # spans
+    _unison_span, _second_span, _third_span, _fourth_span, \
+        _fifth_span, _sixth_span, _seventh_span, _octave_span = range(8)
+
+    # letters
+    _C, _D, _E, _F, _G, _A, _B = range(7)
+
+    # perfect spans
+    perfect = {_unison_span, _fourth_span, _fifth_span, _octave_span}
+
+    # imperfect qualities
+    imperfect_quals = {_minor_qual, _major_qual}
+
+    quals = {'ooooo': _5dim_qual, 'oooo': _4dim_qual, 'ooo': _3dim_qual, 'oo': _2dim_qual, 'o': _dim_qual,
+             'm': _minor_qual, 'P': _perfect_qual, 'M': _major_qual,
+             '+': _aug_qual, '++': _2aug_qual, '+++': _3aug_qual, '++++': _4aug_qual, '+++++': _5aug_qual}
+
+    quals_to_string = {}
+    for k, v in quals.items():
+        quals_to_string[v] = k
+
+    # Creates an Interval from a string, list, or two Pitches.
     #  * Interval(string) - creates an Interval from a pitch string.
     #  * Interval([s, q, x, s]) - creates a Pitch from a list of four
     #  integers: a span, quality, extra octaves and sign. (see below).
@@ -67,9 +91,36 @@ class Interval:
     # a string, list of four integers, or two pitches) the method will raise a TypeError
     # for the offending value.
     def __init__(self, arg, other=None):
-        pass
+        # Initialize instance variables
+        self.span = None
+        self.qual = None
+        self.xoct = None
+        self.sign = None
+        self.interval_string = None
+        # CASE 1: Argument is an INTERVAL STRING that must be parsed into components and stored appropriately.
+        if isinstance(arg, str) and other is None:
+            self._init_from_string(arg)
 
-    ## A private method that checks four integer values (span, qual, xoct, sign) to make sure
+        # CASE 2: Argument is an INTERVAL LIST with 4 params that must be stored appropriately.
+        elif isinstance(arg, list) and other is None:
+            if len(arg) == 4 and isinstance(arg[0], int) and isinstance(arg[1], int)\
+                        and isinstance(arg[2], int) and isinstance(arg[3], int):
+                self._init_from_list(*arg)
+            else:
+                raise ValueError(f"The parameter is not a valid integer list."
+                                 f"\nThe pitch list must have 4 integer values "
+                                 f"for a span, quality, octave index, and sign.")
+
+        # CASE 3: Arguments are TWO PITCH OBJECTS and the interval must be found between them.
+        elif isinstance(arg, Pitch) and isinstance(other, Pitch):
+            self._init_from_pitches(arg, other)
+
+        else:
+            raise TypeError("Invalid parameter for Interval. Intervals can be made using"
+                            "interval strings, lists with four parameters, or with two"
+                            "Pitch objects.")
+
+    # A private method that checks four integer values (span, qual, xoct, sign) to make sure
     # they are valid index values for the span, qual, xoct and sign attributes. Legal values
     # are: span 0-7, qual 0-12, xoct 0-10, sign -1 or 1. If any value is out of range the
     # method will raise a ValueError for that value. If all values are legal the method will
@@ -89,9 +140,96 @@ class Interval:
     # the four values to the attributes, e.g. self.span=span, self.qual=qual, and
     # so on. Otherwise if any edge case fails the method should raise a ValueError.
     def _init_from_list(self, span, qual, xoct, sign):
-        pass
+        if 0 <= span <= 7 and 0 <= qual <= 12 and 0 <= xoct <= 10 and abs(sign) == 1:
+            # Set the sign from the fourth value and the quality from the third value.
+            self.sign = sign
+            self.qual = qual
 
-    ## A private method that accepts an interval string and parses it into four
+            # Compare span to qual to make sure they're compatible.
+            # If the span is a perfect interval, then the quality cannot be major or minor.
+            if span in Interval.perfect and self.qual not in Interval.imperfect_quals:
+                self.span = span
+
+            # If the span is an imperfect interval, then the quality cannot be perfect.
+            elif span not in Interval.perfect and self.qual != Interval._perfect_qual:
+                self.span = span
+            else:
+                raise ValueError("Invalid interval list. Perfect intervals must use perfect qualities and"
+                                 " imperfect intervals must use imperfect qualities.")
+
+            # Set octave
+            self.xoct = xoct
+
+            # Check edge cases
+            # A* span and quality values cannot produce negative semitones, i.e. an interval
+            #   whose 'top' would be lower that its 'bottom'. Here are the smallest VALID
+            #   interval for each span that could cause this: perfect unison, diminished-second,
+            #   triply-diminished third.
+            # B* Only the span of a fifth can be quintuply diminished.
+            # C* Only the span of a fourth can be quintuply augmented.
+            # D* No interval can surpass 127 semitones, LOL. The last legal intervals are: 'P75'
+            #  (a 10 octave perfect 5th), and a 'o76' (a 10 octave diminished 6th)
+            # E* If a user specifies an octave as a unison span with 1 extra octave, e.g. [0,*,1,*],
+            #  it should be converted to an octave span with 0 extra octaves, e.g. [7,*,0,*]
+
+            # edge case A
+            # only applies if the interval is in the same octave
+            if self.xoct > 0:
+                if self.span == Interval._unison_span and self.qual < Interval._perfect_qual:
+                    raise ValueError("Invalid interval. Unison intervals can only"
+                                     " have a quality of perfect and higher.")
+                elif self.span == Interval._second_span and self.qual < Interval._dim_qual:
+                    raise ValueError("Invalid interval. Second intervals can only"
+                                     " have a quality of diminished and higher.")
+                elif self.span == Interval._third_span and self.qual < Interval._3dim_qual:
+                    raise ValueError("Invalid interval. Third intervals can only"
+                                     " have a quality of triply diminished and higher.")
+
+            # edge case B + C
+            if self.qual == Interval._5dim_qual and self.span != Interval._fifth_span:
+                raise ValueError("Invalid interval. Only the span of a fifth can be quintuply diminished.")
+            if self.qual == Interval._5aug_qual and self.span != Interval._fourth_span:
+                raise ValueError("Invalid interval. Only the span of a fourth can be quintuply augmented.")
+
+            # edge case D
+            if self.xoct > 10:
+                raise ValueError("Invalid interval. Interval is too big (10+ octaves)")
+            else:
+                if self.span > Interval._sixth_span:
+                    raise ValueError("Invalid interval. Interval is too big (Greater than sixth at 10 octaves)")
+                else:
+                    if self.span == Interval._sixth_span:
+                        if self.qual > Interval._dim_qual:
+                            raise ValueError("Invalid interval. Interval is too big "
+                                             "(Greater than diminished sixth at 10 octaves)")
+                    elif self.span == Interval._fifth_span:
+                        if self.qual > Interval._perfect_qual:
+                            raise ValueError("Invalid interval. Interval is too big "
+                                             "(Greater than perfect fifth at 10 octaves)")
+
+            # edge case E
+            if self.span == Interval._unison_span and self.xoct == 1:
+                self.span = Interval._octave_span
+                self.xoct = 0
+
+            # Concatenate string using four values... but only if it wasn't made by init_to_string already
+            if self.interval_string is None:
+                if self.sign == -1:
+                    sign_string = '-'
+                else:
+                    sign_string = ''
+                qual_string = Interval.quals_to_string[self.qual]
+                span_string = str(self.span + 1 + Interval._octave_span * self.xoct)
+                self.interval_string = sign_string + qual_string + span_string
+
+        else:
+            raise ValueError("All values in an interval list must be integers."
+                             "\nThe first value is for span, which includes indices 0-7."
+                             "\nThe second value is for quality, which includes indices 0-12."
+                             "\nThe third value is for octaves, which includes indices 0-10."
+                             "\nThe fourth value is for sign, which must be -1 or 1.")
+
+    # A private method that accepts an interval string and parses it into four
     # integer values: span, qual, xoct, sign. If all four values can be parsed
     # from the string they should be passed to the _init_from_list() method to
     # check the values and assign them to the instance's attributes. A ValueError
@@ -99,38 +237,101 @@ class Interval:
     # _init_from_list().
     def _init_from_string(self, string):
         # ... parse the string into a span, qual, xoct and sign values
-        span, qual, xoct, sign = (-1,-1,-1,-1)
-        # ... pass on to check an assign instance attributes.
-        self._init_from_list(span,qual,xoct,sign)
+        if len(string) != 0:
+            # Use a temporary string (if temp_arg passes the parsing,
+            # then arg will be used as the final Interval string.)
+            # Method is to continuously delete components as they are parsed
+            # to ensure that the string is valid/in the right order, which necessitates
+            # the need for a temporary string.
+            temp_arg = string
 
-    ## A private method that determines approprite span, qual, xoct, sign
+            # Replace safe with symbolics
+            temp_arg = temp_arg.replace('d', 'o')
+            temp_arg = temp_arg.replace('a', '+')
+
+            # First check for descending intervals
+            if temp_arg.find('-') != -1:
+                if temp_arg[0] == '-':
+                    sign = -1
+                    temp_arg = temp_arg.replace('-', '')
+                else:
+                    raise ValueError("Invalid interval string. To denote descending intervals, "
+                                     "place a '-' at the beginning of the interval string.")
+            else:
+                sign = 1
+
+            # Next, check for the quality
+            if Interval.quals.get(temp_arg[0]) is not None:
+                if temp_arg[0] == 'o' or temp_arg[0] == '+':
+                    count = temp_arg.count(temp_arg[0])
+                    temp_qual = ''
+                    for i in range(count):
+                        temp_qual += temp_arg[0]
+                    qual = Interval.quals[temp_qual]
+                    temp_arg = temp_arg.replace(temp_qual, '')
+                else:
+                    qual = Interval.quals[temp_arg[0]]
+                    temp_arg = temp_arg.replace(temp_arg[0], '')
+            else:
+                raise ValueError("Invalid interval string. The quality of the interval must be valid.")
+
+            # Finally, check for the span
+            # Must check if span is COMPATIBLE with qual, i.e. perfects must be with spans 0, 3, 4, 7
+            if temp_arg.isnumeric():
+                if int(temp_arg) > 0:
+                    temp_span = (int(temp_arg) - 1) % 7
+                    if temp_span in Interval.perfect and qual not in Interval.imperfect_quals:
+                        span = temp_span
+                    elif temp_span not in Interval.perfect and qual != Interval._perfect_qual:  # qual is not perfect
+                        span = temp_span
+                    else:
+                        raise ValueError("Invalid interval string. Perfect intervals must use perfect qualities and"
+                                         " imperfect intervals must use imperfect qualities.")
+                    xoct = (int(temp_arg) - 1) // 7
+                else:
+                    raise ValueError("Invalid interval string. The span of the interval must be greater than 0.")
+            else:
+                raise ValueError("Invalid interval string. The span of the "
+                                 "interval must be an integer greater than 0.")
+
+            # If the string parsing succeeds, the original string is valid.
+            # Set it to a variable for str and repr to use.
+            self.interval_string = string
+        else:
+            raise ValueError("Invalid interval string. Interval strings must include a quality and span.")
+
+        # ... pass on to check an assign instance attributes.
+        self._init_from_list(span, qual, xoct, sign)
+
+    # A private method that determines appropriate span, qual, xoct, sign
     # from two pitches. If pitch2 is lower than pitch1 then a descending
     # interval should be formed. The values should be passed to the
-    # _init_from_list() method to initalize the interval's attributes.
+    # _init_from_list() method to initialize the interval's attributes.
     # See: _init_from_list().
     #
     # Do NOT implement this method yet.
     def _init_from_pitches(self, pitch1, pitch2):
         # ... parse the string into a span, qual, xoct and sign values
-        span, qual, xoct, sign = (-1,-1,-1,-1)
+        span, qual, xoct, sign = (-1, -1, -1, -1)
         # ... pass on to check and assign instance attributes.
-        self._init_from_list(span,qual,xoct,sign)
+        self._init_from_list(span, qual, xoct, sign)
         
-    ## Returns a string displaying information about the
+    # Returns a string displaying information about the
     #  Interval within angle brackets. Information includes the
     #  the class name, the interval text, the span, qual, xoct and sign
     #  values, and the id of the object. Example:
     #  <Interval: oooo8 [7, 1, 0, 1] 0x1075bf6d0>
     #  See also: string().
     def __str__(self):
-        return ''
+        return f'<Interval: {self.interval_string} [{self.span}, {self.qual}, ' \
+               f'{self.xoct}, {self.sign}] {hex(id(self))}>'
 
-    ## The string the console prints shows the external form.
+    # The string the console prints shows the external form.
     # Example: Interval("oooo8")
     def __repr__(self):
-        return ''
+        return f'Interval("{self.interval_string}")'
 
-    ## Implements Interval < Interval.
+    # Implements Interval < Interval.
     # @param other The interval to compare with this interval.
     # @returns True if this interval is less than the other.
     #
@@ -140,7 +341,7 @@ class Interval:
     def __lt__(self, other):
         pass
 
-    ## Implements Interval <= Interval.
+    # Implements Interval <= Interval.
     # @param other The interval to compare with this interval.
     # @returns True if this interval is less than or equal to the other.
     #
@@ -150,7 +351,7 @@ class Interval:
     def __le__(self, other):
         pass
 
-    ## Implements Interval == Interval.
+    # Implements Interval == Interval.
     # @param other The interval to compare with this interval.
     # @returns True if this interval is equal to the other.
     #
@@ -160,7 +361,7 @@ class Interval:
     def __eq__(self, other):
         pass
 
-    ## Implements Interval != Interval.
+    # Implements Interval != Interval.
     # @param other The interval to compare with this interval.
     # @returns True if this interval is not equal to the other.
     #
@@ -170,7 +371,7 @@ class Interval:
     def __ne__(self, other):
         pass
 
-    ## Implements Interval >= Interval.
+    # Implements Interval >= Interval.
     # @param other The interval to compare with this interval.
     # @returns True if this interval is greater than or equal to the other.
     #
@@ -180,7 +381,7 @@ class Interval:
     def __ge__(self, other):
         pass
 
-    ## Implements Interval > Interval.
+    # Implements Interval > Interval.
     # @param other The interval to compare with this interval.
     # @returns True if this interval is greater than the other.
     #
@@ -190,7 +391,7 @@ class Interval:
     def __gt__(self, other):
         pass
 
-    ## Returns a numerical value for comparing the size of this interval to
+    # Returns a numerical value for comparing the size of this interval to
     # another. The comparison depends on the span, extra octaves, and quality
     # of the intervals but not their signs. For two intervals, if the span of
     # the first (including extra octaves) is larger than the second then the
@@ -201,175 +402,175 @@ class Interval:
     def pos(self):
         pass
 
-    ## Returns a string containing the interval name.
+    # Returns a string containing the interval name.
     #  For example, Interval('-P5').string() would return '-P5'.
     def string(self):
         pass
 
-    ## Returns the full interval name, e.g. 'doubly-augmented third'
+    # Returns the full interval name, e.g. 'doubly-augmented third'
     #  or 'descending augmented sixth'
     # @param sign If true then "descending" will appear in the
     # name if it is a descending interval.
     def full_name(self, *, sign=True):
         pass
 
-    ## Returns the full name of the interval's span, e.g. a
+    # Returns the full name of the interval's span, e.g. a
     # unison would return "unison" and so on.
     def span_name(self):
         pass
 
-    ## Returns the full name of the interval's quality, e.g. a
+    # Returns the full name of the interval's quality, e.g. a
     # perfect unison would return "perfect" and so on.
     def quality_name(self):
         pass
 
-    ## Returns true if this interval and the other interval have the
+    # Returns true if this interval and the other interval have the
     # same span, quality and sign. The extra octaves are ignored.
     def matches(self, other):
         pass
 
-    ## Returns the interval's number of lines and spaces, e.g.
+    # Returns the interval's number of lines and spaces, e.g.
     # a unison will return 1.
     def lines_and_spaces(self):
         pass
 
-    ## Private method that returns a zero based interval quality from its 
+    # Private method that returns a zero based interval quality from its 
     #  external name. Raises an assertion if the name is invalid. See:
     # is_unison() and similar.
     def _to_iq(self, name):
         pass
 
-    ## Returns the interval values as a list: [span, qual, xoct, sign]
+    # Returns the interval values as a list: [span, qual, xoct, sign]
     def to_list(self):
         return [self.span, self.qual, self.xoct, self.sign]
 
-    ## Returns true if the interval is a unison otherwise false.
+    # Returns true if the interval is a unison otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of unison, which can be any valid quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_unison(self, qual=None):
         pass
 
-    ## Returns true if the interval is a second otherwise false.
+    # Returns true if the interval is a second otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of second, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_second(self, qual=None):
         pass
 
-    ## Returns true if the interval is a third otherwise false.
+    # Returns true if the interval is a third otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of third, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_third(self, qual=None):
         pass
 
-    ## Returns true if the interval is a fourth otherwise false.
+    # Returns true if the interval is a fourth otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of fourth, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_fourth(self, qual=None):
         pass
 
-    ## Returns true if the interval is a fifth otherwise false.
+    # Returns true if the interval is a fifth otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of fifth, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_fifth(self, qual=None):
         pass
 
-    ## Returns true if the interval is a sixth otherwise false.
+    # Returns true if the interval is a sixth otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of sixth, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_sixth(self, qual=None):
         pass
 
-    ## Returns true if the interval is a seventh otherwise false.
+    # Returns true if the interval is a seventh otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of seventh, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_seventh(self, qual=None):
         pass
 
-    ## Returns true if the interval is an octave otherwise false.
+    # Returns true if the interval is an octave otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of octave, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_octave(self, qual=None):
         pass
 
-    ## Returns a 'diminution count' 1-5 if the interval is diminished else False.
+    # Returns a 'diminution count' 1-5 if the interval is diminished else False.
     # For example, if the interval is doubly-diminished then 2 is returned.
     # If the interval not diminished at all (e.g. is perfect, augmented, minor or
     # major) then False is returned.
     def is_diminished(self):
         pass
 
-    ## Returns true if the interval is minor, otherwise false.
+    # Returns true if the interval is minor, otherwise false.
     def is_minor(self):
         pass
 
-    ## Returns true if the interval is perfect, otherwise false.
+    # Returns true if the interval is perfect, otherwise false.
     def is_perfect(self):
         pass
 
-    ## Returns true if the interval is major, otherwise false.
+    # Returns true if the interval is major, otherwise false.
     def is_major(self):
         pass
 
-    ## Returns a 'augmentation count' 1-5 if the interval is augmented else False.
+    # Returns a 'augmentation count' 1-5 if the interval is augmented else False.
     # For example, if the interval is doubly-augmented then 2 is returned.
     # If the interval not augmented at all (e.g. is perfect, diminished, minor or
     # major) then False is returned.
     def is_augmented(self):
         pass
 
-    ## Returns true if the interval belongs to the 'perfect interval'
+    # Returns true if the interval belongs to the 'perfect interval'
     #  family, i.e. it is a Unison, 4th, 5th, or Octave.
     def is_perfect_type(self):
         pass
 
-    ## Returns true if this interval belongs to the 'imperfect interval'
+    # Returns true if this interval belongs to the 'imperfect interval'
     #  family, i.e. it is a 2nd, 3rd, 6th, or 7th.
     def is_imperfect_type(self):
         pass
 
-    ## Returns true if this is a simple interval, i.e. its span is
+    # Returns true if this is a simple interval, i.e. its span is
     #  less-than-or-equal to an octave.
     def is_simple(self):
         pass
 
-    ## Returns true if this is a compound interval, i.e. its span is
+    # Returns true if this is a compound interval, i.e. its span is
     #  more than an octave (an octave is a simple interval).
     def is_compound(self):
         pass
 
-    ## Returns true if this interval's sign is 1.
+    # Returns true if this interval's sign is 1.
     def is_ascending(self):
         pass
 
-    ## Returns true if this interval's sign is -1.
+    # Returns true if this interval's sign is -1.
     def is_descending(self):
         pass
 
-    ## Returns true if the interval is a consonant interval. In this
+    # Returns true if the interval is a consonant interval. In this
     # context the perfect fourth should be considered consonant.
     def is_consonant(self):
         pass
 
-    ## Returns true if the interval is not a consonant interval.
+    # Returns true if the interval is not a consonant interval.
     def is_dissonant(self):
         pass
 
-    ##  Returns a complemented copy of the interval. To complement an interval
+    #  Returns a complemented copy of the interval. To complement an interval
     # you invert its span and quality. To invert the span, subtract it from
     # the maximum span index (the octave index). To invert the  quality subtract
     # it from the maximum quality index (quintuply augmented).
     def complemented(self):
         pass
 
-    ## Returns the number of semitones in the interval. It is possible
+    # Returns the number of semitones in the interval. It is possible
     # to determine the number of semitones by looking at the span and
     # quality indexes. For example, if the span is a perfect fifth
     # (span index 4) and the quality is perfect (quality index 6)
@@ -380,7 +581,7 @@ class Interval:
     def semitones(self):
         pass
 
-    ## Adds a specified interval to this interval.
+    # Adds a specified interval to this interval.
     #  @return  a new interval expressing the total span of both intervals.
     #  @param other the interval to add to this one.
     #
