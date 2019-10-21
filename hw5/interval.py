@@ -494,8 +494,7 @@ class Interval:
     # Private method that returns a zero based interval quality from its 
     #  external name. Raises an assertion if the name is invalid. See:
     # is_unison() and similar.
-    def _to_iq(self, name):
-        pass
+    # def _to_iq(self, name):
 
     # Returns the interval values as a list: [span, qual, xoct, sign]
     def to_list(self):
@@ -580,7 +579,10 @@ class Interval:
     # If the interval not diminished at all (e.g. is perfect, augmented, minor or
     # major) then False is returned.
     def is_diminished(self):
-        pass
+        if self.qual <= Interval._dim_qual:
+            return 5 - self.qual
+        else:
+            return False
 
     # Returns true if the interval is minor, otherwise false.
     def is_minor(self):
@@ -599,17 +601,21 @@ class Interval:
     # If the interval not augmented at all (e.g. is perfect, diminished, minor or
     # major) then False is returned.
     def is_augmented(self):
-        pass
+        if self.qual >= Interval._aug_qual:
+            return self.qual - Interval._aug_qual + 1
+        else:
+            return False
 
     # Returns true if the interval belongs to the 'perfect interval'
     #  family, i.e. it is a Unison, 4th, 5th, or Octave.
     def is_perfect_type(self):
-        pass
+        return self.span == Interval._unison_span or self.span == Interval._fourth_span or \
+               self.span == Interval._fifth_span or self.span == Interval._octave_span
 
     # Returns true if this interval belongs to the 'imperfect interval'
     #  family, i.e. it is a 2nd, 3rd, 6th, or 7th.
     def is_imperfect_type(self):
-        pass
+        return not self.is_perfect_type()
 
     # Returns true if this is a simple interval, i.e. its span is
     #  less-than-or-equal to an octave.
@@ -632,11 +638,13 @@ class Interval:
     # Returns true if the interval is a consonant interval. In this
     # context the perfect fourth should be considered consonant.
     def is_consonant(self):
-        pass
+        return Interval._minor_qual <= self.qual <= Interval._major_qual \
+               and self.span != Interval._second_span \
+               and self.span != Interval._seventh_span
 
     # Returns true if the interval is not a consonant interval.
     def is_dissonant(self):
-        pass
+        return not self.is_consonant()
 
     #  Returns a complemented copy of the interval. To complement an interval
     # you invert its span and quality. To invert the span, subtract it from
