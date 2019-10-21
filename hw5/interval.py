@@ -49,6 +49,16 @@ class Interval:
     for k, v in quals.items():
         quals_to_string[v] = k
 
+    quals_to_names = {_5dim_qual: "quintuply-diminished", _4dim_qual: "quadruply-diminished",
+                      _3dim_qual: "triply-diminished", _2dim_qual: "doubly-diminished",
+                      _dim_qual: "diminished", _minor_qual: "minor", _perfect_qual: "perfect",
+                      _major_qual: "major", _aug_qual: "augmented", _2aug_qual: "doubly-augmented",
+                      _3aug_qual: "triply-augmented", _4aug_qual: "quadruply-augmented",
+                      _5aug_qual: "quintuply-augmented"}
+
+    spans_to_names = {_unison_span: "unison", _second_span: "second", _third_span: "third", _fourth_span: "fourth",
+                      _fifth_span: "fifth", _sixth_span: "sixth", _seventh_span: "seventh", _octave_span: "octave"}
+
     # Creates an Interval from a string, list, or two Pitches.
     #  * Interval(string) - creates an Interval from a pitch string.
     #  * Interval([s, q, x, s]) - creates a Pitch from a list of four
@@ -339,7 +349,13 @@ class Interval:
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
     def __lt__(self, other):
-        pass
+        if isinstance(other, Interval):
+            if self.pos() < other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Interval comparisons can only be performed between two Intervals.")
 
     # Implements Interval <= Interval.
     # @param other The interval to compare with this interval.
@@ -349,7 +365,13 @@ class Interval:
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
     def __le__(self, other):
-        pass
+        if isinstance(other, Interval):
+            if self.pos() <= other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Interval comparisons can only be performed between two Intervals.")
 
     # Implements Interval == Interval.
     # @param other The interval to compare with this interval.
@@ -359,7 +381,13 @@ class Interval:
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
     def __eq__(self, other):
-        pass
+        if isinstance(other, Interval):
+            if self.pos() == other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Interval comparisons can only be performed between two Intervals.")
 
     # Implements Interval != Interval.
     # @param other The interval to compare with this interval.
@@ -369,7 +397,13 @@ class Interval:
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
     def __ne__(self, other):
-        pass
+        if isinstance(other, Interval):
+            if self.pos() != other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Interval comparisons can only be performed between two Intervals.")
 
     # Implements Interval >= Interval.
     # @param other The interval to compare with this interval.
@@ -379,7 +413,13 @@ class Interval:
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
     def __ge__(self, other):
-        pass
+        if isinstance(other, Interval):
+            if self.pos() > other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Interval comparisons can only be performed between two Intervals.")
 
     # Implements Interval > Interval.
     # @param other The interval to compare with this interval.
@@ -389,7 +429,13 @@ class Interval:
     # This method should call self.pos() and other.pos() to get the
     # values to compare. See: pos().
     def __gt__(self, other):
-        pass
+        if isinstance(other, Interval):
+            if self.pos() >= other.pos():
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Interval comparisons can only be performed between two Intervals.")
 
     # Returns a numerical value for comparing the size of this interval to
     # another. The comparison depends on the span, extra octaves, and quality
@@ -400,39 +446,48 @@ class Interval:
     # larger than the second if its quality is larger. This value can be
     # encoded as a 16 bit integer: (((span + (xoct * 7)) + 1) << 8) + qual  
     def pos(self):
-        pass
+        return (((self.span + (self.xoct * 7)) + 1) << 8) + self.qual
 
     # Returns a string containing the interval name.
     #  For example, Interval('-P5').string() would return '-P5'.
     def string(self):
-        pass
+        return self.interval_string
 
     # Returns the full interval name, e.g. 'doubly-augmented third'
     #  or 'descending augmented sixth'
     # @param sign If true then "descending" will appear in the
     # name if it is a descending interval.
     def full_name(self, *, sign=True):
-        pass
+        name = f'{self.quality_name()} {self.span_name()}'
+        if sign and self.sign == -1:
+            name = f'descending {name}'
+        return name
 
     # Returns the full name of the interval's span, e.g. a
     # unison would return "unison" and so on.
     def span_name(self):
-        pass
+        return Interval.spans_to_names[self.span]
 
     # Returns the full name of the interval's quality, e.g. a
     # perfect unison would return "perfect" and so on.
     def quality_name(self):
-        pass
+        return Interval.quals_to_names[self.qual]
 
     # Returns true if this interval and the other interval have the
     # same span, quality and sign. The extra octaves are ignored.
     def matches(self, other):
-        pass
+        if isinstance(other, Interval):
+            if self.span == other.span and self.qual == other.qual and self.sign == other.sign:
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("matches() can only be performed between two Intervals.")
 
     # Returns the interval's number of lines and spaces, e.g.
     # a unison will return 1.
     def lines_and_spaces(self):
-        pass
+        return self.span + 1
 
     # Private method that returns a zero based interval quality from its 
     #  external name. Raises an assertion if the name is invalid. See:
@@ -444,61 +499,79 @@ class Interval:
     def to_list(self):
         return [self.span, self.qual, self.xoct, self.sign]
 
+    # Sets up skeleton for the is_span functions
+    # @param qual If specified the predicate tests for that specific
+    # quality of unison, which can be any valid quality symbol, e.g.
+    # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on.
+    def is_span(self, span, qual):
+        if qual is None:
+            if self.span == span:
+                return True
+            else:
+                return False
+        elif Interval.quals.get(qual, -1) != -1:
+            if self.span == span and Interval.quals[qual] == self.qual:
+                return True
+            else:
+                return False
+        else:
+            raise TypeError("Invalid quality. Please enter a valid quality string (P, M, m, d, A, o, +, etc.)")
+
     # Returns true if the interval is a unison otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of unison, which can be any valid quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_unison(self, qual=None):
-        pass
+        return self.is_span(Interval._unison_span, qual)
 
     # Returns true if the interval is a second otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of second, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_second(self, qual=None):
-        pass
+        return self.is_span(Interval._second_span, qual)
 
     # Returns true if the interval is a third otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of third, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_third(self, qual=None):
-        pass
+        return self.is_span(Interval._third_span, qual)
 
     # Returns true if the interval is a fourth otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of fourth, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_fourth(self, qual=None):
-        pass
+        return self.is_span(Interval._fourth_span, qual)
 
     # Returns true if the interval is a fifth otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of fifth, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_fifth(self, qual=None):
-        pass
+        return self.is_span(Interval._fifth_span, qual)
 
     # Returns true if the interval is a sixth otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of sixth, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_sixth(self, qual=None):
-        pass
+        return self.is_span(Interval._sixth_span, qual)
 
     # Returns true if the interval is a seventh otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of seventh, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_seventh(self, qual=None):
-        pass
+        return self.is_span(Interval._seventh_span, qual)
 
     # Returns true if the interval is an octave otherwise false.
     # @param qual If specified the predicate tests for that specific
     # quality of octave, which can be any quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on. See: _to_iq().
     def is_octave(self, qual=None):
-        pass
+        return self.is_span(Interval._octave_span, qual)
 
     # Returns a 'diminution count' 1-5 if the interval is diminished else False.
     # For example, if the interval is doubly-diminished then 2 is returned.
@@ -544,15 +617,15 @@ class Interval:
     # Returns true if this is a compound interval, i.e. its span is
     #  more than an octave (an octave is a simple interval).
     def is_compound(self):
-        pass
+        return self.xoct > 0
 
     # Returns true if this interval's sign is 1.
     def is_ascending(self):
-        pass
+        return self.sign == 1
 
     # Returns true if this interval's sign is -1.
     def is_descending(self):
-        pass
+        return self.sign == -1
 
     # Returns true if the interval is a consonant interval. In this
     # context the perfect fourth should be considered consonant.
