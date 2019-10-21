@@ -184,7 +184,7 @@ class Interval:
 
             # edge case A
             # only applies if the interval is in the same octave
-            if self.xoct > 0:
+            if self.xoct == 0:
                 if self.span == Interval._unison_span and self.qual < Interval._perfect_qual:
                     raise ValueError("Invalid interval. Unison intervals can only"
                                      " have a quality of perfect and higher.")
