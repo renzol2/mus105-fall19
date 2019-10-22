@@ -372,15 +372,13 @@ class Interval:
 
         if span in perfect_differences:  # if span is a key in perfect differences
             perfect_difference = perfect_differences[span]
-            # a fifth up from B and a fourth up from F is naturally diminished
-            if (span == Interval._fifth_span and pitch2_letter == Interval._B) \
-                    or (span == Interval._fourth_span and pitch2_letter == Interval._F):
-                perfect_difference -= 1
 
             # if midi_offset is negative, qual is diminished
             # if midi_offset is positive, qual is augmented
             # if midi_offset is 0, qual is perfect
-            midi_offset = (midi_difference - perfect_difference) % 12
+            midi_offset = (midi_difference - perfect_difference)
+            if midi_offset > 0:
+                midi_offset %= 12
 
             # self.qual = perfect quality + any diminished/augmented discrepancy
             qual = Interval._perfect_qual + midi_offset
