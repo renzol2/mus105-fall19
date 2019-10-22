@@ -331,7 +331,10 @@ class Interval:
         # First, find span and sign
         pitch1_letter = pitch1.letter
         pitch2_letter = pitch2.letter
-        sign = int((pitch2.keynum() - pitch1.keynum()) / abs(pitch2.keynum() - pitch1.keynum()))
+        if pitch1 <= pitch2:
+            sign = 1
+        else:
+            sign = -1
         span = ((pitch2_letter - pitch1_letter) * sign) % Interval._octave_span
 
         # differentiate between octave and unison
@@ -341,6 +344,8 @@ class Interval:
 
         # Finding the octave
         xoct = abs((pitch2.keynum() - pitch1.keynum())) // 12
+        if span == Interval._octave_span:
+            xoct -= 1
 
         # Finding qual:
         # handle perfect and imperfect intervals differently
@@ -375,7 +380,7 @@ class Interval:
             # if midi_offset is negative, qual is diminished
             # if midi_offset is positive, qual is augmented
             # if midi_offset is 0, qual is perfect
-            midi_offset = midi_difference - perfect_difference
+            midi_offset = (midi_difference - perfect_difference) % 12
 
             # self.qual = perfect quality + any diminished/augmented discrepancy
             qual = Interval._perfect_qual + midi_offset
