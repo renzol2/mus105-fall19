@@ -308,8 +308,12 @@ class Interval:
                                  "interval must be an integer greater than 0.")
 
             # If the string parsing succeeds, the original string is valid.
-            # Set it to a variable for str and repr to use.
+            # Set it to a variable for str and repr to use... but change safes to symbolics after.
             self.interval_string = string
+            self.interval_string = self.interval_string.replace('d', 'o')
+            self.interval_string = self.interval_string.replace('D', 'o')
+            self.interval_string = self.interval_string.replace('A', '+')
+            self.interval_string = self.interval_string.replace('a', '+')
         else:
             raise ValueError("Invalid interval string. Interval strings must include a quality and span.")
 
@@ -324,8 +328,66 @@ class Interval:
     #
     # Do NOT implement this method yet.
     def _init_from_pitches(self, pitch1, pitch2):
+        # First, find span and sign
+        pitch1_letter = pitch1.letter
+        pitch2_letter = pitch2.letter
+        sign = int((pitch2.keynum() - pitch1.keynum()) / abs(pitch2.keynum() - pitch1.keynum()))
+        span = ((pitch2_letter - pitch1_letter) * sign) % Interval._octave_span
+
+        # differentiate between octave and unison
+        semi = int((pitch2.keynum() - pitch1.keynum()) * sign)
+        if span == Interval._unison_span and semi > 3:
+            span = Interval._octave_span
+
+        # Finding the octave
+        xoct = abs((pitch2.keynum() - pitch1.keynum())) // 12
+
+        # Finding qual:
+        # handle perfect and imperfect intervals differently
+        # if the span is perfect (0, 3, 4, 7):
+        #  find the semitonal difference of the PERFECT version (in midi)
+        #  compare that to the actual difference of the midi vals
+
+        # Key(span): Object(semitonal difference in midi)
+
+        # ex. Perfect fifth (4): 7 semitones apart (7)
+        perfect_differences = {Interval._unison_span: 0, Interval._fourth_span: 5,
+                               Interval._fifth_span: 7, Interval._octave_span: 12}
+
+        # ex. Minor third (2): 3 semitones apart (3)
+        imperfect_minor_differences = {Interval._second_span: 1, Interval._third_span: 3,
+                                       Interval._sixth_span: 8, Interval._seventh_span: 10}
+
+        # ex. Major third (2): 4 semitones apart (4)
+        imperfect_major_differences = {Interval._second_span: 2, Interval._third_span: 4,
+                                       Interval._sixth_span: 9, Interval._seventh_span: 11}
+
+        # the actual difference of midi values
+        midi_difference = int(abs(pitch2.keynum() - pitch1.keynum()))
+
+        if span in perfect_differences:  # if span is a key in perfect differences
+            perfect_difference = perfect_differences[span]
+            # a fifth up from B and a fourth up from F is naturally diminished
+            if (span == Interval._fifth_span and pitch2_letter == Interval._B) \
+                    or (span == Interval._fourth_span and pitch2_letter == Interval._F):
+                perfect_difference -= 1
+
+            # if midi_offset is negative, qual is diminished
+            # if midi_offset is positive, qual is augmented
+            # if midi_offset is 0, qual is perfect
+            midi_offset = midi_difference - perfect_difference
+
+            # self.qual = perfect quality + any diminished/augmented discrepancy
+            qual = Interval._perfect_qual + midi_offset
+            # adjust for the presence of minor/major quals
+            if qual > Interval._perfect_qual:
+                qual += 1
+            elif qual < Interval._perfect_qual:
+                qual -= 1
+        elif self.span in imperfect_major_differences or self.span in imperfect_minor_differences:
+            pass
+
         # ... parse the string into a span, qual, xoct and sign values
-        span, qual, xoct, sign = (-1, -1, -1, -1)
         # ... pass on to check and assign instance attributes.
         self._init_from_list(span, qual, xoct, sign)
         
@@ -469,7 +531,11 @@ class Interval:
     # Returns the full name of the interval's span, e.g. a
     # unison would return "unison" and so on.
     def span_name(self):
-        return Interval.spans_to_names[self.span]
+        if self.span == Interval._unison_span and self.xoct > 0:
+            span = Interval._octave_span
+        else:
+            span = self.span
+        return Interval.spans_to_names[span]
 
     # Returns the full name of the interval's quality, e.g. a
     # perfect unison would return "perfect" and so on.
@@ -506,6 +572,11 @@ class Interval:
     # quality of unison, which can be any valid quality symbol, e.g.
     # 'P', 'M' 'm' 'd' 'A' 'o' '+' and so on.
     def is_span(self, span, qual):
+        if isinstance(qual, str):
+            qual = qual.replace('a', '+')
+            qual = qual.replace('A', '+')
+            qual = qual.replace('d', 'o')
+            qual = qual.replace('D', 'o')
         if qual is None:
             if self.span == span:
                 return True
