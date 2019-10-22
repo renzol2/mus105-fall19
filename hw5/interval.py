@@ -360,8 +360,8 @@ class Interval:
                                Interval._fifth_span: 7, Interval._octave_span: 12}
 
         # ex. Minor third (2): 3 semitones apart (3)
-        imperfect_minor_differences = {Interval._second_span: 1, Interval._third_span: 3,
-                                       Interval._sixth_span: 8, Interval._seventh_span: 10}
+        # imperfect_minor_differences = {Interval._second_span: 1, Interval._third_span: 3,
+        #                                Interval._sixth_span: 8, Interval._seventh_span: 10}
 
         # ex. Major third (2): 4 semitones apart (4)
         imperfect_major_differences = {Interval._second_span: 2, Interval._third_span: 4,
@@ -387,8 +387,9 @@ class Interval:
                 qual += 1
             elif qual < Interval._perfect_qual:
                 qual -= 1
-        elif self.span in imperfect_major_differences or self.span in imperfect_minor_differences:
-            pass
+        elif span in imperfect_major_differences:
+            imperfect_difference = imperfect_major_differences[span]
+            # continue...
 
         # ... parse the string into a span, qual, xoct and sign values
         # ... pass on to check and assign instance attributes.
@@ -748,7 +749,7 @@ class Interval:
         if self.is_perfect_type():
             spans_to_semitones = {Interval._unison_span: 0, Interval._fourth_span: 5,
                                   Interval._fifth_span: 7, Interval._octave_span: 12}
-            return self.sign * spans_to_semitones[self.span] + quals_to_semitones[self.qual]
+            return self.sign * spans_to_semitones[self.span] + quals_to_semitones[self.qual] + self.xoct * 12
         else:
             # lets try basing it off of major
             spans_to_semitones = {Interval._second_span: 2, Interval._third_span: 4,
@@ -756,7 +757,7 @@ class Interval:
             semitones = self.sign * spans_to_semitones[self.span] + quals_to_semitones[self.qual]
             if self.qual < Interval._minor_qual:
                 semitones -= 1
-            return semitones
+            return semitones + self.xoct * 12
 
     # Adds a specified interval to this interval.
     #  @return  a new interval expressing the total span of both intervals.
