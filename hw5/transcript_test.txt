@@ -117,7 +117,7 @@
       [  input = Interval('M3') < Interval('o4')  ]  your_output = True  desired_output = True  (2/2)
       [  input = Interval('M3') <= Interval('A3')  ]  your_output = True  desired_output = True  (2/2)
       [  input = Interval('M3') <= Interval('M3')  ]  your_output = True  desired_output = True  (2/2)
-      [  input = Interval('M3') > Interval('M3')  ]  your_output = True  desired_output = False  (0/2)
+      [  input = Interval('M3') > Interval('M3')  ]  your_output = False  desired_output = False  (2/2)
       [  input = Interval('oo4') > Interval('M3')  ]  your_output = True  desired_output = True  (2/2)
       [  input = Interval('m3') != Interval('m3')  ]  your_output = False  desired_output = False  (2/2)
       [  input = Interval('m3').full_name()  ]  your_output = minor third  desired_output = minor third  (2/2)
@@ -376,10 +376,10 @@
       [  input = Interval('P1').transpose(Pitch('Ef3').pnum())  ]  your_output = None  desired_output = Pnum.Ef  (0/2)
       [  input = Interval('+1').transpose(Pitch('Ef3').pnum())  ]  your_output = None  desired_output = Pnum.E  (0/2)
       [  input = Interval('++1').transpose(Pitch('Ef3').pnum())  ]  your_output = None  desired_output = Pnum.Es  (0/2)
-Total raw score: (513/751)
+Total raw score: (515/751)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 1
 Extra credit (if applicable): 0
-Adjusted score (Final): 512/750
+Adjusted score (Final): 514/750
 
