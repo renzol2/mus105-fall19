@@ -342,6 +342,11 @@ class Interval:
         if span == Interval._unison_span and semi > 4:
             span = Interval._octave_span
 
+        # manually check if there are invalid small intervals:
+        if sign == 1 and semi < 0:
+            raise ValueError("Invalid interval. Smaller pitch has larger keynum than larger pitch. Likely due to "
+                             "an excess of sharps on smaller pitch or flats on larger pitch.")
+
         # Finding the smaller pitch for use in xoct and qual
         if sign > 0:
             smaller_pitch = pitch1
