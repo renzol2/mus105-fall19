@@ -434,13 +434,10 @@ class Interval:
 
             # self.qual = perfect quality + any diminished/augmented discrepancy
             qual = Interval._perfect_qual + midi_offset
-            if diatonically_minor and qual == Interval._perfect_qual:
+            if diatonically_minor and (qual == Interval._perfect_qual or midi_difference == 0):
                 qual -= 1
-            elif qual == Interval._perfect_qual:
+            elif qual >= Interval._perfect_qual:
                 qual += 1
-
-            if not diatonically_minor and qual < Interval._minor_qual:
-                qual -= 2
 
         # ... parse the string into a span, qual, xoct and sign values
         # ... pass on to check and assign instance attributes.
