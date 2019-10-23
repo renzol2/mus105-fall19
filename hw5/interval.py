@@ -342,9 +342,20 @@ class Interval:
         if span == Interval._unison_span and semi > 3:
             span = Interval._octave_span
 
+        # Finding the smaller pitch for use in xoct and qual
+        if sign > 0:
+            smaller_pitch = pitch1
+            larger_pitch = pitch2
+        else:
+            smaller_pitch = pitch2
+            larger_pitch = pitch1
+
         # Finding the octave
         xoct = abs((pitch2.keynum() - pitch1.keynum())) // 12
-        if span == Interval._octave_span:
+        # if a simple interval passes an octave in midi keyvals through accidentals, it will accidentally
+        # create an extra octave, so we want to get rid of it
+        if span == Interval._octave_span or (span < Interval._octave_span and xoct > 0
+            and (smaller_pitch.accidental < 2 or larger_pitch.accidental > 2)):
             xoct -= 1
 
         # Finding qual:
@@ -360,8 +371,8 @@ class Interval:
                                Interval._fifth_span: 7, Interval._octave_span: 12}
 
         # ex. Minor third (2): 3 semitones apart (3)
-        # imperfect_minor_differences = {Interval._second_span: 1, Interval._third_span: 3,
-        #                                Interval._sixth_span: 8, Interval._seventh_span: 10}
+        imperfect_minor_differences = {Interval._second_span: 1, Interval._third_span: 3,
+                                       Interval._sixth_span: 8, Interval._seventh_span: 10}
 
         # ex. Major third (2): 4 semitones apart (4)
         imperfect_major_differences = {Interval._second_span: 2, Interval._third_span: 4,
@@ -387,9 +398,48 @@ class Interval:
                 qual += 1
             elif qual < Interval._perfect_qual:
                 qual -= 1
+        # Basing imperfect intervals off major:
         elif span in imperfect_major_differences:
             imperfect_difference = imperfect_major_differences[span]
-            # continue...
+
+            # minors
+            # 2nd: E -> F, B -> C
+            minor_second_letters = {Interval._E, Interval._B}
+            # 3rd: D -> F, E -> G, A -> C, B -> D
+            minor_third_letters = {Interval._D, Interval._E, Interval._A, Interval._B}
+            # 6th: E -> C, A -> F, B -> G
+            minor_sixth_letters = {Interval._E, Interval._A, Interval._B}
+            # 7th: D -> C, E -> D, G -> F, A -> G, B -> A
+            minor_seventh_letters = {Interval._D, Interval._E, Interval._G, Interval._A, Interval._B}
+
+            # figure out if the interval is major or minor:
+            # if the interval is actually minor, further subtract 2 from the eventual quality
+            # (since major - minor = 2)
+            diatonically_minor = False
+            if (span == Interval._second_span and smaller_pitch.letter in minor_second_letters) or \
+                    (span == Interval._third_span and smaller_pitch.letter in minor_third_letters) or \
+                    (span == Interval._sixth_span and smaller_pitch.letter in minor_sixth_letters) or \
+                    (span == Interval._seventh_span and smaller_pitch.letter in minor_seventh_letters):
+                # this is used for decreasing major qualities to diminished
+                imperfect_difference -= 1
+                diatonically_minor = True
+
+            # if midi_offset is negative, qual is diminished
+            # if midi_offset is positive, qual is augmented
+            # if midi_offset is 0, qual is major/minor
+            if midi_difference > 12 and xoct > 0:
+                midi_difference %= 12
+            midi_offset = (midi_difference - imperfect_difference)
+
+            # self.qual = perfect quality + any diminished/augmented discrepancy
+            qual = Interval._perfect_qual + midi_offset
+            if diatonically_minor and qual == Interval._perfect_qual:
+                qual -= 1
+            elif qual == Interval._perfect_qual:
+                qual += 1
+
+            if not diatonically_minor and qual < Interval._minor_qual:
+                qual -= 2
 
         # ... parse the string into a span, qual, xoct and sign values
         # ... pass on to check and assign instance attributes.
