@@ -395,6 +395,11 @@ class Interval:
             # if midi_offset is 0, qual is perfect
             if midi_difference > 12 and xoct > 0:
                 midi_difference %= 12
+
+            # prevents
+            if span == Interval._octave_span and xoct > 0:
+                perfect_difference = 0
+
             midi_offset = (midi_difference - perfect_difference)
             if midi_offset > 0:
                 midi_offset %= 12
