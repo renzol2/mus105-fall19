@@ -345,12 +345,12 @@
       [  input = Interval('++9').semitones()  ]  your_output = 16  desired_output = 16  (2/2)
       [  input = Interval('+++9').semitones()  ]  your_output = 17  desired_output = 17  (2/2)
       [  input = Interval('++++9').semitones()  ]  your_output = 18  desired_output = 18  (2/2)
-      [  input = Interval('M3').add(Interval('m3'))  ]  your_output = None  desired_output = <Interval: P5 [4, 6, 0, 1]>  (0/2)
-      [  input = Interval('m3').add(Interval('M3'))  ]  your_output = None  desired_output = <Interval: P5 [4, 6, 0, 1]>  (0/2)
-      [  input = Interval('m3').add(Interval('m3'))  ]  your_output = None  desired_output = <Interval: o5 [4, 4, 0, 1]>  (0/2)
-      [  input = Interval('M3').add(Interval('M3'))  ]  your_output = None  desired_output = <Interval: +5 [4, 8, 0, 1]>  (0/2)
-      [  input = Interval('P5').add(Interval('m3'))  ]  your_output = None  desired_output = <Interval: m7 [6, 5, 0, 1]>  (0/2)
-      [  input = Interval('o5').add(Interval('m3'))  ]  your_output = None  desired_output = <Interval: o7 [6, 4, 0, 1]>  (0/2)
+      [  input = Interval('M3').add(Interval('m3'))  ]  your_output = <Interval: P5 [4, 6, 0, 1]>  desired_output = <Interval: P5 [4, 6, 0, 1]>  (2/2)
+      [  input = Interval('m3').add(Interval('M3'))  ]  your_output = <Interval: P5 [4, 6, 0, 1]>  desired_output = <Interval: P5 [4, 6, 0, 1]>  (2/2)
+      [  input = Interval('m3').add(Interval('m3'))  ]  your_output = <Interval: o5 [4, 4, 0, 1]>  desired_output = <Interval: o5 [4, 4, 0, 1]>  (2/2)
+      [  input = Interval('M3').add(Interval('M3'))  ]  your_output = <Interval: +5 [4, 8, 0, 1]>  desired_output = <Interval: +5 [4, 8, 0, 1]>  (2/2)
+      [  input = Interval('P5').add(Interval('m3'))  ]  your_output = <Interval: m7 [6, 5, 0, 1]>  desired_output = <Interval: m7 [6, 5, 0, 1]>  (2/2)
+      [  input = Interval('o5').add(Interval('m3'))  ]  your_output = <Interval: o7 [6, 4, 0, 1]>  desired_output = <Interval: o7 [6, 4, 0, 1]>  (2/2)
       [  input = Interval('M3').add(Interval('-m3'))  ]  your_output = $exception$  desired_output = $exception$  (2/2)
       [  input = Interval('++5').transpose(Pitch('C#5'))  ]  your_output = None  desired_output = $exception$  (0/2)
       [  input = Interval('+5').transpose(Pitch('C#5'))  ]  your_output = None  desired_output = <Pitch: G##5>  (0/2)
@@ -376,10 +376,10 @@
       [  input = Interval('P1').transpose(Pitch('Ef3').pnum())  ]  your_output = None  desired_output = Pnum.Ef  (0/2)
       [  input = Interval('+1').transpose(Pitch('Ef3').pnum())  ]  your_output = None  desired_output = Pnum.E  (0/2)
       [  input = Interval('++1').transpose(Pitch('Ef3').pnum())  ]  your_output = None  desired_output = Pnum.Es  (0/2)
-Total raw score: (689/751)
+Total raw score: (701/751)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 1
 Extra credit (if applicable): 0
-Adjusted score (Final): 688/750
+Adjusted score (Final): 700/750
 
