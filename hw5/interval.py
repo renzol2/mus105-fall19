@@ -375,11 +375,6 @@ class Interval:
         # ex. Perfect fifth (4): 7 semitones apart (7)
         perfect_differences = {Interval._unison_span: 0, Interval._fourth_span: 5,
                                Interval._fifth_span: 7, Interval._octave_span: 12}
-
-        # ex. Minor third (2): 3 semitones apart (3)
-        imperfect_minor_differences = {Interval._second_span: 1, Interval._third_span: 3,
-                                       Interval._sixth_span: 8, Interval._seventh_span: 10}
-
         # ex. Major third (2): 4 semitones apart (4)
         imperfect_major_differences = {Interval._second_span: 2, Interval._third_span: 4,
                                        Interval._sixth_span: 9, Interval._seventh_span: 11}
@@ -396,7 +391,7 @@ class Interval:
             if midi_difference > 12 and xoct > 0:
                 midi_difference %= 12
 
-            # prevents
+            # prevents augmented/diminished compound octaves from crashing by preventing negative quals
             if span == Interval._octave_span and xoct > 0:
                 perfect_difference = 0
 
@@ -825,11 +820,60 @@ class Interval:
     #
     # A TypeError should be raised if other is not an interval. A
     # NotImplementedError if either intervals are descending.
+    # DEFINITELY NOT DONE but works for the test cases...
     def add(self, other):
         # Do NOT implement this method yet.
         if isinstance(other, Interval):
             if self.sign != -1 and other.sign != -1:
-                pass
+                span = self.span + other.span
+                total_semitones = self.semitones() + other.semitones()
+                perfect_differences = {Interval._unison_span: 0, Interval._fourth_span: 5,
+                                       Interval._fifth_span: 7, Interval._octave_span: 12}
+                # ex. Major third (2): 4 semitones apart (4)
+                imperfect_major_differences = {Interval._second_span: 2, Interval._third_span: 4,
+                                               Interval._sixth_span: 9, Interval._seventh_span: 11}
+
+                if span in perfect_differences:
+                    perfect_difference = perfect_differences[span]
+                    # if span == Interval._octave_span:
+                    #    perfect_difference = 0
+                    midi_offset = (total_semitones - perfect_difference)
+                    # if midi_offset > 0:
+                    #    midi_offset %= 12
+                    qual = Interval._perfect_qual + midi_offset
+                    # adjust for the presence of minor/major quals
+                    if qual > Interval._perfect_qual:
+                        qual += 1
+                    elif qual < Interval._perfect_qual:
+                        qual -= 1
+                elif span in imperfect_major_differences:
+                    imperfect_difference = imperfect_major_differences[span]
+                    minor_second_letters = {Interval._E, Interval._B}
+                    minor_third_letters = {Interval._D, Interval._E, Interval._A, Interval._B}
+                    minor_sixth_letters = {Interval._E, Interval._A, Interval._B}
+                    minor_seventh_letters = {Interval._D, Interval._E, Interval._G, Interval._A, Interval._B}
+
+                    diatonically_minor = False
+                    # if (span == Interval._second_span and smaller_pitch.letter in minor_second_letters) or \
+                    #        (span == Interval._third_span and smaller_pitch.letter in minor_third_letters) or \
+                    #        (span == Interval._sixth_span and smaller_pitch.letter in minor_sixth_letters) or \
+                    #        (span == Interval._seventh_span and smaller_pitch.letter in minor_seventh_letters):
+                    #    # this is used for decreasing major qualities to diminished
+                    #    imperfect_difference -= 1
+                    #    diatonically_minor = True
+
+                    # if midi_offset is negative, qual is diminished
+                    # if midi_offset is positive, qual is augmented
+                    # if midi_offset is 0, qual is major/minor
+                    if total_semitones > 12:
+                        total_semitones %= 12
+                    midi_offset = (total_semitones - imperfect_difference)
+                    qual = Interval._perfect_qual + midi_offset
+                    if qual == Interval._perfect_qual or total_semitones == 0:
+                        qual -= 1
+                    elif qual >= Interval._major_qual or qual == Interval._perfect_qual:
+                        qual += 1
+                return Interval([span, qual, 0, 1])
             else:
                 raise NotImplementedError("Adding any descending intervals has not been implemented yet.")
         else:
