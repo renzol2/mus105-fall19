@@ -84,12 +84,12 @@
       [  input = Interval(Pitch('C4'), Pitch('C##5'))  ]  your_output = <Interval: ++8 [7, 9, 0, 1]>  desired_output = <Interval: ++8 [7, 9, 0, 1]>  (2/2)
       [  input = Interval(Pitch('Cb4'), Pitch('C##5'))  ]  your_output = <Interval: +++8 [7, 10, 0, 1]>  desired_output = <Interval: +++8 [7, 10, 0, 1]>  (2/2)
       [  input = Interval(Pitch('Cbb4'), Pitch('C##5'))  ]  your_output = <Interval: ++++8 [7, 11, 0, 1]>  desired_output = <Interval: ++++8 [7, 11, 0, 1]>  (2/2)
-      [  input = Interval(Pitch('Cbb4'), Pitch('C##6'))  ]  your_output = $exception$  desired_output = <Interval: ++++15 [7, 11, 1, 1]>  (0/2)
+      [  input = Interval(Pitch('Cbb4'), Pitch('C##6'))  ]  your_output = <Interval: ++++15 [7, 11, 1, 1]>  desired_output = <Interval: ++++15 [7, 11, 1, 1]>  (2/2)
       [  input = Interval(Pitch('C#5'), Pitch('C4'))  ]  your_output = <Interval: -+8 [7, 8, 0, -1]>  desired_output = <Interval: -+8 [7, 8, 0, -1]>  (2/2)
       [  input = Interval(Pitch('C##5'), Pitch('C4'))  ]  your_output = <Interval: -++8 [7, 9, 0, -1]>  desired_output = <Interval: -++8 [7, 9, 0, -1]>  (2/2)
       [  input = Interval(Pitch('C##5'), Pitch('Cb4'))  ]  your_output = <Interval: -+++8 [7, 10, 0, -1]>  desired_output = <Interval: -+++8 [7, 10, 0, -1]>  (2/2)
       [  input = Interval(Pitch('C##5'), Pitch('Cbb4'))  ]  your_output = <Interval: -++++8 [7, 11, 0, -1]>  desired_output = <Interval: -++++8 [7, 11, 0, -1]>  (2/2)
-      [  input = Interval(Pitch('C##5'), Pitch('Cbb3'))  ]  your_output = $exception$  desired_output = <Interval: -++++15 [7, 11, 1, -1]>  (0/2)
+      [  input = Interval(Pitch('C##5'), Pitch('Cbb3'))  ]  your_output = <Interval: -++++15 [7, 11, 1, -1]>  desired_output = <Interval: -++++15 [7, 11, 1, -1]>  (2/2)
       [  input = Interval(Pitch('E4'), Pitch('D5'))  ]  your_output = <Interval: m7 [6, 5, 0, 1]>  desired_output = <Interval: m7 [6, 5, 0, 1]>  (2/2)
       [  input = Interval(Pitch('E4'), Pitch('D#5'))  ]  your_output = <Interval: M7 [6, 7, 0, 1]>  desired_output = <Interval: M7 [6, 7, 0, 1]>  (2/2)
       [  input = Interval(Pitch('E4'), Pitch('D##5'))  ]  your_output = <Interval: +7 [6, 8, 0, 1]>  desired_output = <Interval: +7 [6, 8, 0, 1]>  (2/2)
@@ -376,10 +376,10 @@
       [  input = Interval('P1').transpose(Pitch('Ef3').pnum())  ]  your_output = None  desired_output = Pnum.Ef  (0/2)
       [  input = Interval('+1').transpose(Pitch('Ef3').pnum())  ]  your_output = None  desired_output = Pnum.E  (0/2)
       [  input = Interval('++1').transpose(Pitch('Ef3').pnum())  ]  your_output = None  desired_output = Pnum.Es  (0/2)
-Total raw score: (685/751)
+Total raw score: (689/751)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 1
 Extra credit (if applicable): 0
-Adjusted score (Final): 684/750
+Adjusted score (Final): 688/750
 
