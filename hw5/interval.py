@@ -436,7 +436,7 @@ class Interval:
             qual = Interval._perfect_qual + midi_offset
             if diatonically_minor and (qual == Interval._perfect_qual or midi_difference == 0):
                 qual -= 1
-            elif qual == Interval._perfect_qual:
+            elif (not diatonically_minor and qual >= Interval._major_qual) or (qual == Interval._perfect_qual):
                 qual += 1
 
         # ... parse the string into a span, qual, xoct and sign values
