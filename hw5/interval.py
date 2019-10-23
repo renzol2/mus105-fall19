@@ -354,7 +354,8 @@ class Interval:
         xoct = abs((pitch2.keynum() - pitch1.keynum())) // 12
         # if a simple interval passes an octave in midi keyvals through accidentals, it will accidentally
         # create an extra octave, so we want to get rid of it
-        if span == Interval._octave_span or (span < Interval._octave_span and xoct > 0
+        # - if it's a sixth and
+        if span == Interval._octave_span or (Interval._sixth_span <= span < Interval._octave_span and xoct > 0
             and (smaller_pitch.accidental < 2 or larger_pitch.accidental > 2)):
             xoct -= 1
 
