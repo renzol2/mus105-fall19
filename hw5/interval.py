@@ -436,7 +436,7 @@ class Interval:
             qual = Interval._perfect_qual + midi_offset
             if diatonically_minor and (qual == Interval._perfect_qual or midi_difference == 0):
                 qual -= 1
-            elif qual >= Interval._perfect_qual:
+            elif qual == Interval._perfect_qual:
                 qual += 1
 
         # ... parse the string into a span, qual, xoct and sign values
@@ -815,7 +815,13 @@ class Interval:
     # NotImplementedError if either intervals are descending.
     def add(self, other):
         # Do NOT implement this method yet.
-        pass
+        if isinstance(other, Interval):
+            if self.sign != -1 and other.sign != -1:
+                pass
+            else:
+                raise NotImplementedError("Adding any descending intervals has not been implemented yet.")
+        else:
+            raise TypeError("Only intervals can be added to other intervals.")
 
     # Transposes a Pitch or Pnum by the interval. Pnum transposition
     #  has no direction so if the interval is negative its complement
