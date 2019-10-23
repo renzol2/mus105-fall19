@@ -339,7 +339,7 @@ class Interval:
 
         # differentiate between octave and unison
         semi = int((pitch2.keynum() - pitch1.keynum()) * sign)
-        if span == Interval._unison_span and semi > 3:
+        if span == Interval._unison_span and semi > 4:
             span = Interval._octave_span
 
         # Finding the smaller pitch for use in xoct and qual
@@ -388,6 +388,8 @@ class Interval:
             # if midi_offset is negative, qual is diminished
             # if midi_offset is positive, qual is augmented
             # if midi_offset is 0, qual is perfect
+            if midi_difference > 12 and xoct > 0:
+                midi_difference %= 12
             midi_offset = (midi_difference - perfect_difference)
             if midi_offset > 0:
                 midi_offset %= 12
