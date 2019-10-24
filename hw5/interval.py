@@ -826,6 +826,10 @@ class Interval:
         if isinstance(other, Interval):
             if self.sign != -1 and other.sign != -1:
                 span = self.span + other.span
+                xoct = 0
+                if span > Interval._octave_span:
+                    xoct += span // Interval._octave_span
+                    span %= Interval._octave_span
                 total_semitones = self.semitones() + other.semitones()
                 perfect_differences = {Interval._unison_span: 0, Interval._fourth_span: 5,
                                        Interval._fifth_span: 7, Interval._octave_span: 12}
@@ -848,32 +852,15 @@ class Interval:
                         qual -= 1
                 elif span in imperfect_major_differences:
                     imperfect_difference = imperfect_major_differences[span]
-                    minor_second_letters = {Interval._E, Interval._B}
-                    minor_third_letters = {Interval._D, Interval._E, Interval._A, Interval._B}
-                    minor_sixth_letters = {Interval._E, Interval._A, Interval._B}
-                    minor_seventh_letters = {Interval._D, Interval._E, Interval._G, Interval._A, Interval._B}
-
-                    diatonically_minor = False
-                    # if (span == Interval._second_span and smaller_pitch.letter in minor_second_letters) or \
-                    #        (span == Interval._third_span and smaller_pitch.letter in minor_third_letters) or \
-                    #        (span == Interval._sixth_span and smaller_pitch.letter in minor_sixth_letters) or \
-                    #        (span == Interval._seventh_span and smaller_pitch.letter in minor_seventh_letters):
-                    #    # this is used for decreasing major qualities to diminished
-                    #    imperfect_difference -= 1
-                    #    diatonically_minor = True
-
-                    # if midi_offset is negative, qual is diminished
-                    # if midi_offset is positive, qual is augmented
-                    # if midi_offset is 0, qual is major/minor
                     if total_semitones > 12:
                         total_semitones %= 12
                     midi_offset = (total_semitones - imperfect_difference)
                     qual = Interval._perfect_qual + midi_offset
-                    if qual == Interval._perfect_qual or total_semitones == 0:
-                        qual -= 1
+                    if midi_offset == 0:
+                        qual += 1
                     elif qual >= Interval._major_qual or qual == Interval._perfect_qual:
                         qual += 1
-                return Interval([span, qual, 0, 1])
+                return Interval([span, qual, xoct, 1])
             else:
                 raise NotImplementedError("Adding any descending intervals has not been implemented yet.")
         else:
@@ -885,5 +872,16 @@ class Interval:
     #  @param pref  The Pitch or Pnum to transpose.
     #  @return The transposed Pitch or Pnum.
     def transpose(self, pref):
+        interval = self
+        if self.sign < 0:
+            interval = self.complemented()
         # Do NOT implement this method yet.
-        pass
+        if isinstance(pref, Pitch):
+            pass
+        elif isinstance(pref, int) and pref in Pitch.pnums:
+            letter_val = (pref & 0b11110000) >> 4
+            accidental_val = pref & 0b1111
+            new_letter = (letter_val + interval.span) % Interval._octave_span
+            return Pitch([new_letter, -1, -1]).pnum()
+        else:
+            raise TypeError("The transpose function only works on Intervals and Pnums")
