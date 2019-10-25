@@ -873,15 +873,48 @@ class Interval:
     #  @return The transposed Pitch or Pnum.
     def transpose(self, pref):
         interval = self
-        if self.sign < 0:
-            interval = self.complemented()
         # Do NOT implement this method yet.
         if isinstance(pref, Pitch):
-            pass
+            if self.sign < 0:
+                interval = self.complemented()
+            new_letter = (pref.letter + interval.span) % Interval._octave_span
+            if interval.span in Interval.perfect:
+                new_oct = pref.octave + interval.xoct
+                if pref.letter + interval.span > Interval._octave_span:
+                    new_oct += 1
+                if interval.qual >= Interval._aug_qual:
+                    amount = interval.qual - Interval._aug_qual + 1
+                elif interval.qual <= Interval._dim_qual:
+                    amount = -(Interval._dim_qual - interval.qual + 1)
+                else:
+                    amount = 0
+                if pref.letter == Interval._F and interval.span == Interval._fourth_span:
+                    amount -= 1
+                elif pref.letter == Interval._B and interval.span == Interval._fifth_span:
+                    amount += 1
+                new_accidental = pref.accidental + amount
+            else:
+                pass
+            return Pitch([new_letter, new_accidental, new_oct])
         elif isinstance(pref, int) and pref in Pitch.pnums:
+            # parse the letter and accidental val from the 8 bit binary value
             letter_val = (pref & 0b11110000) >> 4
             accidental_val = pref & 0b1111
             new_letter = (letter_val + interval.span) % Interval._octave_span
-            return Pitch([new_letter, -1, -1]).pnum()
+            if interval.span in Interval.perfect:
+                if interval.qual >= Interval._aug_qual:
+                    amount = interval.qual - Interval._aug_qual + 1
+                elif interval.qual <= Interval._dim_qual:
+                    amount = -(Interval._dim_qual - interval.qual + 1)
+                else:
+                    amount = 0
+                if letter_val == Interval._F and interval.span == Interval._fourth_span:
+                    amount -= 1
+                elif letter_val == Interval._B and interval.span == Interval._fifth_span:
+                    amount += 1
+                new_accidental = accidental_val + amount
+            else:
+                pass
+            return Pitch([new_letter, new_accidental, 4]).pnum()
         else:
             raise TypeError("The transpose function only works on Intervals and Pnums")
