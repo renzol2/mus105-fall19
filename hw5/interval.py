@@ -880,14 +880,21 @@ class Interval:
             new_letter = (pref.letter + interval.span) % Interval._octave_span
             if interval.span in Interval.perfect:
                 new_oct = pref.octave + interval.xoct
-                if pref.letter + interval.span > Interval._octave_span:
+                # adjusting octave
+                if pref.letter + interval.span > Interval._octave_span and interval.sign > 0:
                     new_oct += 1
+                elif pref.letter - interval.span < Interval._C and interval.sign < 0:
+                    new_oct -= 1
+
+                # setting amount
                 if interval.qual >= Interval._aug_qual:
                     amount = interval.qual - Interval._aug_qual + 1
                 elif interval.qual <= Interval._dim_qual:
                     amount = -(Interval._dim_qual - interval.qual + 1)
                 else:
                     amount = 0
+
+                # adjusting for certain diatonic instances
                 if pref.letter == Interval._F and interval.span == Interval._fourth_span:
                     amount -= 1
                 elif pref.letter == Interval._B and interval.span == Interval._fifth_span:
