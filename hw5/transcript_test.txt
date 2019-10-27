@@ -360,11 +360,11 @@
       [  input = Interval('ooo5').transpose(Pitch('C#5'))  ]  your_output = <Pitch: Gbb5>  desired_output = <Pitch: Gbb5>  (2/2)
       [  input = Interval('oooo5').transpose(Pitch('C#5'))  ]  your_output = $exception$  desired_output = $exception$  (2/2)
       [  input = Interval('-+++++5').transpose(Pitch('C##5'))  ]  your_output = $exception$  desired_output = $exception$  (2/2)
-      [  input = Interval('-++++5').transpose(Pitch('C##5'))  ]  your_output = <Pitch: Fbb5>  desired_output = <Pitch: Fbb4>  (0/2)
-      [  input = Interval('-+++5').transpose(Pitch('C##5'))  ]  your_output = <Pitch: Fb5>  desired_output = <Pitch: Fb4>  (0/2)
-      [  input = Interval('-++5').transpose(Pitch('C##5'))  ]  your_output = <Pitch: F5>  desired_output = <Pitch: F4>  (0/2)
-      [  input = Interval('-+5').transpose(Pitch('C##5'))  ]  your_output = <Pitch: F#5>  desired_output = <Pitch: F#4>  (0/2)
-      [  input = Interval('-P5').transpose(Pitch('C##5'))  ]  your_output = <Pitch: F##5>  desired_output = <Pitch: F##4>  (0/2)
+      [  input = Interval('-++++5').transpose(Pitch('C##5'))  ]  your_output = <Pitch: Fbb4>  desired_output = <Pitch: Fbb4>  (2/2)
+      [  input = Interval('-+++5').transpose(Pitch('C##5'))  ]  your_output = <Pitch: Fb4>  desired_output = <Pitch: Fb4>  (2/2)
+      [  input = Interval('-++5').transpose(Pitch('C##5'))  ]  your_output = <Pitch: F4>  desired_output = <Pitch: F4>  (2/2)
+      [  input = Interval('-+5').transpose(Pitch('C##5'))  ]  your_output = <Pitch: F#4>  desired_output = <Pitch: F#4>  (2/2)
+      [  input = Interval('-P5').transpose(Pitch('C##5'))  ]  your_output = <Pitch: F##4>  desired_output = <Pitch: F##4>  (2/2)
       [  input = Interval('-o5').transpose(Pitch('C##5'))  ]  your_output = $exception$  desired_output = $exception$  (2/2)
       [  input = Interval('A6').transpose(Pitch('g4'))  ]  your_output = $exception$  desired_output = <Pitch: E#5>  (0/2)
       [  input = Interval('M7').transpose(Pitch('B3'))  ]  your_output = $exception$  desired_output = <Pitch: A#4>  (0/2)
@@ -376,10 +376,10 @@
       [  input = Interval('P1').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.Ef  desired_output = Pnum.Ef  (2/2)
       [  input = Interval('+1').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.E  desired_output = Pnum.E  (2/2)
       [  input = Interval('++1').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.Es  desired_output = Pnum.Es  (2/2)
-Total raw score: (723/751)
+Total raw score: (733/751)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 1
 Extra credit (if applicable): 0
-Adjusted score (Final): 722/750
+Adjusted score (Final): 732/750
 
