@@ -956,9 +956,29 @@ class Interval:
                     amount -= 1
                 elif letter_val == Interval._B and interval.span == Interval._fifth_span:
                     amount += 1
-                new_accidental = accidental_val + amount
+
             else:
-                pass
+                if interval.span == Interval._second_span:
+                    diatonic_minor = {Interval._E, Interval._B}
+                elif interval.span == Interval._third_span:
+                    diatonic_minor = {Interval._D, Interval._E, Interval._A, Interval._B}
+                elif interval.span == Interval._sixth_span:
+                    diatonic_minor = {Interval._E, Interval._A, Interval._B}
+                else:  # seventh span
+                    diatonic_minor = {Interval._D, Interval._E, Interval._G, Interval._A, Interval._B}
+
+                # setting amount
+                if interval.qual >= Interval._major_qual:
+                    amount = interval.qual - Interval._major_qual
+                else:  # if minor or lower
+                    amount = Interval._minor_qual - interval.qual
+
+                # adjusting
+                if letter_val in diatonic_minor and interval.qual >= Interval._major_qual:
+                    amount += 1
+                elif letter_val not in diatonic_minor and interval.qual <= Interval._minor_qual:
+                    amount -= 1
+            new_accidental = accidental_val + amount
             return Pitch([new_letter, new_accidental, 4]).pnum()
         else:
             raise TypeError("The transpose function only works on Intervals and Pnums")
