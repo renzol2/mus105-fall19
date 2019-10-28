@@ -59,7 +59,6 @@ class Interval:
     spans_to_names = {_unison_span: "unison", _second_span: "second", _third_span: "third", _fourth_span: "fourth",
                       _fifth_span: "fifth", _sixth_span: "sixth", _seventh_span: "seventh", _octave_span: "octave"}
 
-
     # Creates an Interval from a string, list, or two Pitches.
     #  * Interval(string) - creates an Interval from a pitch string.
     #  * Interval([s, q, x, s]) - creates a Pitch from a list of four
@@ -879,13 +878,6 @@ class Interval:
                 interval = self.complemented()
             new_letter = (pref.letter + interval.span) % Interval._octave_span
             if interval.span in Interval.perfect:
-                new_oct = pref.octave + interval.xoct
-                # adjusting octave
-                if pref.letter + interval.span > Interval._octave_span and interval.sign > 0:
-                    new_oct += 1
-                elif pref.letter - interval.span < Interval._C and interval.sign < 0:
-                    new_oct -= 1
-
                 # setting amount
                 if interval.qual >= Interval._aug_qual:
                     amount = interval.qual - Interval._aug_qual + 1
@@ -899,9 +891,54 @@ class Interval:
                     amount -= 1
                 elif pref.letter == Interval._B and interval.span == Interval._fifth_span:
                     amount += 1
-                new_accidental = pref.accidental + amount
-            else:
-                pass
+
+            else:  # if imperfect:
+                # going over naturally minor/major intervals from starting notes:
+                # 2nds:
+                #   minor: E -> F, B -> C
+                #   major: C -> D, D -> E, F -> G, G -> A, A -> B
+                # 3rds:
+                #   minor: D -> F, E -> G, A -> C, B -> D
+                #   major: C -> E, F -> A, G -> B
+                # 6ths:
+                #   minor: E -> C, A -> F, B -> G
+                #   major: C -> A, D -> B, F -> D, G -> E
+                # 7ths:
+                #   minor: D -> C, E -> D, G -> F, A -> G, B -> D
+                #   major: C -> B, F -> E
+
+                # setting diatonic cases
+                if interval.span == Interval._second_span:
+                    diatonic_minor = {Interval._E, Interval._B}
+                elif interval.span == Interval._third_span:
+                    diatonic_minor = {Interval._D, Interval._E, Interval._A, Interval._B}
+                elif interval.span == Interval._sixth_span:
+                    diatonic_minor = {Interval._E, Interval._A, Interval._B}
+                else:  # seventh span
+                    diatonic_minor = {Interval._D, Interval._E, Interval._G, Interval._A, Interval._B}
+
+                # setting amount
+                if interval.qual >= Interval._major_qual:
+                    amount = interval.qual - Interval._major_qual
+                else:  # if minor or lower
+                    amount = Interval._minor_qual - interval.qual
+
+                # adjusting
+                if pref.letter in diatonic_minor and interval.qual >= Interval._major_qual:
+                    amount += 1
+                elif pref.letter not in diatonic_minor and interval.qual <= Interval._minor_qual:
+                    amount -= 1
+
+            # finally setting the new accidental based on previous parameters
+            new_accidental = pref.accidental + amount
+
+            # adjusting octave (applies to both perfect and imperfect intervals)
+            new_oct = pref.octave + interval.xoct
+            if pref.letter + interval.span > Interval._octave_span and interval.sign > 0:
+                new_oct += 1
+            elif pref.letter - interval.span < Interval._C and interval.sign < 0:
+                new_oct -= 1
+            # passing transposed Pitch
             return Pitch([new_letter, new_accidental, new_oct])
         elif isinstance(pref, int) and pref in Pitch.pnums:
             # parse the letter and accidental val from the 8 bit binary value
