@@ -368,7 +368,7 @@
       [  input = Interval('-o5').transpose(Pitch('C##5'))  ]  your_output = $exception$  desired_output = $exception$  (2/2)
       [  input = Interval('A6').transpose(Pitch('g4'))  ]  your_output = <Pitch: E#5>  desired_output = <Pitch: E#5>  (2/2)
       [  input = Interval('M7').transpose(Pitch('B3'))  ]  your_output = <Pitch: A#4>  desired_output = <Pitch: A#4>  (2/2)
-      [  input = Interval('o2').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.F  desired_output = Pnum.Fff  (0/2)
+      [  input = Interval('o2').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.Fff  desired_output = Pnum.Fff  (2/2)
       [  input = Interval('m2').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.Ff  desired_output = Pnum.Ff  (2/2)
       [  input = Interval('M2').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.F  desired_output = Pnum.F  (2/2)
       [  input = Interval('+2').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.Fs  desired_output = Pnum.Fs  (2/2)
@@ -376,10 +376,10 @@
       [  input = Interval('P1').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.Ef  desired_output = Pnum.Ef  (2/2)
       [  input = Interval('+1').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.E  desired_output = Pnum.E  (2/2)
       [  input = Interval('++1').transpose(Pitch('Ef3').pnum())  ]  your_output = Pnum.Es  desired_output = Pnum.Es  (2/2)
-Total raw score: (745/751)
+Total raw score: (747/751)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 1
 Extra credit (if applicable): 0
-Adjusted score (Final): 744/750
+Adjusted score (Final): 746/750
 
