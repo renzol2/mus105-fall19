@@ -873,10 +873,16 @@ class Interval:
     def transpose(self, pref):
         interval = self
         # Do NOT implement this method yet.
-        if isinstance(pref, Pitch):
+        if isinstance(pref, Pitch) or (isinstance(pref, int) and pref in Pitch.pnums):
             if self.sign < 0:
                 interval = self.complemented()
-            new_letter = (pref.letter + interval.span) % Interval._octave_span
+            if isinstance(pref, Pitch):
+                old_letter = pref.letter
+                old_accidental = pref.accidental
+            else:
+                old_letter = (pref & 0b11110000) >> 4
+                old_accidental = pref & 0b1111
+            new_letter = (old_letter + interval.span) % Interval._octave_span
             if interval.span in Interval.perfect:
                 # setting amount
                 if interval.qual >= Interval._aug_qual:
@@ -887,9 +893,9 @@ class Interval:
                     amount = 0
 
                 # adjusting for certain diatonic instances
-                if pref.letter == Interval._F and interval.span == Interval._fourth_span:
+                if old_letter == Interval._F and interval.span == Interval._fourth_span:
                     amount -= 1
-                elif pref.letter == Interval._B and interval.span == Interval._fifth_span:
+                elif old_letter == Interval._B and interval.span == Interval._fifth_span:
                     amount += 1
 
             else:  # if imperfect:
@@ -921,64 +927,27 @@ class Interval:
                 if interval.qual >= Interval._major_qual:
                     amount = interval.qual - Interval._major_qual
                 else:  # if minor or lower
-                    amount = Interval._minor_qual - interval.qual
+                    amount = interval.qual - Interval._minor_qual
 
                 # adjusting
-                if pref.letter in diatonic_minor and interval.qual >= Interval._major_qual:
+                if old_letter in diatonic_minor and interval.qual >= Interval._major_qual:
                     amount += 1
-                elif pref.letter not in diatonic_minor and interval.qual <= Interval._minor_qual:
+                elif old_letter not in diatonic_minor and interval.qual <= Interval._minor_qual:
                     amount -= 1
 
             # finally setting the new accidental based on previous parameters
-            new_accidental = pref.accidental + amount
+            new_accidental = old_accidental + amount
 
             # adjusting octave (applies to both perfect and imperfect intervals)
-            new_oct = pref.octave + interval.xoct
-            if pref.letter + interval.span > Interval._octave_span and interval.sign > 0:
-                new_oct += 1
-            elif pref.letter - interval.span < Interval._C and interval.sign < 0:
-                new_oct -= 1
-            # passing transposed Pitch
-            return Pitch([new_letter, new_accidental, new_oct])
-        elif isinstance(pref, int) and pref in Pitch.pnums:
-            # parse the letter and accidental val from the 8 bit binary value
-            letter_val = (pref & 0b11110000) >> 4
-            accidental_val = pref & 0b1111
-            new_letter = (letter_val + interval.span) % Interval._octave_span
-            if interval.span in Interval.perfect:
-                if interval.qual >= Interval._aug_qual:
-                    amount = interval.qual - Interval._aug_qual + 1
-                elif interval.qual <= Interval._dim_qual:
-                    amount = -(Interval._dim_qual - interval.qual + 1)
-                else:
-                    amount = 0
-                if letter_val == Interval._F and interval.span == Interval._fourth_span:
-                    amount -= 1
-                elif letter_val == Interval._B and interval.span == Interval._fifth_span:
-                    amount += 1
-
+            if isinstance(pref, Pitch):
+                new_oct = pref.octave + interval.xoct
+                if pref.letter + interval.span > Interval._octave_span and interval.sign > 0:
+                    new_oct += 1
+                elif pref.letter - interval.span < Interval._C and interval.sign < 0:
+                    new_oct -= 1
+                # passing transposed Pitch
+                return Pitch([new_letter, new_accidental, new_oct])
             else:
-                if interval.span == Interval._second_span:
-                    diatonic_minor = {Interval._E, Interval._B}
-                elif interval.span == Interval._third_span:
-                    diatonic_minor = {Interval._D, Interval._E, Interval._A, Interval._B}
-                elif interval.span == Interval._sixth_span:
-                    diatonic_minor = {Interval._E, Interval._A, Interval._B}
-                else:  # seventh span
-                    diatonic_minor = {Interval._D, Interval._E, Interval._G, Interval._A, Interval._B}
-
-                # setting amount
-                if interval.qual >= Interval._major_qual:
-                    amount = interval.qual - Interval._major_qual
-                else:  # if minor or lower
-                    amount = Interval._minor_qual - interval.qual
-
-                # adjusting
-                if letter_val in diatonic_minor and interval.qual >= Interval._major_qual:
-                    amount += 1
-                elif letter_val not in diatonic_minor and interval.qual <= Interval._minor_qual:
-                    amount -= 1
-            new_accidental = accidental_val + amount
-            return Pitch([new_letter, new_accidental, 4]).pnum()
+                return Pitch([new_letter, new_accidental, 5]).pnum()
         else:
             raise TypeError("The transpose function only works on Intervals and Pnums")
