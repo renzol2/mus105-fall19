@@ -48,6 +48,9 @@ class Key:
     #  ValueError if the signum integer or the mode string is invalid.
     def __init__(self, signum, mode):
         if isinstance(signum, int) and (isinstance(mode, Mode) or isinstance(mode, str)):
+            if isinstance(mode, str):
+                mode = mode.replace("Ionian", "Major")
+                mode = mode.replace("Aeolian", "Minor")
             if -7 <= signum <= 7 and (mode in [m.name.lower().capitalize() for m in Mode] or mode in Mode):
                 self.signum = signum
                 if isinstance(mode, Mode):
