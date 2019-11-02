@@ -123,12 +123,12 @@
       [  input = Mode['MIXOLYDIAN']  ]  your_output = Mode.MIXOLYDIAN  desired_output = Mode.MIXOLYDIAN  (2/2)
       [  input = Mode['MINOR']  ]  your_output = Mode.MINOR  desired_output = Mode.MINOR  (2/2)
       [  input = Mode['LOCRIAN']  ]  your_output = Mode.LOCRIAN  desired_output = Mode.LOCRIAN  (2/2)
-      [  input = Mode['IONIAN'] is Mode['MAJOR']  ]  your_output = $exception$  desired_output = True  (0/2)
-      [  input = Mode['AEOLIAN'] is Mode['MINOR']  ]  your_output = $exception$  desired_output = True  (0/2)
+      [  input = Mode['IONIAN'] is Mode['MAJOR']  ]  your_output = True  desired_output = True  (2/2)
+      [  input = Mode['AEOLIAN'] is Mode['MINOR']  ]  your_output = True  desired_output = True  (2/2)
       [  input = Mode.MAJOR.short_name()  ]  your_output = MAJ  desired_output = MAJ  (2/2)
       [  input = Mode.MAJOR.tonic_degree()  ]  your_output = 0  desired_output = 0  (2/2)
-      [  input = Mode.AEOLIAN.short_name()  ]  your_output = $exception$  desired_output = MIN  (0/2)
-      [  input = Mode.AEOLIAN.tonic_degree()  ]  your_output = $exception$  desired_output = 5  (0/2)
+      [  input = Mode.AEOLIAN.short_name()  ]  your_output = MIN  desired_output = MIN  (2/2)
+      [  input = Mode.AEOLIAN.tonic_degree()  ]  your_output = 5  desired_output = 5  (2/2)
       [  input = Mode.LOCRIAN.short_name()  ]  your_output = LOC  desired_output = LOC  (2/2)
       [  input = Mode.LOCRIAN.tonic_degree()  ]  your_output = 6  desired_output = 6  (2/2)
   module: meter
@@ -190,7 +190,7 @@
       [  input = Meter(7, 32).is_complex()  ]  your_output = True  desired_output = True  (2/2)
       [  input = Meter(8, 8).is_complex()  ]  your_output = True  desired_output = True  (2/2)
       [  input = Meter(10, 2).is_complex()  ]  your_output = True  desired_output = True  (2/2)
-      [  input = Meter(11, 8).is_complex()  ]  your_output = False  desired_output = True  (0/2)
+      [  input = Meter(11, 8).is_complex()  ]  your_output = True  desired_output = True  (2/2)
       [  input = Meter(14, 2).is_complex()  ]  your_output = True  desired_output = True  (2/2)
       [  input = Meter(15, 2).is_complex()  ]  your_output = False  desired_output = False  (2/2)
       [  input = Meter(4, 4.0)  ]  your_output = $exception$  desired_output = $exception$  (2/2)
@@ -611,10 +611,10 @@
       [  input = Key(-8, 'lydian')  ]  your_output = $exception$  desired_output = $exception$  (2/2)
       [  input = Key(10, 'major')  ]  your_output = $exception$  desired_output = $exception$  (2/2)
       [  input = Key(0, ' major ')  ]  your_output = $exception$  desired_output = $exception$  (2/2)
-Total raw score: (1196/1206)
+Total raw score: (1206/1206)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 6
 Extra credit (if applicable): 0
-Adjusted score (Final): 1190/1200
+Adjusted score (Final): 1200/1200
 
