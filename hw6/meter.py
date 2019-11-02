@@ -96,10 +96,16 @@ class Meter:
     # a NotImplementedError If the meter is not simple or compound.
     # See: Ratio.
     def beat(self):
-        pass
+        if self.is_compound() or self.is_simple():
+            if self.is_compound():
+                return Ratio(3, self.den)
+            else:
+                return Ratio(1, self.den)
+        else:
+            raise NotImplementedError("Complex meters not implemented yet.")
 
     # Returns a Ratio representing the meter's total measure duration, in beats.
     # For example, 4/4 returns a duration ratio of 1/1, 6/8 meter returns 3/4,
     # and 3/2 returns a duration of 3/2. See: Ratio.
     def measure_dur(self):
-        pass
+        return Ratio(self.num, self.den)

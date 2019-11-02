@@ -18,9 +18,6 @@ class Mode (IntEnum):
     MINOR = 5
     LOCRIAN = 6
 
-    IONIAN = MAJOR
-    AEOLIAN = MINOR
-
     # Returns only the first three characters of the mode's name.
     def short_name(self):
         return self.name[0:3]
