@@ -904,7 +904,7 @@ class Interval:
                 #   minor: E -> F, B -> C
                 #   major: C -> D, D -> E, F -> G, G -> A, A -> B
                 # 3rds:
-                #   minor: D -> F, E -> G, A -> C, B -> D
+                #   minor: Dx -> Fx, E -> G, A -> C, B -> D
                 #   major: C -> E, F -> A, G -> B
                 # 6ths:
                 #   minor: E -> C, A -> F, B -> G

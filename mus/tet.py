@@ -281,6 +281,6 @@ def pitch_to_hertz(pitch):
 
 if __name__ == '__main__':
     print("Testing...")
-    
+    print(pitch_to_midi('Bbb00'))
     print("Done!")
 

@@ -1,13 +1,13 @@
-###############################################################################
+########################################
 
 from .durational import Durational
 from .pitch import Pitch
 
 
-## A class that inherits from Durational to represent a musical pitch with an
+# A class that inherits from Durational to represent a musical pitch with an
 # exact beat duration.
 class Note (Durational):
-    ## Initializes a Note and its three attributes self.pitch, self.marks,
+    # Initializes a Note and its three attributes self.pitch, self.marks,
     # and self.voice.
     # @param pitch A Pitch for the note's pitch attribute.
     # @param dur The Ratio duration of the Note. The initializer
@@ -19,30 +19,49 @@ class Note (Durational):
     # The attribute self.voice should be initialized to None.
     # See also: Rest, Chord, Durational, https://en.wikipedia.org/wiki/Musical_note
     def __init__(self, pitch, dur, marks=[]):
-        pass
+        # call super constructor
+        super().__init__(dur)
 
-    ## Returns a string showing the note's pitch, duration
+        # set pitch
+        if isinstance(pitch, Pitch):
+            self.pitch = pitch
+        else:
+            raise TypeError("pitch must be Pitch object")
+
+        # set marks
+        if isinstance(marks, list):
+            self.marks = marks
+        else:
+            raise TypeError("marks must be a list")
+
+        # set voice
+        self.voice = None
+
+    # Returns a string showing the note's pitch, duration
     # and the hex id of the instance.
     # Example: '<Note: F#4 1/8 0x10e242d10>'
     def __str__(self):
-        return ''
+        return f'<Note: {self.pitch.string()} {self.dur.string()} {hex(id(self))}>'
 
-    ## Define __repr__ to be the same as __str__ except there is
+    # Define __repr__ to be the same as __str__ except there is
     # no hex id included.
     # Example: '<Note: F#4 1/8>'
     def __repr__(self):
-        return ''
+        return f'<Note: {self.pitch.string()} {self.dur.string()}>'
 
-    ## Implements Note < Note.
+    # Implements Note < Note.
     # @param other The note to compare with this note.
     # @returns True if this note's pitch is less than the other.
     #
     # A TypeError should be raised if other is not a Note.
     # This method can call self.pitch.__lt__() to compare.
     def __lt__(self, other):
-        pass
+        if isinstance(other, Note):
+            return self.pitch < other.pitch
+        else:
+            raise TypeError("Note comparisons can only be performed between two Notes")
 
-    ## Implements Note <= Note.
+    # Implements Note <= Note.
     # @param other The note to compare with this note.
     # @returns True if this note's pitch is less than or
     # equal to the other.
@@ -50,27 +69,36 @@ class Note (Durational):
     # A TypeError should be raised if other is not a Note.
     # This method can call self.pitch.__le__() to compare.
     def __le__(self, other):
-        pass
+        if isinstance(other, Note):
+            return self.pitch <= other.pitch
+        else:
+            raise TypeError("Note comparisons can only be performed between two Notes")
 
-    ## Implements Note == Note.
+    # Implements Note == Note.
     # @param other The note to compare with this note.
     # @returns True if this note's pitch is equal to the other.
     #
     # A TypeError should be raised if other is not a Note.
     # This method can call self.pitch.__eq__() to compare.
     def __eq__(self, other):
-        pass
+        if isinstance(other, Note):
+            return self.pitch == other.pitch
+        else:
+            raise TypeError("Note comparisons can only be performed between two Notes")
 
-    ## Implements Note != Note.
+    # Implements Note != Note.
     # @param other The note to compare with this note.
     # @returns True if this note's pitch is not equal to the other.
     #
     # A TypeError should be raised if other is not a Note.
     # This method can call self.pitch.__ne__() to compare.
     def __ne__(self, other):
-        pass
+        if isinstance(other, Note):
+            return self.pitch != other.pitch
+        else:
+            raise TypeError("Note comparisons can only be performed between two Notes")
 
-    ## Implements Note >= Note.
+    # Implements Note >= Note.
     # @param other The note to compare with this note.
     # @returns True if this note's pitch is not greater
     # than or equal to the other.
@@ -78,18 +106,24 @@ class Note (Durational):
     # A TypeError should be raised if other is not a Note.
     # This method can call self.pitch.__ge__() to compare.
     def __ge__(self, other):
-        pass
+        if isinstance(other, Note):
+            return self.pitch >= other.pitch
+        else:
+            raise TypeError("Note comparisons can only be performed between two Notes")
 
-    ## Implements Note > Note.
+    # Implements Note > Note.
     # @param other The note to compare with this note.
     # @returns True if this note's pitch is greater than the other.
     #
     # A TypeError should be raised if other is not a Note.
     # This method can call self.pitch.__gt__() to compare.
     def __gt__(self, other):
-        pass
+        if isinstance(other, Note):
+            return self.pitch > other.pitch
+        else:
+            raise TypeError("Note comparisons can only be performed between two Notes")
 
-    ## Returns a string that contains the note's pitch and duration.
+    # Returns a string that contains the note's pitch and duration.
     # Example: 'G#4 1/4'
     def string(self):
-       pass
+        return f'{self.pitch.string()} {self.dur.string()}'
