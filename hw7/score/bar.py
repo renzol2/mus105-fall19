@@ -22,29 +22,13 @@ class Bar:
         if isinstance(bid, int) and isinstance(partial, bool):  # probably check for other types
             self.id = bid
             self.partial = partial
+            self.clef = clef
+            self.key = key
+            self.meter = meter
+            self.barline = barline
         else:
             raise TypeError("Types to pass are as follows: bid (int), clef (Clef), key (Key), meter (Meter),"
                             "barline (Barline), partial (bool)")
-
-        if clef is None or isinstance(clef, Clef):
-            self.clef = clef
-        else:
-            raise TypeError("clef must be of type Clef")
-
-        if key is None or isinstance(key, Key):
-            self.key = key
-        else:
-            raise TypeError("key must be of type Key")
-
-        if meter is None or isinstance(meter, Meter):
-            self.meter = meter
-        else:
-            raise TypeError("meter must be of type Meter")
-
-        if barline is None or isinstance(barline, Barline):
-            self.barline = barline
-        else:
-            raise TypeError("barline must be of type Barline")
 
         # initialize to defaults
         self.voices = []
