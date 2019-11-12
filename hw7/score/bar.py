@@ -1,10 +1,6 @@
 ########################################
 
 from .voice import Voice
-from .clef import Clef
-from .key import Key
-from .meter import Meter
-from .barline import Barline
 
 
 # A class representing a measure of music.
