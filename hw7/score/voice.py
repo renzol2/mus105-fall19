@@ -16,7 +16,7 @@ class Voice:
     # self.bar to None.  See also: Note, Rest, Chord, Bar.
     def __init__(self, voiceid):
         if isinstance(voiceid, int):
-            self.voiceid = voiceid
+            self.id = voiceid
             self.notes = []
             self.bar = None
         else:
@@ -32,7 +32,7 @@ class Voice:
     # no hex id included.
     # Example: '<Voice: 2>'
     def __repr__(self):
-        return f'<Voice: {self.voiceid}>'
+        return f'<Voice: {self.id}>'
 
     # Implements Voice iteration by returning an iterator for the voices's
     # notes. See: Python's iter() function.
@@ -46,6 +46,7 @@ class Voice:
     # The method should raise a TypeError if object supplied is not a Durational.
     def add_note(self, note):
         if isinstance(note, Durational):
+            note.voice = self
             self.notes.append(note)
         else:
             raise TypeError("can only add Durationals to voices")
@@ -61,6 +62,6 @@ class Voice:
     # Returns the 'part and voice' identifier of the voice, a string
     # concatenation of the part's id with the voice's id: PARTID.VOICEID
     # Example: 'P1.1'
-    def get_pvid(self):  # @TODO
-        pass
+    def get_pvid(self):
+        return self.bar.staff.part.id + "." + str(self.id)
 

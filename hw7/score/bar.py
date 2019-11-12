@@ -25,8 +25,7 @@ class Bar:
     def __init__(self, bid, clef=None, key=None, meter=None, barline=None, partial=False):
         if isinstance(bid, int) and isinstance(partial, bool):  # probably check for other types
             self.id = bid
-            self.voices = []
-            self.staff = None
+            self.partial = partial
         else:
             raise TypeError("Types to pass are as follows: bid (int), clef (Clef), key (Key), meter (Meter),"
                             "barline (Barline), partial (bool)")
@@ -50,6 +49,10 @@ class Bar:
             self.barline = barline
         else:
             raise TypeError("barline must be of type Barline")
+
+        # initialize to defaults
+        self.voices = []
+        self.staff = None
 
     # Returns a string showing the bars unique id and all attributes
     # except self.voices if that attribute is not None. The order of
@@ -80,6 +83,7 @@ class Bar:
     # The method should raise a TypeError if voice is not a Voice instance.
     def add_voice(self, voice):
         if isinstance(voice, Voice):
+            voice.bar = self
             self.voices.append(voice)
         else:
             raise TypeError("can only add voices to bars")
@@ -87,7 +91,7 @@ class Bar:
     # Returns the bar's voice identifiers in the same order
     # that they occur in the voices list.
     def voice_ids(self):  # @TODO
-        pass
+        return [voice.id for voice in self.voices]
 
     # Returns the number of voices in the bar.
     def num_voices(self):

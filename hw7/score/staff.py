@@ -48,8 +48,8 @@ class Staff:
 
     # Returns a list of the staffs's bar identifiers in the same order
     # that they occur in the bars list.
-    def bar_ids(self):  # @TODO
-        pass
+    def bar_ids(self):
+        return [bar.id for bar in self.bars]
 
     # Returns the number of bars in the staff.
     def num_bars(self):
