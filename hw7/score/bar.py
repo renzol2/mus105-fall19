@@ -70,7 +70,7 @@ class Bar:
         key_name = ' ' + self.key.string() if self.key is not None else ''
         meter_name = ' ' + self.meter.string() if self.key is not None else ''
         barline_name = ' ' + self.barline.name if self.barline is not None else ''
-        return f'<Bar: {self.id}{clef_name}{key_name}{meter_name}{barline_name}>'
+        return f'<Bar: {self.id}{clef_name.upper()}{key_name}{meter_name}{barline_name}>'
 
     # Implements Bar iteration by returning an iterator for the bar's
     # voices. See: Python's iter() function.
