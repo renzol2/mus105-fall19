@@ -151,6 +151,6 @@ class Score:
         return s
 
     # Prints the score to the terminal. This function has already been written for you.
-    # Do not alter the function, just implement the print_all_reprs() function above.
+    # Do not alter the function, just implement the print_all_reprs() function above
     def print(self):
         print('\n'.join(self.print_all_repr()))
