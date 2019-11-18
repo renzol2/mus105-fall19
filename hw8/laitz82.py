@@ -31,7 +31,7 @@ melodic_checks = {
     # At least 75% of notes must be within the tessitura (central Major
     # 6th of the melody's range). If the check is successful set this value
     # to true, otherwise set it to an empty list [].
-    'MEL_TESSITURA': None,
+    'MEL_TESSITURA': None,  # @TODO
 
     # All pitches must be diatonic. If the check is successful set
     # this value to True, otherwise set it to a list containing the
@@ -43,7 +43,7 @@ melodic_checks = {
 
     # At least 51% of notes must be stepwise.  If the check is successful
     # set this value to True, otherwise set it to an empty list [].
-    'INT_STEPWISE': None,
+    'INT_STEPWISE': None,  # @TODO
 
     # All intervals must be consonant (P4 is consonant). If the check
     # is successful set this value to True, otherwise set it to a list
@@ -51,31 +51,31 @@ melodic_checks = {
     # positions start on 1 not 0. Since this check involves an interval
     # between two notes, use the position of the note to the left
     # of the offending interval.
-    'INT_CONSONANT': None,
+    'INT_CONSONANT': None,  # @TODO
 
     # All intervals must be an octave or less. If the check is successful
     # set this value to True, otherwise set it to a list containing the
     # note positions of each note that fails. Note positions start on 1
     # not 0. Since this check involves an interval between two notes, use
     # the position of the note to the left of the offending interval.
-    'INT_SIMPLE': None,
+    'INT_SIMPLE': None,  # @TODO
 
     # Max number of large leaps is 1. A large leap is defined as a perfect
     # fifth or more. If the check is successful set this value to True,
     # otherwise set it to a list containing the note positions of each
     # interval after the first one.
-    'INT_NUM_LARGE': None,
+    'INT_NUM_LARGE': None,  # @TODO
 
     # Max number of unisons is 1. If the check is successful set this
     # value to True, otherwise set it to a list containing the note
     # positions of each unison after the first one.
-    'INT_NUM_UNISON': None,
+    'INT_NUM_UNISON': None,  # @TODO
 
     # Max number of consecutive intervals moving in same direction is 3
     # (i.e four consecutive notes). If the check is successful set this
     # value to True, otherwise set it to a list containing the note
     # positions of each interval after the third one.
-    'INT_NUM_SAMEDIR': None,
+    'INT_NUM_SAMEDIR': None,  # @TODO
 
     # Leap checks
 
@@ -87,30 +87,30 @@ melodic_checks = {
     # otherwise set it to a list containing the note positions of each interval
     # that fails. To mark a leap spanning a 5th or greater that did not reverse
     # by step, set its note index to be negative.
-    'LEAP_RECOVERY': None,
+    'LEAP_RECOVERY': None,  # @TODO
 
     # Max number of consecutive leaps in a row is 2 (three notes). If the
     # check is successful set this value to True, otherwise set it to a list
     # containing the note positions of each interval after the second leap.
-    'LEAP_NUM_CONSEC': None,
+    'LEAP_NUM_CONSEC': None,  # @TODO
 
     # Shape checks
 
     # Max number of climax notes is 1.  If the check is successful set
     # this value to True, otherwise set it to a list containing the note
     # positions of each climax after the first.
-    'SHAPE_NUM_CLIMAX': None,
+    'SHAPE_NUM_CLIMAX': None,  # @TODO
 
     # Climax note must be located within the center third of melody.  If
     # the check is successful set this value to True, otherwise set it to a
     # list containing the note positions of all climaxes outside it.
-    'SHAPE_ARCHLIKE': None,
+    'SHAPE_ARCHLIKE': None,  # @TODO
 
     # A set of intervals with at least one direct repetition cannot
     # occupy more than 50% of melody. If the check is successful set this
     # value to True, otherwise set it to a list containing the set of
     # interval motions (e.g [2, 2, -3].
-    'SHAPE_UNIQUE': None
+    'SHAPE_UNIQUE': None  # @TODO
 }
 
 
@@ -122,13 +122,12 @@ class MelodyStartNoteRule(Rule):
     # Rule initializer.
     def __init__(self, analysis):
         # Always set the rule's back pointer to its analysis!
-        super().__init__(analysis, "Starting note is in melodic triad")
+        super().__init__(analysis, "Success if: Starting note is in melodic triad")
         # Now initialize whatever attributes your rule defines.
         # ...
         # Need to grab the key from the first bar of the score...
         self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
         self.tonic_triad = {self.key.scale()[0], self.key.scale()[2], self.key.scale()[4]}
-        # print(vars(self.analysis))
         self.starting_note = self.analysis.pitches[0]
         self.success = False
 
@@ -160,7 +159,7 @@ class MelodicCadenceRule(Rule):
         Constructor for the rule.
         :param analysis: Backpointer to the (Melodic) analysis of the rule.
         """
-        super().__init__(analysis, "Ending cadence is 7 - 1 or 2 - 1")
+        super().__init__(analysis, "Success if: Ending cadence is 7 - 1 or 2 - 1")
 
         # grabbing information...
         self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
@@ -176,11 +175,71 @@ class MelodicCadenceRule(Rule):
         self.success = self.cadence == self.cadence2_1 or self.cadence == self.cadence7_1
         self.analysis.results['MEL_CADENCE'] = True if self.success else []
 
-    # Uncomment this code if you want your rule to print information to the
-    # the terminal just after it runs...
     def display(self, index):
         print('-------------------------------------------------------------------')
         print(f"Rule {index+1}: {self.title}")
+        print(self.success)
+
+
+class MelodyWithinTessitura(Rule):
+    """
+    Tests whether the melody is 75% within the tessitura.
+    """
+
+    def __init__(self, analysis):
+        """
+        Constructor for the rule.
+        :param analysis: Backpointer to the (Melodic) analysis of the rule.
+        """
+        super().__init__(analysis, "Success if: Melody is 75% within the tessitura")
+
+        # grabbing information...
+        self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
+        self.scale = self.key.scale()
+        self.success = False
+
+    def apply(self):
+        """
+        Determines whether the rule is met or not.
+        """
+        pitch_is_diatonic = [p.pnum() in self.scale for p in self.analysis.pitches]
+        self.success = not (False in pitch_is_diatonic)
+        self.analysis.results['MEL_DIATONIC'] = True if self.success else \
+            [i + 1 for i in range(len(pitch_is_diatonic)) if pitch_is_diatonic[i] is False]
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+class MelodyDiatonic(Rule):
+    """
+    Tests whether the melody is diatonic.
+    """
+    def __init__(self, analysis):
+        """
+        Constructor for the rule.
+        :param analysis: Backpointer to the (Melodic) analysis of the rule.
+        """
+        super().__init__(analysis, "Success if: Melody is diatonic")
+
+        # grabbing information...
+        self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
+        self.scale = self.key.scale()
+        self.success = False
+
+    def apply(self):
+        """
+        Determines whether the rule is met or not.
+        """
+        pitch_is_diatonic = [p.pnum() in self.scale for p in self.analysis.pitches]
+        self.success = not (False in pitch_is_diatonic)
+        self.analysis.results['MEL_DIATONIC'] = True if self.success else\
+            [i + 1 for i in range(len(pitch_is_diatonic)) if pitch_is_diatonic[i] is False]
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
         print(self.success)
 
 
@@ -203,10 +262,13 @@ class MelodicAnalysis(Analysis):
         self.melody = [t.nmap['P1.1'] for t in self.timepoints]
         self.pitches = [n.pitch for n in self.melody]
         self.intervals = [Interval(n1, n2) for n1, n2 in zip(self.pitches, self.pitches[1:])]
+        self.spans = [i.lines_and_spaces() * i.sign for i in self.intervals]
 
         # Create the list of rules this analysis runs. This example just
         # uses the demo Rule defined above.
-        self.rules = [MelodyStartNoteRule(self), MelodicCadenceRule(self)]
+        self.rules = [MelodyStartNoteRule(self),
+                      MelodicCadenceRule(self),
+                      MelodyDiatonic(self)]
 
     # You can define a cleanup function if you want.
     def cleanup(self):
@@ -230,4 +292,14 @@ class MelodicAnalysis(Analysis):
         self.analyze('P1.1')
         # Return the results to the caller.
         return self.results
+
+"""
+Console testing lines:
+from hw8.score import import_score
+from hw8.laitz82 import *
+s = import_score('hw8/xmls/Laitz_p84A.musicxml')
+m = MelodicAnalysis(s)
+m.submit_to_grading()
+"""
+
 
