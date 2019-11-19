@@ -64,7 +64,7 @@ melodic_checks = {
     # fifth or more. If the check is successful set this value to True,
     # otherwise set it to a list containing the note positions of each
     # interval after the first one.
-    'INT_NUM_LARGE': None,  # @TODO
+    'INT_NUM_LARGE': None,
 
     # Max number of unisons is 1. If the check is successful set this
     # value to True, otherwise set it to a list containing the note
@@ -279,6 +279,7 @@ class IntervalsSimple(Rule):
         print(f"Rule {index + 1}: {self.title}")
         print(self.success)
 
+
 class IntervalsNumLarge(Rule):
     """
     Tests that only one leap (fifth or higher) exists in the melody.
@@ -292,6 +293,25 @@ class IntervalsNumLarge(Rule):
         self.success = is_leap.count(True) <= 1
         self.analysis.results['INT_NUM_LARGE'] = True if self.success else \
             [i + 1 for i in range(len(is_leap)) if is_leap[i] is True][1:]
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+class IntervalsNumUnisons(Rule):
+    """
+    Tests that only one unison exists in the melody.
+    """
+    def __init__(self, analysis):
+        super().__init__(analysis, "True if: only one unison exists in the melody")
+        self.success = False
+
+    def apply(self):
+        is_unison = [i.lines_and_spaces() == 1 for i in self.analysis.intervals]
+        self.success = is_unison.count(True) <= 1
+        self.analysis.results['INT_NUM_UNISON'] = True if self.success else \
+            [i + 1 for i in range(len(is_unison)) if is_unison[i] is True][1:]
 
     def display(self, index):
         print('-------------------------------------------------------------------')
@@ -329,7 +349,8 @@ class MelodicAnalysis(Analysis):
                       IntervalsStepwise(self),
                       IntervalsConsonant(self),
                       IntervalsSimple(self),
-                      IntervalsNumLarge(self)]
+                      IntervalsNumLarge(self),
+                      IntervalsNumUnisons(self)]
 
     # You can define a cleanup function if you want.
     def cleanup(self):
