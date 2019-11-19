@@ -31,7 +31,7 @@ melodic_checks = {
     # At least 75% of notes must be within the tessitura (central Major
     # 6th of the melody's range). If the check is successful set this value
     # to true, otherwise set it to an empty list [].
-    'MEL_TESSITURA': None,  # @TODO
+    'MEL_TESSITURA': None,
 
     # All pitches must be diatonic. If the check is successful set
     # this value to True, otherwise set it to a list containing the
@@ -122,7 +122,7 @@ class MelodyStartNoteRule(Rule):
     # Rule initializer.
     def __init__(self, analysis):
         # Always set the rule's back pointer to its analysis!
-        super().__init__(analysis, "Success if: Starting note is in melodic triad")
+        super().__init__(analysis, "True if: Starting note is in melodic triad")
         # Now initialize whatever attributes your rule defines.
         # ...
         # Need to grab the key from the first bar of the score...
@@ -159,7 +159,7 @@ class MelodicCadenceRule(Rule):
         Constructor for the rule.
         :param analysis: Backpointer to the (Melodic) analysis of the rule.
         """
-        super().__init__(analysis, "Success if: Ending cadence is 7 - 1 or 2 - 1")
+        super().__init__(analysis, "True if: Ending cadence is 7 - 1 or 2 - 1")
 
         # grabbing information...
         self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
@@ -191,26 +191,32 @@ class MelodyWithinTessitura(Rule):
         Constructor for the rule.
         :param analysis: Backpointer to the (Melodic) analysis of the rule.
         """
-        super().__init__(analysis, "Success if: Melody is 75% within the tessitura")
+        super().__init__(analysis, "True if: Melody is 75% within the tessitura")
 
         # grabbing information...
-        self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
-        self.scale = self.key.scale()
+        max_pitch, min_pitch = max(self.analysis.pitches), min(self.analysis.pitches)
+        avg_keynum = (max_pitch.keynum() + min_pitch.keynum()) // 2
+        bottom_tess_keynum, top_tess_keynum = avg_keynum - 5, avg_keynum + 4
+        self.bottom_tess_pitch = Pitch.from_keynum(bottom_tess_keynum)
+        self.top_tess_pitch = Pitch.from_keynum(top_tess_keynum)\
+            if Interval(self.bottom_tess_pitch, Pitch.from_keynum(top_tess_keynum)).is_sixth()\
+            else Pitch.from_keynum(top_tess_keynum, '#')
         self.success = False
 
     def apply(self):
         """
         Determines whether the rule is met or not.
         """
-        pitch_is_diatonic = [p.pnum() in self.scale for p in self.analysis.pitches]
-        self.success = not (False in pitch_is_diatonic)
-        self.analysis.results['MEL_DIATONIC'] = True if self.success else \
-            [i + 1 for i in range(len(pitch_is_diatonic)) if pitch_is_diatonic[i] is False]
+        pitches_within_tessitura = [p for p in self.analysis.pitches
+                                    if self.bottom_tess_pitch <= p <= self.top_tess_pitch]
+        self.success = len(pitches_within_tessitura) >= len(self.analysis.pitches) * 3 / 4
+        self.analysis.results['MEL_TESSITURA'] = True if self.success else []
 
     def display(self, index):
         print('-------------------------------------------------------------------')
         print(f"Rule {index + 1}: {self.title}")
         print(self.success)
+
 
 class MelodyDiatonic(Rule):
     """
@@ -221,7 +227,7 @@ class MelodyDiatonic(Rule):
         Constructor for the rule.
         :param analysis: Backpointer to the (Melodic) analysis of the rule.
         """
-        super().__init__(analysis, "Success if: Melody is diatonic")
+        super().__init__(analysis, "True if: Melody is diatonic")
 
         # grabbing information...
         self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
@@ -268,6 +274,7 @@ class MelodicAnalysis(Analysis):
         # uses the demo Rule defined above.
         self.rules = [MelodyStartNoteRule(self),
                       MelodicCadenceRule(self),
+                      MelodyWithinTessitura(self),
                       MelodyDiatonic(self)]
 
     # You can define a cleanup function if you want.
