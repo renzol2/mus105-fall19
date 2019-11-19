@@ -51,14 +51,14 @@ melodic_checks = {
     # positions start on 1 not 0. Since this check involves an interval
     # between two notes, use the position of the note to the left
     # of the offending interval.
-    'INT_CONSONANT': None,  # @TODO
+    'INT_CONSONANT': None,
 
     # All intervals must be an octave or less. If the check is successful
     # set this value to True, otherwise set it to a list containing the
     # note positions of each note that fails. Note positions start on 1
     # not 0. Since this check involves an interval between two notes, use
     # the position of the note to the left of the offending interval.
-    'INT_SIMPLE': None,  # @TODO
+    'INT_SIMPLE': None,
 
     # Max number of large leaps is 1. A large leap is defined as a perfect
     # fifth or more. If the check is successful set this value to True,
@@ -155,13 +155,7 @@ class MelodicCadenceRule(Rule):
     Tests for a melodic cadence (Ending cadence uses scale degrees 7 - 1 or 2 - 1)
     """
     def __init__(self, analysis):
-        """
-        Constructor for the rule.
-        :param analysis: Backpointer to the (Melodic) analysis of the rule.
-        """
         super().__init__(analysis, "True if: Ending cadence is 7 - 1 or 2 - 1")
-
-        # grabbing information...
         self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
         self.cadence = [p.pnum() for p in self.analysis.pitches[-2:]]
         self.cadence7_1 = [self.key.scale()[-1], self.key.tonic()]
@@ -169,9 +163,6 @@ class MelodicCadenceRule(Rule):
         self.success = False
 
     def apply(self):
-        """
-        Determines whether the rule is met or not.
-        """
         self.success = self.cadence == self.cadence2_1 or self.cadence == self.cadence7_1
         self.analysis.results['MEL_CADENCE'] = True if self.success else []
 
@@ -185,15 +176,8 @@ class MelodyWithinTessitura(Rule):
     """
     Tests whether the melody is 75% within the tessitura.
     """
-
     def __init__(self, analysis):
-        """
-        Constructor for the rule.
-        :param analysis: Backpointer to the (Melodic) analysis of the rule.
-        """
         super().__init__(analysis, "True if: Melody is 75% within the tessitura")
-
-        # grabbing information...
         max_pitch, min_pitch = max(self.analysis.pitches), min(self.analysis.pitches)
         avg_keynum = (max_pitch.keynum() + min_pitch.keynum()) // 2
         bottom_tess_keynum, top_tess_keynum = avg_keynum - 5, avg_keynum + 4
@@ -204,9 +188,6 @@ class MelodyWithinTessitura(Rule):
         self.success = False
 
     def apply(self):
-        """
-        Determines whether the rule is met or not.
-        """
         pitches_within_tessitura = [p for p in self.analysis.pitches
                                     if self.bottom_tess_pitch <= p <= self.top_tess_pitch]
         self.success = len(pitches_within_tessitura) >= len(self.analysis.pitches) * 3 / 4
@@ -223,21 +204,12 @@ class MelodyDiatonic(Rule):
     Tests whether the melody is diatonic.
     """
     def __init__(self, analysis):
-        """
-        Constructor for the rule.
-        :param analysis: Backpointer to the (Melodic) analysis of the rule.
-        """
         super().__init__(analysis, "True if: Melody is diatonic")
-
-        # grabbing information...
         self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
         self.scale = self.key.scale()
         self.success = False
 
     def apply(self):
-        """
-        Determines whether the rule is met or not.
-        """
         pitch_is_diatonic = [p.pnum() in self.scale for p in self.analysis.pitches]
         self.success = not (False in pitch_is_diatonic)
         self.analysis.results['MEL_DIATONIC'] = True if self.success else\
@@ -248,27 +220,78 @@ class MelodyDiatonic(Rule):
         print(f"Rule {index + 1}: {self.title}")
         print(self.success)
 
+
 class IntervalsStepwise(Rule):
     """
     Tests whether at least 51% of the intervals are stepwise.
     """
     def __init__(self, analysis):
-        """
-        Constructor for the rule.
-        :param analysis: Backpointer to the (Melodic) analysis of the rule.
-        """
         super().__init__(analysis, "True if: at least 51% of the intervals are stepwise")
-
-        # grabbing information...
         self.success = False
 
     def apply(self):
-        """
-        Determines whether the rule is met or not.
-        """
         stepwise_intervals = [span for span in self.analysis.spans if abs(span) == 2]
         self.success = len(stepwise_intervals) > len(self.analysis.spans) * 0.51
         self.analysis.results['INT_STEPWISE'] = True if self.success else []
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+
+class IntervalsConsonant(Rule):
+    """
+    Tests whether all the intervals are consonant.
+    """
+    def __init__(self, analysis):
+        super().__init__(analysis, "True if: all the intervals are consonant")
+        self.success = False
+
+    def apply(self):
+        is_consonant = [i.is_consonant() or i.lines_and_spaces() == 2 for i in self.analysis.intervals]
+        self.success = not (False in is_consonant)
+        self.analysis.results['INT_CONSONANT'] = True if self.success else \
+            [i + 1 for i in range(len(is_consonant)) if is_consonant[i] is False]
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+
+class IntervalsSimple(Rule):
+    """
+    Tests whether all the intervals are simple.
+    """
+    def __init__(self, analysis):
+        super().__init__(analysis, "True if: all the intervals are simple")
+        self.success = False
+
+    def apply(self):
+        is_simple = [i.is_simple() for i in self.analysis.intervals]
+        self.success = not (False in is_simple)
+        self.analysis.results['INT_SIMPLE'] = True if self.success else \
+            [i + 1 for i in range(len(is_simple)) if is_simple[i] is False]
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+class IntervalsNumLarge(Rule):
+    """
+    Tests that only one leap (fifth or higher) exists in the melody.
+    """
+    def __init__(self, analysis):
+        super().__init__(analysis, "True if: only one leap exists in the melody")
+        self.success = False
+
+    def apply(self):
+        is_leap = [i >= Interval('P5') for i in self.analysis.intervals]
+        self.success = is_leap.count(True) <= 1
+        self.analysis.results['INT_NUM_LARGE'] = True if self.success else \
+            [i + 1 for i in range(len(is_leap)) if is_leap[i] is True][1:]
 
     def display(self, index):
         print('-------------------------------------------------------------------')
@@ -303,7 +326,10 @@ class MelodicAnalysis(Analysis):
                       MelodicCadenceRule(self),
                       MelodyWithinTessitura(self),
                       MelodyDiatonic(self),
-                      IntervalsStepwise(self)]
+                      IntervalsStepwise(self),
+                      IntervalsConsonant(self),
+                      IntervalsSimple(self),
+                      IntervalsNumLarge(self)]
 
     # You can define a cleanup function if you want.
     def cleanup(self):
@@ -328,13 +354,16 @@ class MelodicAnalysis(Analysis):
         # Return the results to the caller.
         return self.results
 
+
 """
 Console testing lines:
+
 from hw8.score import import_score
 from hw8.laitz82 import *
 s = import_score('hw8/xmls/Laitz_p84A.musicxml')
 m = MelodicAnalysis(s)
 m.submit_to_grading()
+
 """
 
 
