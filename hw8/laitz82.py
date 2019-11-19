@@ -43,7 +43,7 @@ melodic_checks = {
 
     # At least 51% of notes must be stepwise.  If the check is successful
     # set this value to True, otherwise set it to an empty list [].
-    'INT_STEPWISE': None,  # @TODO
+    'INT_STEPWISE': None,
 
     # All intervals must be consonant (P4 is consonant). If the check
     # is successful set this value to True, otherwise set it to a list
@@ -248,6 +248,33 @@ class MelodyDiatonic(Rule):
         print(f"Rule {index + 1}: {self.title}")
         print(self.success)
 
+class IntervalsStepwise(Rule):
+    """
+    Tests whether at least 51% of the intervals are stepwise.
+    """
+    def __init__(self, analysis):
+        """
+        Constructor for the rule.
+        :param analysis: Backpointer to the (Melodic) analysis of the rule.
+        """
+        super().__init__(analysis, "True if: at least 51% of the intervals are stepwise")
+
+        # grabbing information...
+        self.success = False
+
+    def apply(self):
+        """
+        Determines whether the rule is met or not.
+        """
+        stepwise_intervals = [span for span in self.analysis.spans if abs(span) == 2]
+        self.success = len(stepwise_intervals) > len(self.analysis.spans) * 0.51
+        self.analysis.results['INT_STEPWISE'] = True if self.success else []
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
 
 # A class representing a melodic analysis of a voice in a score. The class
 # has three attributes to being with, you will likely add more attributes.
@@ -275,7 +302,8 @@ class MelodicAnalysis(Analysis):
         self.rules = [MelodyStartNoteRule(self),
                       MelodicCadenceRule(self),
                       MelodyWithinTessitura(self),
-                      MelodyDiatonic(self)]
+                      MelodyDiatonic(self),
+                      IntervalsStepwise(self)]
 
     # You can define a cleanup function if you want.
     def cleanup(self):
