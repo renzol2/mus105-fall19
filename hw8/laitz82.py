@@ -69,13 +69,13 @@ melodic_checks = {
     # Max number of unisons is 1. If the check is successful set this
     # value to True, otherwise set it to a list containing the note
     # positions of each unison after the first one.
-    'INT_NUM_UNISON': None,  # @TODO
+    'INT_NUM_UNISON': None,
 
     # Max number of consecutive intervals moving in same direction is 3
     # (i.e four consecutive notes). If the check is successful set this
     # value to True, otherwise set it to a list containing the note
     # positions of each interval after the third one.
-    'INT_NUM_SAMEDIR': None,  # @TODO
+    'INT_NUM_SAMEDIR': None,
 
     # Leap checks
 
@@ -299,6 +299,7 @@ class IntervalsNumLarge(Rule):
         print(f"Rule {index + 1}: {self.title}")
         print(self.success)
 
+
 class IntervalsNumUnisons(Rule):
     """
     Tests that only one unison exists in the melody.
@@ -312,6 +313,38 @@ class IntervalsNumUnisons(Rule):
         self.success = is_unison.count(True) <= 1
         self.analysis.results['INT_NUM_UNISON'] = True if self.success else \
             [i + 1 for i in range(len(is_unison)) if is_unison[i] is True][1:]
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+class IntervalsSameDirection(Rule):
+    """
+    Tests that no more than 4 notes go in the same direction (no more than 3 consecutive similarly signed intervals).
+    """
+    def __init__(self, analysis):
+        super().__init__(analysis, "True if: no more than 3 consecutive similarly signed intervals")
+        self.success = False
+
+    def apply(self):
+        # iterate through every interval
+        # if first interval or current interval has different sign from last, reset counter and assign testing sign
+        # if current interval has same sign from last, add to counter
+        #  if counter is 4 or more, add position to separate list
+        consecutive_intervals = []
+        current_sign = 0
+        counter = 0
+        for i in range(len(self.analysis.intervals)):
+            if current_sign == 0 or self.analysis.intervals[i].sign != current_sign:
+                counter = 1
+                current_sign = self.analysis.intervals[i].sign
+            elif self.analysis.intervals[i].sign == current_sign:
+                counter += 1
+                if counter > 3:
+                    consecutive_intervals.append(i + 2)  # not really sure why it's +2, but that's what works!
+        self.success = len(consecutive_intervals) == 0
+        self.analysis.results['INT_NUM_SAMEDIR'] = True if self.success else consecutive_intervals
 
     def display(self, index):
         print('-------------------------------------------------------------------')
@@ -350,7 +383,8 @@ class MelodicAnalysis(Analysis):
                       IntervalsConsonant(self),
                       IntervalsSimple(self),
                       IntervalsNumLarge(self),
-                      IntervalsNumUnisons(self)]
+                      IntervalsNumUnisons(self),
+                      IntervalsSameDirection(self)]
 
     # You can define a cleanup function if you want.
     def cleanup(self):
@@ -381,7 +415,7 @@ Console testing lines:
 
 from hw8.score import import_score
 from hw8.laitz82 import *
-s = import_score('hw8/xmls/Laitz_p84A.musicxml')
+s = import_score('hw8/xmls/Laitz_p84E.musicxml')
 m = MelodicAnalysis(s)
 m.submit_to_grading()
 
