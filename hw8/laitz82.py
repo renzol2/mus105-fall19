@@ -104,7 +104,7 @@ melodic_checks = {
     # Climax note must be located within the center third of melody.  If
     # the check is successful set this value to True, otherwise set it to a
     # list containing the note positions of all climaxes outside it.
-    'SHAPE_ARCHLIKE': None,  # @TODO
+    'SHAPE_ARCHLIKE': None,
 
     # A set of intervals with at least one direct repetition cannot
     # occupy more than 50% of melody. If the check is successful set this
@@ -353,6 +353,37 @@ class IntervalsSameDirection(Rule):
         print(self.success)
 
 
+class LeapNumberConsecutive(Rule):
+    """
+    Tests that there are no more than 2 consecutive leaps in a row within the melody.
+    """
+    def __init__(self, analysis):
+        super().__init__(analysis, "True if: no more than 2 consecutive leaps in a row are in the melody.")
+        self.success = False
+
+    def apply(self):
+        # iterate through every span
+        # if span is greater than 2, add to counter
+        #   if counter > 2, add to list
+        # if span is 2 or less, reset counter
+        consecutive_leaps = []
+        counter = 0
+        for i in range(len(self.analysis.spans)):
+            if abs(self.analysis.spans[i]) <= 2:
+                counter = 0
+            else:
+                counter += 1
+                if counter > 2:
+                    consecutive_leaps.append(i + 2)  # not really sure why it's +2, but that's what works!
+        self.success = len(consecutive_leaps) == 0
+        self.analysis.results['LEAP_NUM_CONSEC'] = True if self.success else consecutive_leaps
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+
 class ShapeNumberClimax(Rule):
     """
     Tests that only one climax note exists.
@@ -429,6 +460,7 @@ class MelodicAnalysis(Analysis):
                       IntervalsNumLarge(self),
                       IntervalsNumUnisons(self),
                       IntervalsSameDirection(self),
+                      LeapNumberConsecutive(self),
                       ShapeNumberClimax(self),
                       ShapeArchlike(self)]
 
@@ -466,5 +498,3 @@ m = MelodicAnalysis(s)
 m.submit_to_grading()
 
 """
-
-
