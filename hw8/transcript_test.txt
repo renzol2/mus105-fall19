@@ -5,7 +5,7 @@
       [  input = d1=MelodicAnalysis(s1).submit_to_grading()  ]  your_output = None  desired_output = None  (2/2)
       [  input = d1['MEL_START_NOTE']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d1['MEL_CADENCE']  ]  your_output = []  desired_output = []  (2/2)
-      [  input = d1['MEL_TESSITURA']  ]  your_output = None  desired_output = []  (0/2)
+      [  input = d1['MEL_TESSITURA']  ]  your_output = True  desired_output = []  (0/2)
       [  input = d1['MEL_DIATONIC']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d1['INT_STEPWISE']  ]  your_output = None  desired_output = True  (0/2)
       [  input = d1['INT_CONSONANT']  ]  your_output = None  desired_output = True  (0/2)
@@ -22,7 +22,7 @@
       [  input = d2=MelodicAnalysis(s2).submit_to_grading()  ]  your_output = None  desired_output = None  (2/2)
       [  input = d2['MEL_START_NOTE']  ]  your_output = []  desired_output = []  (2/2)
       [  input = d2['MEL_CADENCE']  ]  your_output = []  desired_output = []  (2/2)
-      [  input = d2['MEL_TESSITURA']  ]  your_output = None  desired_output = True  (0/2)
+      [  input = d2['MEL_TESSITURA']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d2['MEL_DIATONIC']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d2['INT_STEPWISE']  ]  your_output = None  desired_output = True  (0/2)
       [  input = d2['INT_CONSONANT']  ]  your_output = None  desired_output = True  (0/2)
@@ -39,7 +39,7 @@
       [  input = d3=MelodicAnalysis(s3).submit_to_grading()  ]  your_output = None  desired_output = None  (2/2)
       [  input = d3['MEL_START_NOTE']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d3['MEL_CADENCE']  ]  your_output = True  desired_output = True  (2/2)
-      [  input = d3['MEL_TESSITURA']  ]  your_output = None  desired_output = True  (0/2)
+      [  input = d3['MEL_TESSITURA']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d3['MEL_DIATONIC']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d3['INT_STEPWISE']  ]  your_output = None  desired_output = []  (0/2)
       [  input = d3['INT_CONSONANT']  ]  your_output = None  desired_output = True  (0/2)
@@ -56,7 +56,7 @@
       [  input = d4=MelodicAnalysis(s4).submit_to_grading()  ]  your_output = None  desired_output = None  (2/2)
       [  input = d4['MEL_START_NOTE']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d4['MEL_CADENCE']  ]  your_output = True  desired_output = True  (2/2)
-      [  input = d4['MEL_TESSITURA']  ]  your_output = None  desired_output = True  (0/2)
+      [  input = d4['MEL_TESSITURA']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d4['MEL_DIATONIC']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d4['INT_STEPWISE']  ]  your_output = None  desired_output = True  (0/2)
       [  input = d4['INT_CONSONANT']  ]  your_output = None  desired_output = [13]  (0/2)
@@ -73,7 +73,7 @@
       [  input = d5=MelodicAnalysis(s5).submit_to_grading()  ]  your_output = None  desired_output = None  (2/2)
       [  input = d5['MEL_START_NOTE']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d5['MEL_CADENCE']  ]  your_output = True  desired_output = True  (2/2)
-      [  input = d5['MEL_TESSITURA']  ]  your_output = None  desired_output = True  (0/2)
+      [  input = d5['MEL_TESSITURA']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d5['MEL_DIATONIC']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d5['INT_STEPWISE']  ]  your_output = None  desired_output = True  (0/2)
       [  input = d5['INT_CONSONANT']  ]  your_output = None  desired_output = True  (0/2)
@@ -90,7 +90,7 @@
       [  input = d6=MelodicAnalysis(s6).submit_to_grading()  ]  your_output = None  desired_output = None  (2/2)
       [  input = d6['MEL_START_NOTE']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d6['MEL_CADENCE']  ]  your_output = []  desired_output = []  (2/2)
-      [  input = d6['MEL_TESSITURA']  ]  your_output = None  desired_output = True  (0/2)
+      [  input = d6['MEL_TESSITURA']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d6['MEL_DIATONIC']  ]  your_output = [2]  desired_output = True  (0/2)
       [  input = d6['INT_STEPWISE']  ]  your_output = None  desired_output = True  (0/2)
       [  input = d6['INT_CONSONANT']  ]  your_output = None  desired_output = [1]  (0/2)
@@ -107,7 +107,7 @@
       [  input = d7=MelodicAnalysis(s7).submit_to_grading()  ]  your_output = None  desired_output = None  (2/2)
       [  input = d7['MEL_START_NOTE']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d7['MEL_CADENCE']  ]  your_output = True  desired_output = True  (2/2)
-      [  input = d7['MEL_TESSITURA']  ]  your_output = None  desired_output = True  (0/2)
+      [  input = d7['MEL_TESSITURA']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d7['MEL_DIATONIC']  ]  your_output = True  desired_output = True  (2/2)
       [  input = d7['INT_STEPWISE']  ]  your_output = None  desired_output = True  (0/2)
       [  input = d7['INT_CONSONANT']  ]  your_output = None  desired_output = True  (0/2)
@@ -120,10 +120,10 @@
       [  input = d7['SHAPE_NUM_CLIMAX']  ]  your_output = None  desired_output = True  (0/2)
       [  input = d7['SHAPE_ARCHLIKE']  ]  your_output = None  desired_output = True  (0/2)
       [  input = d7['SHAPE_UNIQUE']  ]  your_output = None  desired_output = True  (0/2)
-Total raw score: (69/239)
+Total raw score: (81/239)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 29
 Extra credit (if applicable): 0
-Adjusted score (Final): 40/210
+Adjusted score (Final): 52/210
 
