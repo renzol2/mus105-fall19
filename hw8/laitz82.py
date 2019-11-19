@@ -92,7 +92,7 @@ melodic_checks = {
     # Max number of consecutive leaps in a row is 2 (three notes). If the
     # check is successful set this value to True, otherwise set it to a list
     # containing the note positions of each interval after the second leap.
-    'LEAP_NUM_CONSEC': None,  # @TODO
+    'LEAP_NUM_CONSEC': None,
 
     # Shape checks
 
@@ -374,7 +374,7 @@ class LeapNumberConsecutive(Rule):
             else:
                 counter += 1
                 if counter > 2:
-                    consecutive_leaps.append(i + 2)  # not really sure why it's +2, but that's what works!
+                    consecutive_leaps.append(i + 1)
         self.success = len(consecutive_leaps) == 0
         self.analysis.results['LEAP_NUM_CONSEC'] = True if self.success else consecutive_leaps
 
