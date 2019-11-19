@@ -99,7 +99,7 @@ melodic_checks = {
     # Max number of climax notes is 1.  If the check is successful set
     # this value to True, otherwise set it to a list containing the note
     # positions of each climax after the first.
-    'SHAPE_NUM_CLIMAX': None,  # @TODO
+    'SHAPE_NUM_CLIMAX': None,
 
     # Climax note must be located within the center third of melody.  If
     # the check is successful set this value to True, otherwise set it to a
@@ -319,6 +319,7 @@ class IntervalsNumUnisons(Rule):
         print(f"Rule {index + 1}: {self.title}")
         print(self.success)
 
+
 class IntervalsSameDirection(Rule):
     """
     Tests that no more than 4 notes go in the same direction (no more than 3 consecutive similarly signed intervals).
@@ -345,6 +346,49 @@ class IntervalsSameDirection(Rule):
                     consecutive_intervals.append(i + 2)  # not really sure why it's +2, but that's what works!
         self.success = len(consecutive_intervals) == 0
         self.analysis.results['INT_NUM_SAMEDIR'] = True if self.success else consecutive_intervals
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+
+class ShapeNumberClimax(Rule):
+    """
+    Tests that only one climax note exists.
+    """
+    def __init__(self, analysis):
+        super().__init__(analysis, "True if: only one climax note exists")
+        self.climax_note = max(self.analysis.pitches)
+        self.success = False
+
+    def apply(self):
+        self.success = self.analysis.pitches.count(self.climax_note) == 1
+        self.analysis.results['SHAPE_NUM_CLIMAX'] = True if self.success else\
+            [i + 1 for i in range(len(self.analysis.pitches)) if self.analysis.pitches[i] == self.climax_note][1:]
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+
+class ShapeArchlike(Rule):
+    """
+    Tests that the climax appears in the middle third of the melody.
+    """
+    def __init__(self, analysis):
+        super().__init__(analysis, "True if: the climax appears in the middle third of the melody")
+        self.climax_note = max(self.analysis.pitches)
+        self.success = False
+
+    def apply(self):
+        middle_third_range = (len(self.analysis.pitches) // 3, 2 * len(self.analysis.pitches) // 3)
+        self.success = middle_third_range[0] <= self.analysis.pitches.index(self.climax_note) <= middle_third_range[1]
+        self.analysis.results['SHAPE_ARCHLIKE'] = True if self.success else\
+            [i + 1 for i in range(len(self.analysis.pitches))
+             if self.analysis.pitches[i] == self.climax_note
+             and (i < middle_third_range[0] or i > middle_third_range[1])]
 
     def display(self, index):
         print('-------------------------------------------------------------------')
@@ -384,7 +428,9 @@ class MelodicAnalysis(Analysis):
                       IntervalsSimple(self),
                       IntervalsNumLarge(self),
                       IntervalsNumUnisons(self),
-                      IntervalsSameDirection(self)]
+                      IntervalsSameDirection(self),
+                      ShapeNumberClimax(self),
+                      ShapeArchlike(self)]
 
     # You can define a cleanup function if you want.
     def cleanup(self):
