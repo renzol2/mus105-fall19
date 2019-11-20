@@ -86,7 +86,7 @@ melodic_checks = {
     # otherwise set it to a list containing the note positions of each interval
     # that fails. To mark a leap spanning a 5th or greater that did not reverse
     # by step, set its note index to be negative.
-    'LEAP_RECOVERY': None,  # @TODO
+    'LEAP_RECOVERY': None,
 
     # Max number of consecutive leaps in a row is 2 (three notes). If the
     # check is successful set this value to True, otherwise set it to a list
@@ -108,7 +108,7 @@ melodic_checks = {
     # A set of intervals with at least one direct repetition cannot
     # occupy more than 50% of melody. If the check is successful set this
     # value to True, otherwise set it to a list containing the set of
-    # interval motions (e.g [2, 2, -3].
+    # interval motions (e.g [2, 2, -3].)
     'SHAPE_UNIQUE': None  # @TODO
 }
 
@@ -382,51 +382,25 @@ class LeapRecovery(Rule):
         self.success = True
 
     def apply(self):
-        # failed = []
-        # have temp variable that holds the span, temp = 0
-        # iterate through every span
-        # if temp == 0,
-        #   temp = span
-        # if temp is 2 or less:
-        #   do nothing, temp set to 0
-        # else if temp > 2
-        #   if temp == 3:
-        #       if next span exists:
-        #           if next span == temp:
-        #               temp = 5
-        #               continue
-        #   if temp == 4
-        #       if next span exists:
-        #           if next span has same sign:
-        #               success = False
-        #               add i to failed
-        #       else:
-        #           success = False
-        #           add i to failed
-        #   if temp > 4
-        #       if next span exists:
-        #           if next span has same sign or is not 2:
-        #               success = False
-        #               add i to failed
-        #       else:
-        #           success = False
-        #           add i to failed
+        # clean this up when you're done lol
         failed_leaps = []
         leap = 0
         for i in range(len(self.analysis.spans)):
-            if leap == 0:
+            if leap == 0:  # only not 0 if there are two consecutive, same direction thirds
                 leap = self.analysis.spans[i]
-            if abs(leap) <= 2:
+            if abs(leap) <= 2:  # stepwise, not a leap: ignore and move on
                 leap = 0
-            else:
+            else:  # interval is a leap, inspect for leap recovery
+                # if span is a third and it's not the last span:
                 if abs(leap) == 3 and i != len(self.analysis.spans) - 1:
                     if self.analysis.spans[i + 1] == leap:
-                        leap = 5 * (leap // abs(leap))
+                        leap = 5 * (leap // abs(leap))  # if the next span is a third in the same dir, treat as a fifth
                     else:
                         leap = 0
                 elif abs(leap) == 4:
                     if i != len(self.analysis.spans) - 1:
-                        if (self.analysis.spans[i + 1] > 0 and leap > 0) or (self.analysis.spans[i + 1] < 0 and leap < 0):
+                        if (self.analysis.spans[i + 1] > 0 and leap > 0)\
+                                or (self.analysis.spans[i + 1] < 0 and leap < 0):  # if both spans go the same dir,fail
                             self.success = False
                             failed_leaps.append(i + 2)
                     else:
@@ -435,7 +409,9 @@ class LeapRecovery(Rule):
                     leap = 0
                 elif abs(leap) > 4:
                     if i != len(self.analysis.spans) - 1:
-                        if ((self.analysis.spans[i + 1] > 0 and leap > 0) or (self.analysis.spans[i + 1] < 0 and leap < 0))\
+                        # if both spans go the same dir OR if the next span is not a second, fails
+                        if ((self.analysis.spans[i + 1] > 0 and leap > 0)
+                            or (self.analysis.spans[i + 1] < 0 and leap < 0))\
                                 or abs(self.analysis.spans[i + 1]) != 2:
                             self.success = False
                             failed_leaps.append(-(i + 2))
@@ -509,7 +485,6 @@ class ShapeArchlike(Rule):
     """
     Tests that the climax appears in the middle third of the melody.
     """
-
     def __init__(self, analysis):
         super().__init__(analysis, "True if: the climax appears in the middle third of the melody")
         self.climax_note = max(self.analysis.pitches)
@@ -522,6 +497,42 @@ class ShapeArchlike(Rule):
             [i + 1 for i in range(len(self.analysis.pitches))
              if self.analysis.pitches[i] == self.climax_note
              and (i < middle_third_range[0] or i > middle_third_range[1])]
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+
+class ShapeUnique(Rule):
+    """
+    Tests that the shape is unique:
+
+    A set of intervals with at least one direct repetition cannot
+    occupy more than 50% of melody. If the check is successful set this
+    value to True, otherwise set it to a list containing the set of
+    interval motions (e.g [2, 2, -3].)
+    """
+    def __init__(self, analysis):
+        super().__init__(analysis, "True if: the melody's shape is unique")
+        self.success = True
+
+    def apply(self):
+        repeated_pattern = []
+        # check patterns up to size // 2
+        for size in range(1, len(self.analysis.spans) // 2):
+            patterns = [self.analysis.spans[i:i + size] for i in range(len(self.analysis.spans) + 1 - size)]
+            print(patterns)
+            repeats = set([tuple(p) for p in patterns if patterns.count(p) * size > len(patterns) // 2])
+            if len(repeats) > 0:
+                # we want the biggest pattern, so clear previous patterns if a bigger one is found
+                repeated_pattern.clear()
+                self.success = False
+                for tup in repeats:
+                    for span in tup:
+                        repeated_pattern.append(span)
+                    break  # only want the first identified pattern
+        self.analysis.results['SHAPE_UNIQUE'] = True if self.success else repeated_pattern
 
     def display(self, index):
         print('-------------------------------------------------------------------')
@@ -565,7 +576,8 @@ class MelodicAnalysis(Analysis):
                       LeapRecovery(self),
                       LeapNumberConsecutive(self),
                       ShapeNumberClimax(self),
-                      ShapeArchlike(self)]
+                      ShapeArchlike(self),
+                      ShapeUnique(self)]
 
     # You can define a cleanup function if you want.
     def cleanup(self):
@@ -596,7 +608,7 @@ Console testing lines:
 
 from hw8.score import import_score
 from hw8.laitz82 import *
-s = import_score('hw8/xmls/Laitz_p84A.musicxml')
+s = import_score('hw8/xmls/Laitz_p84D.musicxml')
 m = MelodicAnalysis(s)
 m.submit_to_grading()
 
