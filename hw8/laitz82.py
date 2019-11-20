@@ -109,7 +109,7 @@ melodic_checks = {
     # occupy more than 50% of melody. If the check is successful set this
     # value to True, otherwise set it to a list containing the set of
     # interval motions (e.g [2, 2, -3].)
-    'SHAPE_UNIQUE': None  # @TODO
+    'SHAPE_UNIQUE': None
 }
 
 
@@ -384,7 +384,7 @@ class LeapRecovery(Rule):
     def apply(self):
         # clean this up when you're done lol
         failed_leaps = []
-        leap = 0
+        leap = 0  # temporary variable
         for i in range(len(self.analysis.spans)):
             if leap == 0:  # only not 0 if there are two consecutive, same direction thirds
                 leap = self.analysis.spans[i]
@@ -402,7 +402,7 @@ class LeapRecovery(Rule):
                         if (self.analysis.spans[i + 1] > 0 and leap > 0)\
                                 or (self.analysis.spans[i + 1] < 0 and leap < 0):  # if both spans go the same dir,fail
                             self.success = False
-                            failed_leaps.append(i + 2)
+                            failed_leaps.append(i + 2)  # adding 2 because we want the ending note of the interval
                     else:
                         self.success = False
                         failed_leaps.append(i + 2)
@@ -522,9 +522,7 @@ class ShapeUnique(Rule):
         # check patterns up to size // 2
         for size in range(1, len(self.analysis.spans) // 2):
             patterns = [self.analysis.spans[i:i + size] for i in range(0, len(self.analysis.spans) + 1 - size, size)]
-            print(patterns)
             repeats = set([tuple(p) for p in patterns if patterns.count(p) * size > len(self.analysis.spans) // 2])
-            print(repeats)
             if len(repeats) > 0:
                 self.success = False
                 for tup in repeats:
