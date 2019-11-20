@@ -6,7 +6,6 @@ from .score import Pitch, Interval, Mode, import_score
 from .theory import Analysis, Rule, timepoints
 from copy import copy
 
-
 # A template dictionary whose keys represent analytical checks performed on
 # a melody. Your analysis will copy this dictionary into its self.results
 # attribute and then run its rules to update the value of each check in the
@@ -15,7 +14,7 @@ from copy import copy
 # to True and if its not successful it will set it to a list of zero or more
 # values as described below.
 melodic_checks = {
-    
+
     # Pitch checks
 
     # Starting note must be tonic, mediant, or dominant. If the melody
@@ -144,7 +143,7 @@ class MelodyStartNoteRule(Rule):
     # the terminal just after it runs...
     def display(self, index):
         print('-------------------------------------------------------------------')
-        print(f"Rule {index+1}: {self.title}")
+        print(f"Rule {index + 1}: {self.title}")
         print(self.success)
 
 
@@ -154,6 +153,7 @@ class MelodicCadenceRule(Rule):
     """
     Tests for a melodic cadence (Ending cadence uses scale degrees 7 - 1 or 2 - 1)
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: Ending cadence is 7 - 1 or 2 - 1")
         self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
@@ -168,7 +168,7 @@ class MelodicCadenceRule(Rule):
 
     def display(self, index):
         print('-------------------------------------------------------------------')
-        print(f"Rule {index+1}: {self.title}")
+        print(f"Rule {index + 1}: {self.title}")
         print(self.success)
 
 
@@ -176,14 +176,15 @@ class MelodyWithinTessitura(Rule):
     """
     Tests whether the melody is 75% within the tessitura.
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: Melody is 75% within the tessitura")
         max_pitch, min_pitch = max(self.analysis.pitches), min(self.analysis.pitches)
         avg_keynum = (max_pitch.keynum() + min_pitch.keynum()) // 2
         bottom_tess_keynum, top_tess_keynum = avg_keynum - 5, avg_keynum + 4
         self.bottom_tess_pitch = Pitch.from_keynum(bottom_tess_keynum)
-        self.top_tess_pitch = Pitch.from_keynum(top_tess_keynum)\
-            if Interval(self.bottom_tess_pitch, Pitch.from_keynum(top_tess_keynum)).is_sixth()\
+        self.top_tess_pitch = Pitch.from_keynum(top_tess_keynum) \
+            if Interval(self.bottom_tess_pitch, Pitch.from_keynum(top_tess_keynum)).is_sixth() \
             else Pitch.from_keynum(top_tess_keynum, '#')
         self.success = False
 
@@ -203,6 +204,7 @@ class MelodyDiatonic(Rule):
     """
     Tests whether the melody is diatonic.
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: Melody is diatonic")
         self.key = self.analysis.score.parts[0].staffs[0].bars[0].key
@@ -210,13 +212,11 @@ class MelodyDiatonic(Rule):
         self.success = False
 
     def apply(self):
-        scale = self.scale + [Interval('-m2').transpose(self.key.tonic())]\
+        scale = self.scale + [Interval('-m2').transpose(self.key.tonic())] \
             if self.key.mode == Mode.MINOR else self.scale  # adding sharp 7 for harmonic minor
-        print(self.analysis.pitches)
-        print(scale)
         pitch_is_diatonic = [p.pnum() in scale for p in self.analysis.pitches]
         self.success = not (False in pitch_is_diatonic)
-        self.analysis.results['MEL_DIATONIC'] = True if self.success else\
+        self.analysis.results['MEL_DIATONIC'] = True if self.success else \
             [i + 1 for i in range(len(pitch_is_diatonic)) if pitch_is_diatonic[i] is False]
 
     def display(self, index):
@@ -229,6 +229,7 @@ class IntervalsStepwise(Rule):
     """
     Tests whether at least 51% of the intervals are stepwise.
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: at least 51% of the intervals are stepwise")
         self.success = False
@@ -248,6 +249,7 @@ class IntervalsConsonant(Rule):
     """
     Tests whether all the intervals are consonant.
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: all the intervals are consonant")
         self.success = False
@@ -268,6 +270,7 @@ class IntervalsSimple(Rule):
     """
     Tests whether all the intervals are simple.
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: all the intervals are simple")
         self.success = False
@@ -288,6 +291,7 @@ class IntervalsNumLarge(Rule):
     """
     Tests that only one leap (fifth or higher) exists in the melody.
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: only one leap exists in the melody")
         self.success = False
@@ -308,6 +312,7 @@ class IntervalsNumUnisons(Rule):
     """
     Tests that only one unison exists in the melody.
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: only one unison exists in the melody")
         self.success = False
@@ -328,6 +333,7 @@ class IntervalsSameDirection(Rule):
     """
     Tests that no more than 4 notes go in the same direction (no more than 3 consecutive similarly signed intervals).
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: no more than 3 consecutive similarly signed intervals")
         self.success = False
@@ -357,10 +363,100 @@ class IntervalsSameDirection(Rule):
         print(self.success)
 
 
+class LeapRecovery(Rule):
+    """
+    Tests for leap recovery:
+
+    Leap of 4th must reverse direction, leap of 5th or more must reverse
+    by step. The leap can be the result of a single interval or by multiple
+    consecutive leaps in the same direction. For multiple leaps in the same
+    direction, the total size of the leap should be the sum of all the leaps
+    in the same direction. If the check is successful set this value to True,
+    otherwise set it to a list containing the note positions of each interval
+    that fails. To mark a leap spanning a 5th or greater that did not reverse
+    by step, set its note index to be negative.
+    """
+
+    def __init__(self, analysis):
+        super().__init__(analysis, "True if: leap recovery is followed")
+        self.success = True
+
+    def apply(self):
+        # failed = []
+        # have temp variable that holds the span, temp = 0
+        # iterate through every span
+        # if temp == 0,
+        #   temp = span
+        # if temp is 2 or less:
+        #   do nothing, temp set to 0
+        # else if temp > 2
+        #   if temp == 3:
+        #       if next span exists:
+        #           if next span == temp:
+        #               temp = 5
+        #               continue
+        #   if temp == 4
+        #       if next span exists:
+        #           if next span has same sign:
+        #               success = False
+        #               add i to failed
+        #       else:
+        #           success = False
+        #           add i to failed
+        #   if temp > 4
+        #       if next span exists:
+        #           if next span has same sign or is not 2:
+        #               success = False
+        #               add i to failed
+        #       else:
+        #           success = False
+        #           add i to failed
+        failed_leaps = []
+        leap = 0
+        for i in range(len(self.analysis.spans)):
+            if leap == 0:
+                leap = self.analysis.spans[i]
+            if abs(leap) <= 2:
+                leap = 0
+            else:
+                if abs(leap) == 3 and i != len(self.analysis.spans) - 1:
+                    if self.analysis.spans[i + 1] == leap:
+                        leap = 5 * (leap // abs(leap))
+                    else:
+                        leap = 0
+                elif abs(leap) == 4:
+                    if i != len(self.analysis.spans) - 1:
+                        if (self.analysis.spans[i + 1] > 0 and leap > 0) or (self.analysis.spans[i + 1] < 0 and leap < 0):
+                            self.success = False
+                            failed_leaps.append(i + 2)
+                    else:
+                        self.success = False
+                        failed_leaps.append(i + 2)
+                    leap = 0
+                elif abs(leap) > 4:
+                    if i != len(self.analysis.spans) - 1:
+                        if ((self.analysis.spans[i + 1] > 0 and leap > 0) or (self.analysis.spans[i + 1] < 0 and leap < 0))\
+                                or abs(self.analysis.spans[i + 1]) != 2:
+                            self.success = False
+                            failed_leaps.append(-(i + 2))
+                    else:
+                        self.success = False
+                        failed_leaps.append(-(i + 2))
+                    leap = 0
+
+        self.analysis.results['LEAP_RECOVERY'] = True if self.success else failed_leaps
+
+    def display(self, index):
+        print('-------------------------------------------------------------------')
+        print(f"Rule {index + 1}: {self.title}")
+        print(self.success)
+
+
 class LeapNumberConsecutive(Rule):
     """
     Tests that there are no more than 2 consecutive leaps in a row within the melody.
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: no more than 2 consecutive leaps in a row are in the melody.")
         self.success = False
@@ -392,6 +488,7 @@ class ShapeNumberClimax(Rule):
     """
     Tests that only one climax note exists.
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: only one climax note exists")
         self.climax_note = max(self.analysis.pitches)
@@ -399,7 +496,7 @@ class ShapeNumberClimax(Rule):
 
     def apply(self):
         self.success = self.analysis.pitches.count(self.climax_note) == 1
-        self.analysis.results['SHAPE_NUM_CLIMAX'] = True if self.success else\
+        self.analysis.results['SHAPE_NUM_CLIMAX'] = True if self.success else \
             [i + 1 for i in range(len(self.analysis.pitches)) if self.analysis.pitches[i] == self.climax_note][1:]
 
     def display(self, index):
@@ -412,6 +509,7 @@ class ShapeArchlike(Rule):
     """
     Tests that the climax appears in the middle third of the melody.
     """
+
     def __init__(self, analysis):
         super().__init__(analysis, "True if: the climax appears in the middle third of the melody")
         self.climax_note = max(self.analysis.pitches)
@@ -420,7 +518,7 @@ class ShapeArchlike(Rule):
     def apply(self):
         middle_third_range = (len(self.analysis.pitches) // 3, 2 * len(self.analysis.pitches) // 3)
         self.success = middle_third_range[0] <= self.analysis.pitches.index(self.climax_note) <= middle_third_range[1]
-        self.analysis.results['SHAPE_ARCHLIKE'] = True if self.success else\
+        self.analysis.results['SHAPE_ARCHLIKE'] = True if self.success else \
             [i + 1 for i in range(len(self.analysis.pitches))
              if self.analysis.pitches[i] == self.climax_note
              and (i < middle_third_range[0] or i > middle_third_range[1])]
@@ -464,6 +562,7 @@ class MelodicAnalysis(Analysis):
                       IntervalsNumLarge(self),
                       IntervalsNumUnisons(self),
                       IntervalsSameDirection(self),
+                      LeapRecovery(self),
                       LeapNumberConsecutive(self),
                       ShapeNumberClimax(self),
                       ShapeArchlike(self)]
@@ -497,7 +596,7 @@ Console testing lines:
 
 from hw8.score import import_score
 from hw8.laitz82 import *
-s = import_score('hw8/xmls/Laitz_p84F.musicxml')
+s = import_score('hw8/xmls/Laitz_p84A.musicxml')
 m = MelodicAnalysis(s)
 m.submit_to_grading()
 
