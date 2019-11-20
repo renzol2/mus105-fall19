@@ -526,13 +526,12 @@ class ShapeUnique(Rule):
             repeats = set([tuple(p) for p in patterns if patterns.count(p) * size > len(self.analysis.spans) // 2])
             print(repeats)
             if len(repeats) > 0:
-                # we want the biggest pattern, so clear previous patterns if a bigger one is found
-                repeated_pattern.clear()
                 self.success = False
                 for tup in repeats:
                     for span in tup:
                         repeated_pattern.append(span)
                     break  # only want the first identified pattern
+                break  # that's what the break statements are for
         self.analysis.results['SHAPE_UNIQUE'] = True if self.success else repeated_pattern
 
     def display(self, index):
