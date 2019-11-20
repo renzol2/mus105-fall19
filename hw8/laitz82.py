@@ -210,7 +210,11 @@ class MelodyDiatonic(Rule):
         self.success = False
 
     def apply(self):
-        pitch_is_diatonic = [p.pnum() in self.scale for p in self.analysis.pitches]
+        scale = self.scale + [Interval('-m2').transpose(self.key.tonic())]\
+            if self.key.mode == Mode.MINOR else self.scale  # adding sharp 7 for harmonic minor
+        print(self.analysis.pitches)
+        print(scale)
+        pitch_is_diatonic = [p.pnum() in scale for p in self.analysis.pitches]
         self.success = not (False in pitch_is_diatonic)
         self.analysis.results['MEL_DIATONIC'] = True if self.success else\
             [i + 1 for i in range(len(pitch_is_diatonic)) if pitch_is_diatonic[i] is False]
@@ -493,7 +497,7 @@ Console testing lines:
 
 from hw8.score import import_score
 from hw8.laitz82 import *
-s = import_score('hw8/xmls/Laitz_p84E.musicxml')
+s = import_score('hw8/xmls/Laitz_p84F.musicxml')
 m = MelodicAnalysis(s)
 m.submit_to_grading()
 
