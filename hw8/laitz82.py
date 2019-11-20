@@ -521,9 +521,10 @@ class ShapeUnique(Rule):
         repeated_pattern = []
         # check patterns up to size // 2
         for size in range(1, len(self.analysis.spans) // 2):
-            patterns = [self.analysis.spans[i:i + size] for i in range(len(self.analysis.spans) + 1 - size)]
+            patterns = [self.analysis.spans[i:i + size] for i in range(0, len(self.analysis.spans) + 1 - size, size)]
             print(patterns)
-            repeats = set([tuple(p) for p in patterns if patterns.count(p) * size > len(patterns) // 2])
+            repeats = set([tuple(p) for p in patterns if patterns.count(p) * size > len(self.analysis.spans) // 2])
+            print(repeats)
             if len(repeats) > 0:
                 # we want the biggest pattern, so clear previous patterns if a bigger one is found
                 repeated_pattern.clear()
