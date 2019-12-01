@@ -6,7 +6,13 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
+1.  Here, the order of the voices is considered, i.e. each from voice from highest down to lowest.
+2.  Yes, this histogram generally agrees to the rule that none of the voices should cross each other. This rule
+    states that the order of voices should always be soprano > alto > tenor > bass. The histogram agrees with the rule
+    90% of the time, while another 7% of cases have either the soprano note equal to the alto note, the alto note equal
+    to the tenor note, or the tenor note equal to the bass note.
+3.  The histogram only agrees with this rule about 2% of the time, where either the tenor note is shown to cross the
+    alto note or the alto note crosses the soprano note.
 
 
 ------------------------------
@@ -17,8 +23,21 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
-
+1.  This feature considers the probability of each pitch class in the soprano voice.
+2.  According to the histogram, there are five prominent pitches that appear in the soprano voice:(starting from most
+    prominent) the third, the tonic, the supertonic, the sixth, and the fifth. Interestingly, these form the major
+    pentatonic scale, but more importantly they are essential pitches to forming melodies. The third and tonic highlight
+    the tonic major triad, while the supertonic and sixth are likely used as passing tones that also form dominant or
+    pre-dominant chords with the other voices. Also notable is the leading tone appearing about 9% of the time
+    according to the histogram, which is about half the probability of the tonic. This makes sense as the leading tone
+    is almost exclusively used in cadences, primarily authentic cadences to end a phrase or piece. The last major pitch
+    seen in the soprano voice is the fourth, which again is primarily used in IACs or as a passing tone between the
+    third and the fifth. The main rule that coincides with these pitches is that they all belong within the diatonic
+    major scale.
+3.  This histogram does not disagree with any hard or fast rules. The pitches rarely seen in the soprano voice are the
+    tritone, sharp fifth/flat sixth, sharp unison/flat second, augmented sixth/minor seventh, and augmented second/minor
+    third. These pitches do not belong in the diatonic major scale, and any rare appearance is likely due to the
+    occasional secondary dominant or instance of modal mixture.
 
 
 ------------------------------
@@ -29,7 +48,12 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
+1.  This feature considers the probability of each pitch class in the alto voice.
+2.  Like the soprano voice, most of the prominent pitches belong to the diatonic major scale, the least prominent of
+    these being the fourth at a 6% probability. However, the alto voices differs from the soprano in that its most
+    prominent pitch is the fifth, rather than the soprano being the third. This makes sense as the soprano and alto
+    voices would tend to use different pitches to form chords.
+3.  Some of the non-diatonic pitches are more prominent in the alto than in the soprano voice, albeit only slightly.
 
 
 
@@ -41,7 +65,11 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
+1.  This feature considers the probability of each pitch class in the tenor voice.
+2.  As before, all the prominent pitches are within the diatonic major scale. Like the alto voice, the most prominent
+    pitch is the fifth, which differs from the soprano voice being the third.
+3.  The tenor voice is similar to the alto voice in that non-diatonic pitches are seen slightly more than in
+    the soprano voice, but again not by much.
 
 
 
@@ -53,7 +81,12 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
+1.  This feature considers the probablity of each pitch class in the bass voice.
+2.  Like before, all the prominent pitches of the bass voice are diatonic. However, the most prominent pitch in the
+    bass voice is the tonic, which makes sense as every PAC must end with the tonic in the bass. The bass voice in
+    general carries much of the 'tonicity' of a chord, which explains why the tonic is used so much.
+3.  Interestingly, the bass note has every pitch class (even non-diatonic) appear at least 1% of the time, including
+    the minor third/augmented second which sees almost no representation in any of the other voices.
 
 
 
@@ -65,7 +98,15 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
+1.  This feature considers the distance from the soprano voice to the bass voice in semitones, i.e. the interval between
+    both parts.
+2.  The two most prominent intervals between the soprano and bass voices are the compound fifth and a unison with two
+    octaves in between. The fifth and unison/octave are extremely important in Western music and thus it makes sense
+    that these two intervals are seen the most between the two parts that form much of the backbone of a four-part
+    Bach chorale. Other prominent intervals include a compound major and minor third, which make sense as the soprano
+    voice's most prominent pitch is the third while the root's most prominent pitch is the tonic.
+3.  One rule that "may" be broken is the presence of a compound tritone at 3% probability, but this may be due to
+    a dominant chord in third inversion (with the seventh in the bass and the third in the soprano).
 
 
 
@@ -77,7 +118,14 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
+1.  This feature considers the simple intervals between the soprano and bass voice (similar to the previous feature
+    but only for simple intervals due to the mod_12 descriptor).
+2.  This histogram is very similar to the previous one: the two most prominent intervals are the unison (octave) and
+    the fifth, with the second two most prominent being the major and minor third. More noticeably here are the
+    third two most prominent intervals: the major and minor sixth. The minor sixth is likely due to major chords in
+    first inversion, with the third in the bass and the root in the soprano.
+3.  Like before, the tritone is at 3%, most likely due to dominant chords. The minor seventh is also present at 3%,
+    which could also be due to dominant chords (root in bass, seventh in soprano).
 
 
 
@@ -89,7 +137,14 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
+1.  This feature considers the intervals between the alto and tenor voices.
+2.  The distance between the inner voices generally must not exceed an octave and preferably should be even lower, such
+    as around a sixth or so. The histogram shows that this rule is abided by for the vast majority of Bach's chorales,
+    with 92% of intervals being less than octave.
+3.  However, there are some exceptions. An octave between the alto and tenor voices appear about 2% of the time. More
+    interestingly is the presence of crossing, where the tenor voice goes higher than the alto voice. While exceedingly
+    rare (< 1% probability), it still exists within Bach's chorales. Additionally, there are also intervals that exceed
+    an octave (again at < 1% probability), with the largest being a two octave gap.
 
 
 
@@ -101,7 +156,15 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
+1.  This feature considers the simple intervals between the alto and tenor voices.
+2.  When consolidating all intervals to simple, it is clearer to see that the fourth is the most prominent interval
+    between the alto and tenor voices. This is likely due to inversions, where tertiary chords use fourths when going
+    from the fifth ascending to the root. The minor third is also widely prominent, which makes sense as a major
+    chord in root position would have the third and fifth of the chord placed in the tenor and alto voices, respectively,
+    forming a minor third interval (ex. S A T B --> notes: C [P4] G [m3] E [M3] C).
+3.  The tritone is a generally dissonant interval that appears a decent amount (6% probability), but it is most likely
+    due to the presence of diminished or dominant chords and generally makes sense within the inner voices to provide
+    tension that is resolved upon the completion of a cadence.
 
 
 
@@ -113,8 +176,22 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
-
+1.  This feature considers the combination of intervals between all four parts: S/A, A/T, T/B.
+2.  The most prominent set of intervals at 6% probability is a fourth, minor third, and compound major third. This
+    forms a major chord in root position, with the tonic doubled between the soprano and bass. This makes sense within
+    the context of Bach's chorales, as this is the chord that completes a PAC. The second most prominent set of intervals
+    at 5% probability is a minor third, major third, and octave. This forms another major chord in root position, but
+    the root is instead doubled between the bass and tenor voice. This type of chord likely resolves an IAC, another
+    common cadence within Bach's chorales. At 4% probability, the set of intervals is a major third, fourth, and fifth,
+    again forming another major chord but with the root doubled between the root and alto. There is obviously a pattern
+    with major chords being by far the most common chord in Bach's chorales, which makes sense considering the major
+    tonality of most of Bach's chorales. The first non-major chord shown is a minor chord in root position at 3% probability,
+    with the root doubled between the bass and alto.
+3.  Many of the interval sets found at the bottom (< 1% probability) are inversions of more uncommon chords like minor
+    and diminished chords, but there are some combinations that don't quite add up to a particular chord quality.
+    Ex: M2, fifth, fifth (SATB -> E D G C) (could be a Maj9 chord but that's not quite Bach)
+        m2, fifth, fifth (SATB -> Eb D G C) (again, min9 chord but not quite Bach either)
+        fourth, M6, fifth (SATB -> A E G C) (min7 first inversion? seventh chords that aren't dominant or diminished are rare though)
 
 
 ------------------------------
@@ -125,7 +202,12 @@
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 
-
+1.  This feature considers the set of intervals between all voices, consolidated to simple intervals.
+2.  As before, this histogram highlights the prominence of major chords and their different voicings present within
+    Bach's chorales, which makes sense due to the diatonic nature of these pieces.
+3.  Examples from the < 1% probability sets that don't quite add up:
+        fourth, fifth, m3 (SATB -> Eb Bb Eb C) (min7 chord with fifth removed?)
+        fifth, fifth, fourth (SATB -> G C F C) (sus4 chord? but not really)
 
 
 
@@ -136,6 +218,38 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 * Does this histogram disagrees with one or multiple rules you learned in a music theory class?
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
+
+1.  This feature considers the pitch class of each voice and sorts them, effectively giving a set of ordered pitch classes
+    that not only give intervals but also the root note of each chord.
+2.  Chords starting from most prominent (these aren't all chords, also I didn't take into account repeated patterns
+        like 0,0,4,7 vs. 0,4,4,7):
+    0,0,4,7 -> C E G; I chord (12%)
+    2,7,11 -> D G B; V chord (8%)
+    0,4,9 -> C E A; vi chord (6%)
+    4,8,11 -> E G# B; III chord (4%) !!
+    2,5,9 -> D F A; ii chord (3%)
+    1,4,9 -> C# E A; VI chord (3%) !!
+    2,5,7,11 -> D F G B; V7 chord (3%)
+    0,5,9 -> C F A; IV chord (3%)
+    2,6,9 -> D F# A; II chord (2%) !!
+    etc.
+
+    (!! denotes non-diatonic)
+
+    As shown, the vast majority of chords shown are diatonic, with the most prominent being the I chord (no surprise).
+    Since Bach chorales generally start and end on the I chord, as well as land on the I chord multiple times in
+    the piece, it makes perfect sense that it is the most prominent chord. It is also no surprise that the V chord is
+    the second most prominent, as the V chord has dominant function that leads back to the I chord.
+3.  However, I expected for the IV and ii chord to be more prominent, due to their pre-dominant function. Therefore,
+    struck me as a surprise to find the vi and (especially) the III chords to be more prominent. However, it can make
+    sense as the III chord is used as a secondary dominant: the V/vi chord. And since the vi chord is the tonic of the
+    relative minor, it is no surprise that those two chords are prominent within Bach's chorales - still, I expected the
+    ii and IV chords to be more prominent. I also expected the V7 chord to be shown more, but it pales in comparison to
+    the V chord (3% vs. 8% probability).
+
+    (related to point 2) All of the non-diatonic chords are secondary dominants to other, usually diatonic, chords.
+    The III chord is actually the V/vi chord, the VI chord is the V/ii, and the II is the V/V. This shows Bach's
+    tendency to use secondary dominants throughout his chorales, taking advantage of their powerful harmonic qualities.
 
 
 
