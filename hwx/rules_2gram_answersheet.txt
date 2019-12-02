@@ -7,7 +7,12 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=66, ngram=1 ] and then other [ pid=66, ngram=2, cond=... ]s.
 
-
+1.  This feature considers the probabilities of starting notes (pitch class) in the soprano voice.
+2.  Generally, the first chord in a chorale will be the I chord, and the histogram supports this trend with the tonic,
+    third, and fifth of the I chord being the most prominent notes in the soprano voice on the starting chord.
+3.  The above "trend" is not a hard and fast rule, as the submediant is also a prominent note in the soprano voice
+    on the starting chord (20%). This may be due to a chorale that starts on the vi chord - the relative minor, which shares
+    a similar tonic function with the I chord.
 
 
 ------------------------------
@@ -19,7 +24,16 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=66, ngram=1 ] and then other [ pid=66, ngram=2, cond=... ]s.
 
-
+1.  This feature considers the probabilities of notes (pitch classes) in the soprano voice with the previous note being
+    the tonic.
+2.  According to the histogram, the most prominent pitches are the leading tone and the supertonic. Since individual
+    parts within the chorale tend to be stepwise for the majority of the piece, it makes sense that the two most
+    prominent pitches that follow the tonic are one step below and one step above it. Additionally, the histogram also
+    highlights that the tonic is often used as the final note in the soprano voice.
+3.  The next most probable pitch following the tonic after the leading tone and supertonic is the fifth/dominant tone,
+    which is not stepwise and is actually quite far (fourth/fifth away). However, this is likely due to the dominant
+    tone being part of the I chord, as well as being part of the dominant chord that could follow a tonic or predominant
+    IV chord that the soprano is a part of.
 
 
 
@@ -32,7 +46,15 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=66, ngram=1 ] and then other [ pid=66, ngram=2, cond=... ]s.
 
-
+1.  This feature considers the probabilities of notes (pitch classes) in the soprano voice with the previous note being
+    the subdominant (fourth).
+2.  Like before, the two most prominent pitches are naturally the two notes one step away (in this case, they are the
+    mediant and the dominant tones). However, the subdominant is much more likely to resolve downwards to the mediant
+    than up towards the dominant tone (64% vs. 28%). This is because the subdominant tone is a half step away from the
+    mediant in the major scale, while the subdominant and dominant tones are a whole step away. This behavior is likely
+    due to an authentic cadence of V7 -> I, with the seventh of the V7 chord resolving to the third of the I chord.
+3.  The non-stepwise tones that tend to follow the subdominant tone are the supertonic and the submediant. These are a
+    third away from the subdominant tone (so not too far), and they also help highlight a ii or IV chord.
 
 
 
@@ -45,7 +67,13 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=66, ngram=1 ] and then other [ pid=66, ngram=2, cond=... ]s.
 
-
+1.  This feature considers the probabilities of pitch classes in the soprano voice, with the previous note being the
+    dominant (fifth).
+2.  As before, the two most prominent pitches are stepwise (subdominant/submediant), which again is important in the
+    context of writing primarily stepwise melodies. For non-stepwise motion, the fifth tends to move to the tonic
+    (likely part of an authentic cadence) or the emdiant (possibly to highlight the I chord or as a small downwards leap).
+3.  There are no hard or fast rules for what comes after the fifth. Interestingly, however, the fifth sometimes goes
+    a half step downward (possibly for a secondary dominant, like the V/V) but almost never goes a half step upward.
 
 
 
@@ -58,8 +86,11 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=66, ngram=1 ] and then other [ pid=66, ngram=2, cond=... ]s.
 
-
-
+1.  Same feature as before, but this time looking at notes after the leading tone.
+2.  Unsurprisingly, the leading tone almost always goes up to the tonic (due to the half step difference) or down to
+    the submediant (stepwise motion going down the scale).
+3.  For non-stepwise motion, the leading tone sometimes goes to the mediant or the fifth, though this is rare because
+    the leading tone must almost always be resolved to the tonic or at least be used in stepwise motion.
 
 
 ------------------------------
@@ -71,9 +102,12 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=68, ngram=1 ] and then other [ pid=68, ngram=2, cond=... ]s.
 
-
-
-
+1.  This feature considers the simple interval between the soprano and bass voices on the starting chord.
+2.  The two most prominent intervals are the unison/octave (likely doubling the tonic in a I chord) or a fifth (again
+    forming a tonic chord). This makes sense as most of the chorales would generally start on the I chord. The major third
+    is also seen at 9%, although much less prominent than the others.
+3.  The minor third is also seen at a rarer but still notable 3%, which could possibly be the starting chord being in
+    the relative or parallel minor.
 
 ------------------------------
 [ pid=68, ngram=2, cond=0 ]
@@ -84,9 +118,15 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=68, ngram=1 ] and then other [ pid=68, ngram=2, cond=... ]s.
 
-
-
-
+1.  This feature considers the simple interval between the soprano and bass voices on chords after the soprano and bass
+    have a unison/octave.
+2.  The four most prominent intervals that follow a unison/octave are: fifth, minor third, major third, minor sixth.
+    Interestingly, it is very rare for the soprano and bass to repeat a unison/octave (3%), though this makes sense
+    as both these voices are so harmonically important that they must move to change the harmony. Also interesting is
+    that this appearance of a unison acts as an ending, which makes sense as most of Bach's chorales end in a PAC
+    with the root doubled in the soprano and bass.
+3.  No hard or fast rules are broken here, though it is interesting that the leap from a unison/octave to a tritone
+    interval has been used at least once within Bach's chorales (seen as a dissonant and inadvisable interval).
 
 ------------------------------
 [ pid=68, ngram=2, cond=3 ]
@@ -97,8 +137,12 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=68, ngram=1 ] and then other [ pid=68, ngram=2, cond=... ]s.
 
-
-
+1.  This feature considers the simple interval between the soprano and bass on chords after they have a minor third.
+2.  Unlike last time where repeating the same interval twice is very rare, minor thirds tend to follow minor thirds between
+    the soprano and bass voices. This may be due to the inner voices changing the harmony rather than the soprano/bass,
+    which is an example of oblique motion. The change from a third to a fifth is equally as prominent.
+3.  No hard or fast rules are broken here, though it is interesting to note that this histogram is less polarizing than
+    the previous one involving intervals after a unison/octave.
 
 
 ------------------------------
@@ -110,8 +154,13 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=68, ngram=1 ] and then other [ pid=68, ngram=2, cond=... ]s.
 
-
-
+1.  This feature considers the simple interval between soprano and bass following a tritone.
+2.  The most prominent interval after the tritone is the major third, which actually makes perfect sense. It is likely
+    that this interval is seen in IACs with the V7 chord being in first inversion. Therefore, the B in the bass would
+    resolve to a C, and the F in the soprano would resolve down to the E, which would be a tritone -> M3. The next
+    most prominent interval is the minor third, likely due to an IAC in a minor tonality.
+3.  Interestingly, the next most prominent interval is the minor sixth, but I don't know in what context this pattern
+    of intervals would be used for.
 
 
 ------------------------------
@@ -123,8 +172,11 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=68, ngram=1 ] and then other [ pid=68, ngram=2, cond=... ]s.
 
-
-
+1.  Same as before, but this feature considers intervals following a fifth.
+2.  The most prominent interval following a fifth is the unison/octave, likely due to some sort of cadence or other form
+    of resolution.
+3.  This histogram is much less polarizing than the previous, meaning that no hard or fast rules are seen with intervals
+    between soprano and voice following a fifth.
 
 
 ------------------------------
@@ -136,9 +188,13 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=157, ngram=1 ] and then other [ pid=157, ngram=2, cond=... ]s.
 
-
-
-
+1.  This feature shows the probability of chords (collection of pitch classes) at the start of a pitch.
+2.  The most prominent chord at the start of a chorale is (unsurprisingly) the I chord, followed by the vi chord. These
+    chords serve tonic functions harmonically, and thus it makes sense that they are used at the start. Additionally,
+    the root of those chords are doubled, likely in the soprano and bass. Interestingly, the ii chord is also used
+    at a 9% probability, which serves predominant function and is likely used to set up a cadence in the following chords.
+3.  One chord that is used 2% of the time is 1,4,9,9, which is likely the V/ii chord and one chord I did not expect to be
+    even marginally prominent at the start.
 
 ------------------------------
 [ pid=157, ngram=2, cond=0,0,4,7 ]
@@ -149,7 +205,14 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=157, ngram=1 ] and then other [ pid=157, ngram=2, cond=... ]s.
 
-
+1.  This feature shows the probability of chords following a I chord with the root doubled.
+2.  This histogram is extremely spread out, showing that within Bach's chorales, there is no clear cut answer for
+    what exact chord to follow a I chord. Some prominent options include repeating the I chord, V chord, IV chord,
+    V7/IV chord, etc. It is also notable that the I chord is often used to end the piece, as shown in the histogram.
+3.  Some chords, however, do not make sense to me. For example, the most prominent chord example is 0,4,7,11, which
+    translates to C E G B. Within the harmony of Bach's chorales, this doesn't make too much sense, though it could be
+    part of a suspension or other occurrence that is dependent on its context more heavily. Another strange chord shown
+    is 0,2,5,7 -> C D F G, which may also be a weird inversion or suspension.
 
 
 ------------------------------
@@ -161,9 +224,13 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=157, ngram=1 ] and then other [ pid=157, ngram=2, cond=... ]s.
 
-
-
-
+1.  Shows the probability of chords following a V chord with root doubled.
+2.  As opposed to the previous histogram, this histogram shows that there are two main chords that follow a V chord:
+    a V7 chord and a I chord. This makes perfect sense according to Western music theory, as it sets up an authentic
+    cadence that eventually resolves.
+3.  The other chords make less sense than the two obvious ones, though they are much rarer - these include:
+    0,4,7,9 -> C E G A (maybe part of a modulation section?)
+    0,2,7,9 -> C D G A (not sure what chord this is, maybe part of a suspension)
 
 ------------------------------
 [ pid=157, ngram=2, cond=2,5,7,11 ]
@@ -174,9 +241,12 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=157, ngram=1 ] and then other [ pid=157, ngram=2, cond=... ]s.
 
-
-
-
+1.  Same as before, but now looking at chords after V7.
+2.  The histogram clearly shows that V7 chords generally resolve to the I chord in various voicings.
+3.  There are more unexpected chords than I anticipated, including:
+    2,4,7,11 -> D E G B (maybe an anticipation towards a I chord)
+    4,4,8,11 -> E G# B (perhaps used as a modulation to the relative minor, since it's the V/vi)
+    0,4,9,11 -> C E A B (maybe part of an anticipation but not sure...)
 
 ------------------------------
 [ pid=157, ngram=2, cond=2,4,8,11 ]
@@ -187,7 +257,13 @@
   If so, what are they? (preferably with a reference, e.g. Laitz page x Rule/Guideline y)
 [Hints:] You may want to compare it to [ pid=157, ngram=1 ] and then other [ pid=157, ngram=2, cond=... ]s.
 
-
+1.  Same as before, but now looking at the chord D E G# B, likely V7/vi.
+2.  Like before, this V7 generally resolves to some voicing of its I, in this case the vi chord. However, it is also
+    seen to resolve to the V7/VI, with the VI chord also being the V/ii. This chord is likely part of a cycle around
+    the circle of fifths that eventually resolves to the home key.
+3.  Some less obvious observations:
+    0,5,9,9 -> C F A (The IV chord, which is diatonic and could resolve back to I)
+    0,4,9,11 -> C E A B (perhaps the B is part of a suspension?)
 
 
 
