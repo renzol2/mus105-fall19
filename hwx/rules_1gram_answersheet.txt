@@ -11,7 +11,7 @@
     states that the order of voices should always be soprano > alto > tenor > bass. The histogram agrees with the rule
     90% of the time, while another 7% of cases have either the soprano note equal to the alto note, the alto note equal
     to the tenor note, or the tenor note equal to the bass note.
-3.  The histogram only agrees with this rule about 2% of the time, where either the tenor note is shown to cross the
+3.  The histogram only disagrees with this rule about 2% of the time, where either the tenor note is shown to cross the
     alto note or the alto note crosses the soprano note.
 
 
