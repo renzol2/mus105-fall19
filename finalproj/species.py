@@ -66,30 +66,30 @@ result_strings = [
     'At #{}: consecutive unisons in cantus firmus notes',  # if species 2
     'At #{}: consecutive fifths in cantus firmus notes',   # if species 2
     'At #{}: consecutive octaves in cantus firmus notes',  # if species 2
-    'At #{}: voice overlap',
-    'At #{}: voice crossing',
-    'At #{}: forbidden weak beat dissonance',   # vertical dissonance
-    'At #{}: forbidden strong beat dissonance',  # vertical dissonance
-    'At #{}: too many consecutive parallel intervals',  # parallel vertical intervals
+    'At #{}: voice overlap',  # 2 gram @TODO
+    'At #{}: voice crossing',  # 1 gram @TODO
+    'At #{}: forbidden weak beat dissonance',   # vertical dissonance  # @TODO
+    'At #{}: forbidden strong beat dissonance',  # vertical dissonance  # @TODO
+    'At #{}: too many consecutive parallel intervals',  # parallel vertical intervals  # @TODO
 
     # MELODIC RESULTS
     'At #{}: forbidden starting pitch',  # 14
     'At #{}: forbidden rest', 
-    'At #{}: forbidden duration',   
-    'At #{}: missing melodic cadence',
-    'At #{}: forbidden non-diatonic pitch',
-    'At #{}: dissonant melodic interval',
-    'At #{}: too many melodic unisons',         # 'MAX_UNI' setting
-    'At #{}: too many leaps of a fourth',       # 'MAX_4TH' setting
-    'At #{}: too many leaps of a fifth',        # 'MAX_5TH' setting
-    'At #{}: too many leaps of a sixth',        # 'MAX_6TH' setting
-    'At #{}: too many leaps of a seventh',      # 'MAX_7TH' setting
-    'At #{}: too many leaps of an octave',      # 'MAX_8VA' setting
-    'At #{}: too many large leaps',             # 'MAX_LRG' setting
-    'At #{}: too many consecutive leaps'        # 'MAX_COtNSEC_LEAP' setting
-    'At #{}: too many consecutive intervals in same direction', # 'MAX_SAMEDIR' setting
-    'At #{}: missing reverse by step recovery', # 'STEP_THRESHOLD' setting
-    'At #{}: forbidden compound melodic interval',
+    'At #{}: forbidden duration',  # @TODO
+    'At #{}: missing melodic cadence',  # @TODO
+    'At #{}: forbidden non-diatonic pitch',  # @TODO
+    'At #{}: dissonant melodic interval',  # @TODO
+    'At #{}: too many melodic unisons',         # 'MAX_UNI' setting  # @TODO
+    'At #{}: too many leaps of a fourth',       # 'MAX_4TH' setting  # @TODO
+    'At #{}: too many leaps of a fifth',        # 'MAX_5TH' setting  # @TODO
+    'At #{}: too many leaps of a sixth',        # 'MAX_6TH' setting  # @TODO
+    'At #{}: too many leaps of a seventh',      # 'MAX_7TH' setting  # @TODO
+    'At #{}: too many leaps of an octave',      # 'MAX_8VA' setting  # @TODO
+    'At #{}: too many large leaps',             # 'MAX_LRG' setting  # @TODO
+    'At #{}: too many consecutive leaps'        # 'MAX_COtNSEC_LEAP' setting  # @TODO
+    'At #{}: too many consecutive intervals in same direction', # 'MAX_SAMEDIR' setting  # @TODO
+    'At #{}: missing reverse by step recovery',  # 'STEP_THRESHOLD' setting  # @TODO
+    'At #{}: forbidden compound melodic interval',  # @TODO
     ]
 
 
@@ -144,6 +144,45 @@ class SpeciesAnalysis(Analysis):
                           for cf, cp in zip(self.cp_pitches, self.cf_pitches)]
         self.spans = [i.lines_and_spaces() * i.sign for i in self.intervals]
 
+        # Setting downbeats and weakbeats for second species scores.
+        if self.species == 2:
+            # Getting timepoints separated by measure and populating downbeats/weakbeats with timepoints.
+            self.timepoints_measures = timepoints(score, measures=True, span=True)
+            self.downbeats = [measure[0] for measure in self.timepoints_measures]
+            self.weakbeats = []
+            for measure in self.timepoints_measures:
+                try:
+                    self.weakbeats.append(measure[1])
+                except IndexError:
+                    pass
+            # Getting notes.
+            # Also preserving the index of each timepoint because rules need to know the positions of notes that
+            # violate that specific rule.
+            self.part1_downbeats = [(t.nmap['P1.1'], t.index) for t in self.downbeats]
+            self.part1_weakbeats = [(t.nmap['P1.1'], t.index) for t in self.weakbeats]
+            self.part2_downbeats = [(t.nmap['P2.1'], t.index) for t in self.downbeats]
+            self.part2_weakbeats = [(t.nmap['P2.1'], t.index) for t in self.weakbeats]
+
+            # Distinguishing between CF and CP.
+            self.cf_downbeats = self.part2_downbeats if self.cp_is_above else self.part1_downbeats
+            self.cf_weakbeats = self.part2_weakbeats if self.cp_is_above else self.part1_weakbeats
+            self.cp_downbeats = self.part1_downbeats if self.cp_is_above else self.part2_downbeats
+            self.cp_weakbeats = self.part1_weakbeats if self.cp_is_above else self.part2_weakbeats
+
+            # Getting pitches and intervals from notes.
+            # 0 = Object (note/pitch), 1 = index of that object's original timepoint
+            self.cf_downbeats_pitches = [(n[0].pitch, n[1]) for n in self.cf_downbeats]
+            self.cf_weakbeats_pitches = [(n[0].pitch, n[1]) for n in self.cf_weakbeats]
+            self.cp_downbeats_pitches = [(n[0].pitch, n[1]) for n in self.cp_downbeats]
+            self.cp_weakbeats_pitches = [(n[0].pitch, n[1]) for n in self.cp_weakbeats]
+
+            self.intervals_downbeats = [(Interval(cp[0], cf[0]), cp[1]) if self.cp_is_above
+                                        else (Interval(cf[0], cp[0]), cp[1])
+                                        for cf, cp in zip(self.cp_downbeats_pitches, self.cf_downbeats_pitches)]
+            self.intervals_weakbeats = [(Interval(cp[0], cf[0]), cp[1]) if self.cp_is_above
+                                        else (Interval(cf[0], cp[0]), cp[1])
+                                        for cf, cp in zip(self.cp_weakbeats_pitches, self.cf_weakbeats_pitches)]
+
         # A local copy of the analysis settings.
         self.settings = copy(s1_settings) if species == 1 else copy(s2_settings)
         # Add your rules to this list.
@@ -153,6 +192,9 @@ class SpeciesAnalysis(Analysis):
                       DirectUnisonsRule(self),
                       DirectFifthsRule(self),
                       DirectOctavesRule(self),
+                      ConsecutiveUnisonsDownbeatRule(self),
+                      ConsecutiveFifthsDownbeatRule(self),
+                      ConsecutiveOctavesDownbeatRule(self),
                       StartNoteRule(self),
                       MelodicCadenceRule(self)]
         # A list of strings that represent the findings of your analysis.
@@ -243,7 +285,8 @@ samples = ['2-034-A_zawang2.musicxml', '2-028-C_hanzhiy2.musicxml', '2-000-B_sz1
 
 # RULES
 # All rules need a success (bool) and format string (string taken from result_strings) attribute
-
+INTERVAL_INDEX, PITCH_INDEX = 0, 0
+NOTE_INDEX = 1
 
 class ConsecutiveUnisonsRule(Rule):
     def __init__(self, analysis):
@@ -371,6 +414,72 @@ class DirectOctavesRule(Rule):
                   f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
 
 
+class ConsecutiveUnisonsDownbeatRule(Rule):
+    def __init__(self, analysis):
+        super().__init__(analysis, "Tests if there are no consecutive unisons on downbeats "
+                                   "between CP and CF (second species only)")
+        self.success = True
+        self.incorrect_notes = []
+
+    def apply(self):
+        if self.analysis.species == 2:
+            for i in range(1, len(self.analysis.intervals_downbeats)):
+                if self.analysis.intervals_downbeats[i][INTERVAL_INDEX].lines_and_spaces() == 1 and \
+                        self.analysis.intervals_downbeats[i - 1][INTERVAL_INDEX].lines_and_spaces() == 1:
+                    self.success = False
+                    self.incorrect_notes.append(self.analysis.intervals_downbeats[i][NOTE_INDEX] + 1)
+
+    def display(self, index):
+        if not self.success:
+            format_string = result_strings[index]
+            print(f"Rule {index}: "
+                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+
+
+class ConsecutiveFifthsDownbeatRule(Rule):
+    def __init__(self, analysis):
+        super().__init__(analysis, "Tests if there are no consecutive fifths on downbeats "
+                                   "between CP and CF (second species only)")
+        self.success = True
+        self.incorrect_notes = []
+
+    def apply(self):
+        if self.analysis.species == 2:
+            for i in range(1, len(self.analysis.intervals_downbeats)):
+                if self.analysis.intervals_downbeats[i][INTERVAL_INDEX].lines_and_spaces() == 5 and \
+                        self.analysis.intervals_downbeats[i - 1][INTERVAL_INDEX].lines_and_spaces() == 5:
+                    self.success = False
+                    self.incorrect_notes.append(self.analysis.intervals_downbeats[i][NOTE_INDEX] + 1)
+
+    def display(self, index):
+        if not self.success:
+            format_string = result_strings[index]
+            print(f"Rule {index}: "
+                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+
+
+class ConsecutiveOctavesDownbeatRule(Rule):
+    def __init__(self, analysis):
+        super().__init__(analysis, "Tests if there are no consecutive octaves on downbeats "
+                                   "between CP and CF (second species only)")
+        self.success = True
+        self.incorrect_notes = []
+
+    def apply(self):
+        if self.analysis.species == 2:
+            for i in range(1, len(self.analysis.intervals_downbeats)):
+                if self.analysis.intervals_downbeats[i][INTERVAL_INDEX].lines_and_spaces() == 8 and \
+                        self.analysis.intervals_downbeats[i - 1][INTERVAL_INDEX].lines_and_spaces() == 8:
+                    self.success = False
+                    self.incorrect_notes.append(self.analysis.intervals_downbeats[i][NOTE_INDEX] + 1)
+
+    def display(self, index):
+        if not self.success:
+            format_string = result_strings[index]
+            print(f"Rule {index}: "
+                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+
+
 class StartNoteRule(Rule):
     def __init__(self, analysis):
         super().__init__(analysis, "Tests if starting note of melody is valid")
@@ -433,7 +542,7 @@ for sample in samples:
 One score (change sample):
 
 from finalproj.species import *
-sample = '1-030_C_chchang6.musicxml'
+sample = '2-003-A_cjrosas2.musicxml'
 s = import_score(root_dir + sample)
 a = SpeciesAnalysis(s, int(sample[0]))
 a.submit_to_grading()
