@@ -260,7 +260,6 @@ class SpeciesAnalysis(Analysis):
         self.analyze()
         # When you return your results to the autograder make sure you convert
         # it to a Python set, like this:
-        print('-------------------------------------------------------------------')
         return set(self.results)
 
 
@@ -353,8 +352,8 @@ class ConsecutiveUnisonsRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class ConsecutiveFifthsRule(Rule):
@@ -373,8 +372,8 @@ class ConsecutiveFifthsRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class ConsecutiveOctavesRule(Rule):
@@ -393,8 +392,8 @@ class ConsecutiveOctavesRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class DirectUnisonsRule(Rule):
@@ -411,13 +410,13 @@ class DirectUnisonsRule(Rule):
                 valid = self.analysis.cp_is_above and abs(self.analysis.cp_spans_melody[i - 1]) == 2
                 if samedir and not valid:  # stepwise motion is okay
                     self.success = False
-                    self.incorrect_notes.append(i + 1)
+                    self.incorrect_notes.append(i)
 
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class DirectFifthsRule(Rule):
@@ -434,13 +433,13 @@ class DirectFifthsRule(Rule):
                 valid = self.analysis.cp_is_above and abs(self.analysis.cp_spans_melody[i - 1]) == 2
                 if samedir and not valid:
                     self.success = False
-                    self.incorrect_notes.append(i + 1)
+                    self.incorrect_notes.append(i)
 
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class DirectOctavesRule(Rule):
@@ -457,13 +456,13 @@ class DirectOctavesRule(Rule):
                 valid = self.analysis.cp_is_above and abs(self.analysis.cp_spans_melody[i - 1]) == 2
                 if samedir and not valid:
                     self.success = False
-                    self.incorrect_notes.append(i + 1)
+                    self.incorrect_notes.append(i)
 
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class ConsecutiveUnisonsDownbeatRule(Rule):
@@ -484,8 +483,8 @@ class ConsecutiveUnisonsDownbeatRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class ConsecutiveFifthsDownbeatRule(Rule):
@@ -506,8 +505,8 @@ class ConsecutiveFifthsDownbeatRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class ConsecutiveOctavesDownbeatRule(Rule):
@@ -528,8 +527,8 @@ class ConsecutiveOctavesDownbeatRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class VoiceOverlappingRule(Rule):
@@ -554,8 +553,8 @@ class VoiceOverlappingRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class VoiceCrossingRule(Rule):
@@ -573,8 +572,8 @@ class VoiceCrossingRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class WeakBeatDissonanceRule(Rule):
@@ -603,8 +602,8 @@ class WeakBeatDissonanceRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class StrongBeatDissonanceRule(Rule):
@@ -624,8 +623,8 @@ class StrongBeatDissonanceRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class ConsecutiveParallelIntervalsRule(Rule):
@@ -655,8 +654,8 @@ class ConsecutiveParallelIntervalsRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class StartNoteRule(Rule):
@@ -673,7 +672,7 @@ class StartNoteRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(f"Rule {index}: {format_string.format(1)}")
+            self.analysis.results.append(f"{format_string.format(1)}")
 
 
 class ForbiddenRestRule(Rule):
@@ -692,8 +691,8 @@ class ForbiddenRestRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class ForbiddenDurationRule(Rule):
@@ -729,8 +728,8 @@ class ForbiddenDurationRule(Rule):
     def display(self, index):
         if not self.success:
             format_string = result_strings[index]
-            print(f"Rule {index}: "
-                  f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class MelodicCadenceRule(Rule):
@@ -759,9 +758,8 @@ class MelodicCadenceRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class ForbiddenNonDiatonicPitchRule(Rule):
@@ -779,8 +777,8 @@ class ForbiddenNonDiatonicPitchRule(Rule):
 
     def apply(self):
         penultimate_measure = self.analysis.timepoints_measures[-2]
-        penultimate_measure_notes = [t.nmap['P1.1'].pitch.pnum() if self.analysis.cp_is_above else t.nmap['P2.1']
-                                     for t in penultimate_measure]
+        penultimate_measure_notes = [t.nmap['P1.1'].pitch.pnum() if self.analysis.cp_is_above
+                                     else t.nmap['P2.1'].pitch.pnum() for t in penultimate_measure]
         for i in range(len(self.analysis.cp_pitches)):
             is_diatonic = self.analysis.cp_pitches[i].pnum() in self.scale
             if self.key.mode == Mode.MINOR:
@@ -797,9 +795,8 @@ class ForbiddenNonDiatonicPitchRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class DissonantMelodicIntervalRule(Rule):
@@ -817,9 +814,8 @@ class DissonantMelodicIntervalRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class MelodicUnisonsRule(Rule):
@@ -838,9 +834,8 @@ class MelodicUnisonsRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class MelodicFourthsRule(Rule):
@@ -859,9 +854,8 @@ class MelodicFourthsRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class MelodicFifthsRule(Rule):
@@ -880,9 +874,8 @@ class MelodicFifthsRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class MelodicSixthRule(Rule):
@@ -901,9 +894,8 @@ class MelodicSixthRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class MelodicSeventhRule(Rule):
@@ -922,9 +914,8 @@ class MelodicSeventhRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class MelodicOctaveRule(Rule):
@@ -943,9 +934,8 @@ class MelodicOctaveRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class LargeLeapsRule(Rule):
@@ -964,9 +954,8 @@ class LargeLeapsRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class LeapConsecutiveRule(Rule):
@@ -994,10 +983,8 @@ class LeapConsecutiveRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            incorrect_notes_string = self.incorrect_notes.__str__()
-            string = format_string.format(incorrect_notes_string.replace('[', '').replace(']', ''))
-            print(
-                f"Rule {index}: {string}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class IntervalsSameDirectionRule(Rule):
@@ -1018,7 +1005,7 @@ class IntervalsSameDirectionRule(Rule):
             elif self.analysis.cp_intervals_melody[i].sign == current_sign:
                 counter += 1
                 if counter > max_samedir:
-                    consecutive_intervals.append(i + 2)  # +2 because it's from laitz82
+                    consecutive_intervals.append(i + 1)
         self.success = len(consecutive_intervals) == 0
         if not self.success:
             self.incorrect_notes = consecutive_intervals
@@ -1026,9 +1013,8 @@ class IntervalsSameDirectionRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class ReverseByStepRecoveryRule(Rule):
@@ -1049,7 +1035,7 @@ class ReverseByStepRecoveryRule(Rule):
             else:  # interval is a leap, inspect for leap recovery
                 # if span is a third and it's not the last span:
                 if abs(leap) == 3 and i != len(self.analysis.cp_spans_melody) - 1:
-                    if self.analysis.spans[i + 1] == leap:
+                    if self.analysis.cp_spans_melody[i + 1] == leap:
                         leap = 5 * (leap // abs(leap))  # if the next span is a third in the same dir, treat as a fifth
                     else:
                         leap = 0
@@ -1081,9 +1067,8 @@ class ReverseByStepRecoveryRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            print(
-                f"Rule {index}: "
-                f"{format_string.format(self.incorrect_notes.__str__().replace('[', '').replace(']', ''))}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 class ForbiddenCompoundIntervalRule(Rule):
@@ -1101,10 +1086,8 @@ class ForbiddenCompoundIntervalRule(Rule):
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            incorrect_notes_string = self.incorrect_notes.__str__()
-            string = format_string.format(incorrect_notes_string.replace('[', '').replace(']', ''))
-            print(
-                f"Rule {index}: {string}")
+            for note in self.incorrect_notes:
+                self.analysis.results.append(format_string.format(note))
 
 
 """
@@ -1121,7 +1104,7 @@ for sample in samples:
 One score (change sample):
 
 from finalproj.species import *
-sample = '2-000-B_sz18.musicxml'
+sample = '1-001-B_zawang2.musicxml'
 s = import_score(root_dir + sample)
 a = SpeciesAnalysis(s, int(sample[0]))
 a.submit_to_grading()
