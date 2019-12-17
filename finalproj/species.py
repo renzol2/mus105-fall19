@@ -134,6 +134,8 @@ class SpeciesAnalysis(Analysis):
         # Getting pitches, intervals within melody, and intervals between parts
         self.cf_pitches = [n.pitch if not isinstance(n, Rest) else Pitch() for n in self.cf]
         self.cp_pitches = [n.pitch if not isinstance(n, Rest) else Pitch() for n in self.cp]
+
+        # This part removes rests, because any rule that needs rests will take them from timepoints directly.
         # I don't know if this will work but we'll see!
         i = 0
         while i < len(self.cp_pitches):
@@ -188,7 +190,7 @@ class SpeciesAnalysis(Analysis):
             self.cp_weakbeats_pitches = [(n[0].pitch if not isinstance(n[0], Rest) else Pitch(), n[1])
                                          for n in self.cp_weakbeats]
 
-            # Rid of any rests (don't know if this works..)
+            # Rid of any rests (don't know if this works.. but it seems to for now!)
             i = 0
             while i < len(self.cp_downbeats_pitches):
                 if self.cp_downbeats_pitches[i][0].is_empty():
@@ -344,8 +346,20 @@ class ConsecutiveUnisonsRule(Rule):
 
     def apply(self):
         for i in range(1, len(self.analysis.intervals)):
-            if self.analysis.intervals[i].lines_and_spaces() == 1 and \
-                    self.analysis.intervals[i - 1].lines_and_spaces() == 1:
+            interval = 1
+            weak_to_downbeat = False
+            is_consecutive = self.analysis.intervals[i].lines_and_spaces() == interval and \
+                             self.analysis.intervals[i - 1].lines_and_spaces() == interval
+            if is_consecutive and self.analysis.species == 2:
+                weakbeat_intervals = [i[INTERVAL_INDEX] for i in self.analysis.intervals_weakbeats]
+                downbeat_intervals = [i[INTERVAL_INDEX] for i in self.analysis.intervals_downbeats]
+                # these are checking references to variables, not the variable's contents
+                prev_interval_in_weak = True in [self.analysis.intervals[i - 1] is weak for weak in weakbeat_intervals]
+                curr_interval_in_down = True in [self.analysis.intervals[i] is down for down in downbeat_intervals]
+                weak_to_downbeat = prev_interval_in_weak and curr_interval_in_down
+            elif self.analysis.species == 1:
+                weak_to_downbeat = True
+            if is_consecutive and weak_to_downbeat:
                 self.success = False
                 self.incorrect_notes.append(i + 1)
 
@@ -364,8 +378,20 @@ class ConsecutiveFifthsRule(Rule):
 
     def apply(self):
         for i in range(1, len(self.analysis.intervals)):
-            if self.analysis.intervals[i].lines_and_spaces() == 5 and \
-                    self.analysis.intervals[i - 1].lines_and_spaces() == 5:
+            interval = 5
+            weak_to_downbeat = False
+            is_consecutive = self.analysis.intervals[i].lines_and_spaces() == interval and \
+                             self.analysis.intervals[i - 1].lines_and_spaces() == interval
+            if is_consecutive and self.analysis.species == 2:
+                weakbeat_intervals = [i[INTERVAL_INDEX] for i in self.analysis.intervals_weakbeats]
+                downbeat_intervals = [i[INTERVAL_INDEX] for i in self.analysis.intervals_downbeats]
+                # these are checking references to variables, not the variable's contents
+                prev_interval_in_weak = True in [self.analysis.intervals[i - 1] is weak for weak in weakbeat_intervals]
+                curr_interval_in_down = True in [self.analysis.intervals[i] is down for down in downbeat_intervals]
+                weak_to_downbeat = prev_interval_in_weak and curr_interval_in_down
+            elif self.analysis.species == 1:
+                weak_to_downbeat = True
+            if is_consecutive and weak_to_downbeat:
                 self.success = False
                 self.incorrect_notes.append(i + 1)
 
@@ -384,8 +410,20 @@ class ConsecutiveOctavesRule(Rule):
 
     def apply(self):
         for i in range(1, len(self.analysis.intervals)):
-            if self.analysis.intervals[i].lines_and_spaces() == 8 and \
-                    self.analysis.intervals[i - 1].lines_and_spaces() == 8:
+            interval = 8
+            weak_to_downbeat = False
+            is_consecutive = self.analysis.intervals[i].lines_and_spaces() == interval and \
+                             self.analysis.intervals[i - 1].lines_and_spaces() == interval
+            if is_consecutive and self.analysis.species == 2:
+                weakbeat_intervals = [i[INTERVAL_INDEX] for i in self.analysis.intervals_weakbeats]
+                downbeat_intervals = [i[INTERVAL_INDEX] for i in self.analysis.intervals_downbeats]
+                # these are checking references to variables, not the variable's contents
+                prev_interval_in_weak = True in [self.analysis.intervals[i - 1] is weak for weak in weakbeat_intervals]
+                curr_interval_in_down = True in [self.analysis.intervals[i] is down for down in downbeat_intervals]
+                weak_to_downbeat = prev_interval_in_weak and curr_interval_in_down
+            elif self.analysis.species == 1:
+                weak_to_downbeat = True
+            if is_consecutive and weak_to_downbeat:
                 self.success = False
                 self.incorrect_notes.append(i + 1)
 
@@ -405,8 +443,8 @@ class DirectUnisonsRule(Rule):
     def apply(self):
         for i in range(1, len(self.analysis.intervals)):
             if self.analysis.intervals[i].lines_and_spaces() == 1:
-                samedir = (self.analysis.cp_spans_melody[i - 1] > 0 and self.analysis.cf_spans_melody[i - 1] > 0) or \
-                          (self.analysis.cp_spans_melody[i - 1] < 0 and self.analysis.cf_spans_melody[i - 1] < 0)
+                samedir = (self.analysis.cp_spans_melody[i - 1] > 1 and self.analysis.cf_spans_melody[i - 1] > 1) or \
+                          (self.analysis.cp_spans_melody[i - 1] < -1 and self.analysis.cf_spans_melody[i - 1] < -1)
                 valid = self.analysis.cp_is_above and abs(self.analysis.cp_spans_melody[i - 1]) == 2
                 if samedir and not valid:  # stepwise motion is okay
                     self.success = False
@@ -428,8 +466,8 @@ class DirectFifthsRule(Rule):
     def apply(self):
         for i in range(1, len(self.analysis.intervals)):
             if self.analysis.intervals[i].lines_and_spaces() == 5:
-                samedir = (self.analysis.cp_spans_melody[i - 1] > 0 and self.analysis.cf_spans_melody[i - 1] > 0) or \
-                          (self.analysis.cp_spans_melody[i - 1] < 0 and self.analysis.cf_spans_melody[i - 1] < 0)
+                samedir = (self.analysis.cp_spans_melody[i - 1] > 1 and self.analysis.cf_spans_melody[i - 1] > 1) or \
+                          (self.analysis.cp_spans_melody[i - 1] < -1 and self.analysis.cf_spans_melody[i - 1] < -1)
                 valid = self.analysis.cp_is_above and abs(self.analysis.cp_spans_melody[i - 1]) == 2
                 if samedir and not valid:
                     self.success = False
@@ -451,8 +489,8 @@ class DirectOctavesRule(Rule):
     def apply(self):
         for i in range(1, len(self.analysis.intervals)):
             if self.analysis.intervals[i].lines_and_spaces() == 8:
-                samedir = (self.analysis.cp_spans_melody[i - 1] > 0 and self.analysis.cf_spans_melody[i - 1] > 0) or \
-                          (self.analysis.cp_spans_melody[i - 1] < 0 and self.analysis.cf_spans_melody[i - 1] < 0)
+                samedir = (self.analysis.cp_spans_melody[i - 1] > 1 and self.analysis.cf_spans_melody[i - 1] > 1) or \
+                          (self.analysis.cp_spans_melody[i - 1] < -1 and self.analysis.cf_spans_melody[i - 1] < -1)
                 valid = self.analysis.cp_is_above and abs(self.analysis.cp_spans_melody[i - 1]) == 2
                 if samedir and not valid:
                     self.success = False
@@ -705,6 +743,7 @@ class ForbiddenDurationRule(Rule):
         # first species: all CP notes must be same duration as CF notes
         # second species: all CP notes must be HALF duration as CF notes
         #   UNLESS: they are same duration AND in the last two measures
+        #   BUT: last note MUST be same duration
         accepted_ratio = Ratio(1, self.analysis.species)
         if self.analysis.species == 1:
             for i in range(len(self.analysis.cp)):
@@ -714,12 +753,17 @@ class ForbiddenDurationRule(Rule):
         else:  # if species 2, need to take into account ending rules for species 2
             i = 0
             for measure in self.analysis.timepoints_measures:
+                in_final_measure = measure is self.analysis.timepoints_measures[-1]
                 for timepoint in measure:
                     cp_note = timepoint.nmap['P1.1'] if self.analysis.cp_is_above else timepoint.nmap['P2.1']
                     cf_note = timepoint.nmap['P2.1'] if self.analysis.cp_is_above else timepoint.nmap['P1.1']
-                    in_last_two_measures = measure in self.analysis.timepoints_measures[-2:]
+                    in_penultimate_measure = measure is self.analysis.timepoints_measures[-2]
                     is_valid = cp_note.dur / cf_note.dur == accepted_ratio or \
-                               (in_last_two_measures and cp_note.dur / cf_note.dur == Ratio(1, 1))
+                               (in_penultimate_measure and cp_note.dur / cf_note.dur == Ratio(1, 1))
+                    if in_final_measure:
+                        # valid only if: length of measure (list) is 1
+                        # only want the last of the invalid notes
+                        is_valid = len(measure) == 1 or timepoint is not measure[-1]
                     if not is_valid:
                         self.success = False
                         self.incorrect_notes.append(i + 1)
