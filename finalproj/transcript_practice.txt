@@ -245,6 +245,7 @@
 'At #4: dissonant melodic interval',
 'At #4: forbidden weak beat dissonance',
 'At #6: too many melodic unisons',
+'At #7: consecutive octaves in cantus firmus notes',
 'At #8: missing reverse by step recovery',
 'At #9: too many consecutive leaps'
 }  (0/2)
@@ -259,6 +260,7 @@
 'At #5: missing reverse by step recovery',
 'At #5: too many consecutive leaps'
 }  desired_output = {
+'At #1: consecutive fifths',
 'At #3: missing reverse by step recovery',
 'At #3: too many consecutive leaps',
 'At #3: too many large leaps',
@@ -293,6 +295,7 @@
 'At #13: consecutive fifths in cantus firmus notes',
 'At #14: direct fifths',
 'At #14: forbidden weak beat dissonance',
+'At #15: consecutive fifths in cantus firmus notes',
 'At #17: forbidden strong beat dissonance',
 'At #18: missing melodic cadence'
 }  (0/2)
