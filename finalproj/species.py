@@ -657,10 +657,11 @@ class StrongBeatDissonanceRule(Rule):
             interval_test = interval if self.analysis.species == 1 else interval[INTERVAL_INDEX]
             if interval_test.is_dissonant() or interval_test.is_fourth():
                 self.success = False
-                interval_index = \
-                    [i is interval_test for i in intervals_list].index(True) \
-                    if self.analysis.species == 1 else \
-                    [i[INTERVAL_INDEX] is interval_test for i in intervals_list].index(True)
+                if self.analysis.species == 1:
+                    interval_index = [i is interval_test for i in intervals_list].index(True)
+                else:
+                    index_in_downbeats = [i[INTERVAL_INDEX] is interval_test for i in intervals_list].index(True)
+                    interval_index = self.analysis.intervals_downbeats[index_in_downbeats][NOTE_INDEX]
                 self.incorrect_notes.append(interval_index + 1)
 
     def display(self, index):

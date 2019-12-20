@@ -7,7 +7,7 @@ def int_from_err(s):
 
 
 for sample in samples:
-    if True:
+    if sample == '2-034-A_zawang2.musicxml':
         print(sample)
         sc = import_score(root_dir + sample)
         a = SpeciesAnalysis(sc, int(sample[0]))
