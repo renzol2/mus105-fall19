@@ -541,7 +541,7 @@ class ConsecutiveFifthsDownbeatRule(Rule):
                 if self.analysis.intervals_downbeats[i][INTERVAL_INDEX].lines_and_spaces() == 5 and \
                         self.analysis.intervals_downbeats[i - 1][INTERVAL_INDEX].lines_and_spaces() == 5:
                     self.success = False
-                    self.incorrect_notes.append(self.analysis.intervals_downbeats[i][NOTE_INDEX] + 1)
+                    self.incorrect_notes.append(self.analysis.intervals_downbeats[i - 1][NOTE_INDEX] + 1)
 
     def display(self, index):
         if not self.success:
@@ -563,7 +563,7 @@ class ConsecutiveOctavesDownbeatRule(Rule):
                 if self.analysis.intervals_downbeats[i][INTERVAL_INDEX].lines_and_spaces() == 8 and \
                         self.analysis.intervals_downbeats[i - 1][INTERVAL_INDEX].lines_and_spaces() == 8:
                     self.success = False
-                    self.incorrect_notes.append(self.analysis.intervals_downbeats[i][NOTE_INDEX] + 1)
+                    self.incorrect_notes.append(self.analysis.intervals_downbeats[i - 1][NOTE_INDEX] + 1)
 
     def display(self, index):
         if not self.success:

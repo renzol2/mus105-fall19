@@ -216,7 +216,7 @@ def int_from_err(s):
 show_results = False
 for sample in samples:
     if show_results:
-        cond = sample == '1-005-A_hanzhiy2.musicxml'
+        cond = sample == '2-021-C_erf3.musicxml'
     else:
         cond = True
     if cond:
