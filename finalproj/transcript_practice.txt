@@ -49,10 +49,10 @@
 'At #16: too many melodic unisons',
 'At #17: forbidden strong beat dissonance',
 'At #17: too many consecutive intervals in same direction',
-'At #18: direct octaves',
+'At #18: consecutive octaves',
 'At #2: forbidden weak beat dissonance',
 'At #3: forbidden strong beat dissonance',
-'At #8: direct octaves',
+'At #8: consecutive octaves',
 'At #9: too many consecutive intervals in same direction'
 }  desired_output = {
 'At #10: too many consecutive intervals in same direction',
@@ -67,7 +67,7 @@
 'At #3: forbidden strong beat dissonance',
 'At #8: consecutive octaves',
 'At #9: too many consecutive intervals in same direction'
-}  (0/2)
+}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/2-003-A_cjrosas2.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #10: too many consecutive intervals in same direction',
 'At #11: forbidden strong beat dissonance',
@@ -388,10 +388,10 @@
 'At #7: forbidden weak beat dissonance',
 'At #7: too many melodic unisons'
 }  (2/2)
-Total raw score: (41/43)
+Total raw score: (43/43)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 1
 Extra credit (if applicable): 0
-Adjusted score (Final): 40/42
+Adjusted score (Final): 42/42
 
