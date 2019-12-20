@@ -415,17 +415,16 @@ class ConsecutiveOctavesRule(Rule):
             is_consecutive = self.analysis.intervals[i].lines_and_spaces() == interval and \
                              self.analysis.intervals[i - 1].lines_and_spaces() == interval
             if is_consecutive and self.analysis.species == 2:
-                weakbeat_intervals = [i[INTERVAL_INDEX] for i in self.analysis.intervals_weakbeats]
-                downbeat_intervals = [i[INTERVAL_INDEX] for i in self.analysis.intervals_downbeats]
-                # these are checking references to variables, not the variable's contents
-                prev_interval_in_weak = True in [self.analysis.intervals[i - 1] is weak for weak in weakbeat_intervals]
-                curr_interval_in_down = True in [self.analysis.intervals[i] is down for down in downbeat_intervals]
+                prev_interval_in_weak = True in [(self.analysis.intervals[i - 1], i - 1) == weakbeat_interval
+                                                 for weakbeat_interval in self.analysis.intervals_weakbeats]
+                curr_interval_in_down = True in [(self.analysis.intervals[i], i) == downbeat_interval
+                                                 for downbeat_interval in self.analysis.intervals_downbeats]
                 weak_to_downbeat = prev_interval_in_weak and curr_interval_in_down
             elif self.analysis.species == 1:
                 weak_to_downbeat = True
             if is_consecutive and weak_to_downbeat:
                 self.success = False
-                self.incorrect_notes.append(i + 1)
+                self.incorrect_notes.append(i)
 
     def display(self, index):
         if not self.success:
@@ -494,7 +493,7 @@ class DirectOctavesRule(Rule):
             if self.analysis.intervals[i].lines_and_spaces() == 8:
                 samedir = (self.analysis.cp_spans_melody[i - 1] > 1 and self.analysis.cf_spans_melody[i - 1] > 1) or \
                           (self.analysis.cp_spans_melody[i - 1] < -1 and self.analysis.cf_spans_melody[i - 1] < -1)
-                valid = self.analysis.cp_is_above and abs(self.analysis.cp_spans_melody[i - 1]) == 2
+                valid = abs(self.analysis.cp_spans_melody[i - 1]) == 2
                 if samedir and not valid:
                     self.success = False
                     self.incorrect_notes.append(i)
