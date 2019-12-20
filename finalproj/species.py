@@ -652,11 +652,15 @@ class StrongBeatDissonanceRule(Rule):
         self.incorrect_notes = []
 
     def apply(self):
-        if self.analysis.species == 2:
-            for interval in self.analysis.intervals_downbeats:
-                if interval[INTERVAL_INDEX].is_dissonant() or interval[INTERVAL_INDEX].is_fourth():
-                    self.success = False
-                    self.incorrect_notes.append(interval[NOTE_INDEX] + 1)
+        intervals_list = self.analysis.intervals if self.analysis.species == 1 else self.analysis.intervals_downbeats
+        for interval in intervals_list:
+            interval_test = interval if self.analysis.species == 1 else interval[INTERVAL_INDEX]
+            if interval_test.is_dissonant() or interval_test.is_fourth():
+                self.success = False
+                interval_index = self.analysis.intervals.index(interval_test) \
+                    if self.analysis.species == 1 \
+                    else interval_test[NOTE_INDEX]
+                self.incorrect_notes.append(interval_index + 1)
 
     def display(self, index):
         if not self.success:
