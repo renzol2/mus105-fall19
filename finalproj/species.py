@@ -361,7 +361,7 @@ class ConsecutiveUnisonsRule(Rule):
                 weak_to_downbeat = True
             if is_consecutive and weak_to_downbeat:
                 self.success = False
-                self.incorrect_notes.append(i + 1)
+                self.incorrect_notes.append(i)
 
     def display(self, index):
         if not self.success:
@@ -446,7 +446,8 @@ class DirectUnisonsRule(Rule):
                 samedir = (self.analysis.cp_spans_melody[i - 1] > 1 and self.analysis.cf_spans_melody[i - 1] > 1) or \
                           (self.analysis.cp_spans_melody[i - 1] < -1 and self.analysis.cf_spans_melody[i - 1] < -1)
                 valid = self.analysis.cp_is_above and abs(self.analysis.cp_spans_melody[i - 1]) == 2
-                if samedir and not valid:  # stepwise motion is okay
+                override = self.analysis.results.count(result_strings[0].format(i + 1)) > 0
+                if samedir and not valid and not override:  # stepwise motion is okay
                     self.success = False
                     self.incorrect_notes.append(i)
 
