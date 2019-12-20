@@ -213,10 +213,10 @@ def int_from_err(s):
     return int(s[i:j])
 
 
-show_results = False
+show_results = True
 for sample in samples:
     if show_results:
-        cond = sample == '2-021-C_erf3.musicxml'
+        cond = sample == '2-000-B_sz18.musicxml'
     else:
         cond = True
     if cond:
