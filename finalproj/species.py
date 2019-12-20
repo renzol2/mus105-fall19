@@ -78,7 +78,7 @@ result_strings = [
     'At #{}: forbidden duration',
     'At #{}: missing melodic cadence',
     'At #{}: forbidden non-diatonic pitch',
-    'At #{}: dissonant melodic interval',
+    'At #{}: dissonant melodic interval',  # 19
     'At #{}: too many melodic unisons',  # 'MAX_UNI' setting
     'At #{}: too many leaps of a fourth',  # 'MAX_4TH' setting
     'At #{}: too many leaps of a fifth',  # 'MAX_5TH' setting
@@ -1115,7 +1115,7 @@ class ReverseByStepRecoveryRule(Rule):
         step_threshold = s1_settings['STEP_THRESHOLD'] if self.analysis.species == 1 else s2_settings['STEP_THRESHOLD']
         failed_leaps = []
         leap = 0  # temporary variable
-        for i in range(len(self.analysis.cp_spans_melody)):
+        for i in range(1, len(self.analysis.cp_spans_melody)):
             if leap == 0:  # only not 0 if there are two consecutive, same direction thirds
                 leap = self.analysis.cp_spans_melody[i]
             if abs(leap) <= 2:  # stepwise, not a leap: ignore and move on
@@ -1156,7 +1156,11 @@ class ReverseByStepRecoveryRule(Rule):
         format_string = result_strings[index]
         if not self.success:
             for note in self.incorrect_notes:
-                self.analysis.results.append(format_string.format(note))
+                override_strings_formats = [result_strings[1], result_strings[14], result_strings[19]]
+                override_strings = [s.format(note) for s in override_strings_formats]
+                override = True in [self.analysis.results.count(s) > 0 for s in override_strings]
+                if not override:
+                    self.analysis.results.append(format_string.format(note))
 
 
 class ForbiddenCompoundIntervalRule(Rule):
