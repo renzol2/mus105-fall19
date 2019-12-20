@@ -7,13 +7,14 @@ def int_from_err(s):
 
 
 for sample in samples:
-    print(sample)
-    sc = import_score(root_dir + sample)
-    a = SpeciesAnalysis(sc, int(sample[0]))
-    results = a.submit_to_grading()
-    for s in sorted(results, key=int_from_err):
-        print(s)
-    print('-------------------------------------------------------------------')
+    if sample == '2-021-B_erf3.musicxml':
+        print(sample)
+        sc = import_score(root_dir + sample)
+        a = SpeciesAnalysis(sc, int(sample[0]))
+        results = a.submit_to_grading()
+        for s in sorted(results, key=int_from_err):
+            print(s)
+        print('-------------------------------------------------------------------')
 
 # scores to nitpick:
 # 2-034-A_zawang2.musicxml
