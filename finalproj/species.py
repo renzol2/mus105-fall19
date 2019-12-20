@@ -584,8 +584,9 @@ class VoiceOverlappingRule(Rule):
         # else CP is lower:
         #   if CP's note is higher than the CF's previous note, OVERLAP
         for i in range(1, len(self.analysis.cp_pitches)):
-            overlap = self.analysis.cp_pitches[i] < self.analysis.cf_pitches[i - 1] if self.analysis.cp_is_above \
-                else self.analysis.cp_pitches[i] > self.analysis.cf_pitches[i - 1]
+            overlap = self.analysis.cp_pitches[i] < self.analysis.cf_pitches[i - 1] or \
+                      self.analysis.cf_pitches[i] > self.analysis.cp_pitches[i - 1] if self.analysis.cp_is_above \
+                      else self.analysis.cp_pitches[i] > self.analysis.cf_pitches[i - 1]
             if overlap:
                 self.success = False
                 self.incorrect_notes.append(i + 1)
@@ -1121,13 +1122,7 @@ class ReverseByStepRecoveryRule(Rule):
             if abs(leap) <= 2:  # stepwise, not a leap: ignore and move on
                 leap = 0
             else:  # interval is a leap, inspect for leap recovery
-                # if span is a third and it's not the last span:
-                if abs(leap) == 3 and i != len(self.analysis.cp_spans_melody) - 1:
-                    if self.analysis.cp_spans_melody[i + 1] == leap:
-                        leap = 5 * (leap // abs(leap))  # if the next span is a third in the same dir, treat as a fifth
-                    else:
-                        leap = 0
-                elif abs(leap) == 4:
+                if abs(leap) == 4:
                     if i != len(self.analysis.cp_spans_melody) - 1:
                         if (self.analysis.cp_spans_melody[i + 1] > 0 and leap > 0) \
                                 or (self.analysis.cp_spans_melody[i + 1] < 0 and leap < 0):
