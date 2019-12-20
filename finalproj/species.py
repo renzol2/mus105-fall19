@@ -1088,10 +1088,10 @@ class ReverseByStepRecoveryRule(Rule):
                         if (self.analysis.cp_spans_melody[i + 1] > 0 and leap > 0) \
                                 or (self.analysis.cp_spans_melody[i + 1] < 0 and leap < 0):
                             self.success = False
-                            failed_leaps.append(i + 2)  # adding 2 because we want the ending note of the interval
+                            failed_leaps.append(i + 1)  # adding 2 because we want the ending note of the interval
                     else:
                         self.success = False
-                        failed_leaps.append(i + 2)
+                        failed_leaps.append(i + 1)
                     leap = 0
                 elif abs(leap) >= step_threshold:
                     if i != len(self.analysis.cp_spans_melody) - 1:
@@ -1100,10 +1100,10 @@ class ReverseByStepRecoveryRule(Rule):
                             or (self.analysis.cp_spans_melody[i + 1] < 0 and leap < 0)) \
                                 or abs(self.analysis.cp_spans_melody[i + 1]) != 2:
                             self.success = False
-                            failed_leaps.append(i + 2)
+                            failed_leaps.append(i + 1)
                     else:
                         self.success = False
-                        failed_leaps.append(i + 2)
+                        failed_leaps.append(i + 1)
                     leap = 0
         if not self.success:
             self.incorrect_notes = failed_leaps
