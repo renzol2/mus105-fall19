@@ -173,9 +173,9 @@
       [  input = SpeciesAnalysis(import_score('Species/1-019-A_ajyanez2.musicxml'), 1).submit_to_grading()  ]  your_output = {
 'At #4: too many consecutive intervals in same direction',
 'At #4: voice crossing',
+'At #4: voice overlap',
 'At #5: voice crossing',
 'At #5: voice overlap',
-'At #6: missing reverse by step recovery',
 'At #6: too many consecutive leaps',
 'At #6: voice crossing',
 'At #6: voice overlap',
@@ -192,7 +192,7 @@
 'At #6: voice overlap',
 'At #8: too many consecutive intervals in same direction',
 'At #9: too many consecutive intervals in same direction'
-}  (0/2)
+}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/2-009-C_mamn2.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #11: forbidden weak beat dissonance',
 'At #13: forbidden weak beat dissonance',
@@ -211,13 +211,10 @@
 'At #9: forbidden weak beat dissonance'
 }  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/1-005-A_hanzhiy2.musicxml'), 1).submit_to_grading()  ]  your_output = {
-'At #10: consecutive unisons',
 'At #10: voice overlap',
-'At #7: missing reverse by step recovery',
-'At #8: direct unisons',
 'At #8: forbidden strong beat dissonance',
-'At #8: missing reverse by step recovery',
 'At #8: too many large leaps',
+'At #9: consecutive unisons',
 'At #9: too many consecutive intervals in same direction',
 'At #9: voice overlap'
 }  desired_output = {
@@ -227,21 +224,19 @@
 'At #9: consecutive unisons',
 'At #9: too many consecutive intervals in same direction',
 'At #9: voice overlap'
-}  (0/2)
+}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/2-010-B_mamn2.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #12: too many melodic unisons',
 'At #13: too many large leaps',
 'At #14: forbidden weak beat dissonance',
 'At #14: too many melodic unisons',
-'At #16: missing reverse by step recovery',
 'At #17: forbidden strong beat dissonance',
 'At #17: too many consecutive intervals in same direction',
 'At #18: too many consecutive intervals in same direction',
 'At #4: dissonant melodic interval',
 'At #4: forbidden weak beat dissonance',
 'At #6: too many melodic unisons',
-'At #8: missing reverse by step recovery',
-'At #9: consecutive octaves in cantus firmus notes',
+'At #7: consecutive octaves in cantus firmus notes',
 'At #9: too many consecutive leaps'
 }  desired_output = {
 'At #12: too many melodic unisons',
@@ -293,10 +288,10 @@
       [  input = SpeciesAnalysis(import_score('Species/2-034-C_zawang2.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #10: forbidden weak beat dissonance',
 'At #12: forbidden weak beat dissonance',
+'At #13: consecutive fifths in cantus firmus notes',
 'At #14: direct fifths',
 'At #14: forbidden weak beat dissonance',
 'At #15: consecutive fifths in cantus firmus notes',
-'At #17: consecutive fifths in cantus firmus notes',
 'At #17: forbidden strong beat dissonance',
 'At #18: missing melodic cadence'
 }  desired_output = {
@@ -308,14 +303,12 @@
 'At #15: consecutive fifths in cantus firmus notes',
 'At #17: forbidden strong beat dissonance',
 'At #18: missing melodic cadence'
-}  (0/2)
+}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/1-011-B_weikeng2.musicxml'), 1).submit_to_grading()  ]  your_output = {'At #8: dissonant melodic interval'}  desired_output = {'At #8: dissonant melodic interval'}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/2-029-A_hanzhiy2.musicxml'), 2).submit_to_grading()  ]  your_output = {
-'At #13: missing reverse by step recovery',
 'At #13: too many consecutive leaps',
 'At #13: too many large leaps',
 'At #14: direct octaves',
-'At #14: missing reverse by step recovery',
 'At #14: too many consecutive leaps',
 'At #14: too many large leaps',
 'At #17: too many consecutive intervals in same direction',
@@ -323,7 +316,6 @@
 'At #2: forbidden weak beat dissonance',
 'At #4: forbidden weak beat dissonance',
 'At #4: too many melodic unisons',
-'At #6: missing reverse by step recovery',
 'At #7: too many consecutive leaps'
 }  desired_output = {
 'At #13: missing reverse by step recovery',
@@ -381,8 +373,8 @@
 'At #15: forbidden weak beat dissonance',
 'At #1: forbidden duration',
 'At #3: forbidden weak beat dissonance',
+'At #4: consecutive fifths in cantus firmus notes',
 'At #5: too many melodic unisons',
-'At #6: consecutive fifths in cantus firmus notes',
 'At #7: forbidden weak beat dissonance',
 'At #7: too many melodic unisons'
 }  desired_output = {
@@ -397,11 +389,11 @@
 'At #5: too many melodic unisons',
 'At #7: forbidden weak beat dissonance',
 'At #7: too many melodic unisons'
-}  (0/2)
-Total raw score: (25/43)
+}  (2/2)
+Total raw score: (33/43)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 1
 Extra credit (if applicable): 0
-Adjusted score (Final): 24/42
+Adjusted score (Final): 32/42
 
