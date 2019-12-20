@@ -1,7 +1,7 @@
 ============= renzol2.finalproj transcript [practice] =============
   module: species
     [import]: success  (1/1)
-      [  input = SpeciesAnalysis(import_score('Species/2-034-A_zawang2.musicxml'), 2).submit_to_grading()  ]  your_output = {
+      [  input = SpeciesAnalysis(import_score('Species/2-034-A_zawang2.musicxml'), 2).submit_to_grading()  ]  your_output = $exception$  desired_output = {
 'At #12: too many melodic unisons',
 'At #13: forbidden strong beat dissonance',
 'At #16: direct fifths',
@@ -13,19 +13,7 @@
 'At #2: forbidden weak beat dissonance',
 'At #6: too many melodic unisons',
 'At #7: too many consecutive intervals in same direction'
-}  desired_output = {
-'At #12: too many melodic unisons',
-'At #13: forbidden strong beat dissonance',
-'At #16: direct fifths',
-'At #16: forbidden weak beat dissonance',
-'At #16: too many large leaps',
-'At #19: missing melodic cadence',
-'At #19: too many melodic unisons',
-'At #20: forbidden duration',
-'At #2: forbidden weak beat dissonance',
-'At #6: too many melodic unisons',
-'At #7: too many consecutive intervals in same direction'
-}  (2/2)
+}  (0/2)
       [  input = SpeciesAnalysis(import_score('Species/2-028-C_hanzhiy2.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #16: forbidden weak beat dissonance',
 'At #2: forbidden weak beat dissonance',
@@ -41,21 +29,7 @@
 'At #7: too many consecutive intervals in same direction',
 'At #8: forbidden weak beat dissonance'
 }  (2/2)
-      [  input = SpeciesAnalysis(import_score('Species/2-000-B_sz18.musicxml'), 2).submit_to_grading()  ]  your_output = {
-'At #10: too many consecutive intervals in same direction',
-'At #11: forbidden strong beat dissonance',
-'At #12: direct fifths',
-'At #16: forbidden weak beat dissonance',
-'At #16: too many melodic unisons',
-'At #17: forbidden strong beat dissonance',
-'At #17: too many consecutive intervals in same direction',
-'At #18: direct octaves',
-'At #1: missing reverse by step recovery',
-'At #2: forbidden weak beat dissonance',
-'At #3: forbidden strong beat dissonance',
-'At #8: direct octaves',
-'At #9: too many consecutive intervals in same direction'
-}  desired_output = {
+      [  input = SpeciesAnalysis(import_score('Species/2-000-B_sz18.musicxml'), 2).submit_to_grading()  ]  your_output = $exception$  desired_output = {
 'At #10: too many consecutive intervals in same direction',
 'At #11: forbidden strong beat dissonance',
 'At #12: direct fifths',
@@ -69,20 +43,7 @@
 'At #8: consecutive octaves',
 'At #9: too many consecutive intervals in same direction'
 }  (0/2)
-      [  input = SpeciesAnalysis(import_score('Species/2-003-A_cjrosas2.musicxml'), 2).submit_to_grading()  ]  your_output = {
-'At #10: too many consecutive intervals in same direction',
-'At #11: forbidden strong beat dissonance',
-'At #12: too many large leaps',
-'At #14: forbidden weak beat dissonance',
-'At #14: missing reverse by step recovery',
-'At #14: too many large leaps',
-'At #15: too many melodic unisons',
-'At #16: forbidden non-diatonic pitch',
-'At #2: forbidden weak beat dissonance',
-'At #4: direct fifths',
-'At #4: forbidden weak beat dissonance',
-'At #6: too many large leaps'
-}  desired_output = {
+      [  input = SpeciesAnalysis(import_score('Species/2-003-A_cjrosas2.musicxml'), 2).submit_to_grading()  ]  your_output = $exception$  desired_output = {
 'At #10: too many consecutive intervals in same direction',
 'At #11: forbidden strong beat dissonance',
 'At #12: too many large leaps',
@@ -100,6 +61,7 @@
 'At #11: too many consecutive intervals in same direction',
 'At #12: too many consecutive intervals in same direction',
 'At #13: forbidden weak beat dissonance',
+'At #16: dissonant melodic interval',
 'At #1: forbidden duration',
 'At #1: too many melodic unisons',
 'At #3: forbidden weak beat dissonance',
@@ -115,11 +77,15 @@
 'At #3: forbidden weak beat dissonance',
 'At #5: forbidden weak beat dissonance',
 'At #7: forbidden weak beat dissonance'
-}  (0/2)
+}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/1-018-C_ajyanez2.musicxml'), 1).submit_to_grading()  ]  your_output = {
 'At #2: missing reverse by step recovery',
+'At #3: forbidden strong beat dissonance',
+'At #4: dissonant melodic interval',
 'At #4: forbidden non-diatonic pitch',
+'At #4: forbidden strong beat dissonance',
 'At #4: too many leaps of a fifth',
+'At #5: forbidden strong beat dissonance',
 'At #6: forbidden non-diatonic pitch',
 'At #8: forbidden non-diatonic pitch',
 'At #9: missing melodic cadence'
@@ -134,21 +100,8 @@
 'At #6: forbidden non-diatonic pitch',
 'At #8: forbidden non-diatonic pitch',
 'At #9: missing melodic cadence'
-}  (0/2)
-      [  input = SpeciesAnalysis(import_score('Species/2-003_A_chchang6.musicxml'), 2).submit_to_grading()  ]  your_output = {
-'At #10: too many consecutive intervals in same direction',
-'At #11: forbidden strong beat dissonance',
-'At #12: too many large leaps',
-'At #14: forbidden weak beat dissonance',
-'At #14: missing reverse by step recovery',
-'At #14: too many large leaps',
-'At #15: too many melodic unisons',
-'At #16: forbidden non-diatonic pitch',
-'At #2: forbidden weak beat dissonance',
-'At #4: direct fifths',
-'At #4: forbidden weak beat dissonance',
-'At #6: too many large leaps'
-}  desired_output = {
+}  (2/2)
+      [  input = SpeciesAnalysis(import_score('Species/2-003_A_chchang6.musicxml'), 2).submit_to_grading()  ]  your_output = $exception$  desired_output = {
 'At #10: too many consecutive intervals in same direction',
 'At #11: forbidden strong beat dissonance',
 'At #12: too many large leaps',
@@ -207,6 +160,7 @@
 'At #10: voice overlap',
 'At #7: missing reverse by step recovery',
 'At #8: direct unisons',
+'At #8: forbidden strong beat dissonance',
 'At #8: missing reverse by step recovery',
 'At #8: too many large leaps',
 'At #8: too many leaps of a fourth',
@@ -220,21 +174,7 @@
 'At #9: too many consecutive intervals in same direction',
 'At #9: voice overlap'
 }  (0/2)
-      [  input = SpeciesAnalysis(import_score('Species/2-010-B_mamn2.musicxml'), 2).submit_to_grading()  ]  your_output = {
-'At #12: too many melodic unisons',
-'At #13: too many large leaps',
-'At #14: forbidden weak beat dissonance',
-'At #14: too many melodic unisons',
-'At #16: missing reverse by step recovery',
-'At #17: forbidden strong beat dissonance',
-'At #17: too many consecutive intervals in same direction',
-'At #18: too many consecutive intervals in same direction',
-'At #4: forbidden weak beat dissonance',
-'At #6: too many melodic unisons',
-'At #8: missing reverse by step recovery',
-'At #9: consecutive octaves in cantus firmus notes',
-'At #9: too many consecutive leaps'
-}  desired_output = {
+      [  input = SpeciesAnalysis(import_score('Species/2-010-B_mamn2.musicxml'), 2).submit_to_grading()  ]  your_output = $exception$  desired_output = {
 'At #12: too many melodic unisons',
 'At #13: too many large leaps',
 'At #14: forbidden weak beat dissonance',
@@ -258,6 +198,7 @@
 'At #4: too many consecutive leaps',
 'At #4: too many large leaps',
 'At #4: too many leaps of a fifth',
+'At #5: forbidden strong beat dissonance',
 'At #5: too many consecutive leaps'
 }  desired_output = {
 'At #1: consecutive fifths',
@@ -280,16 +221,7 @@
 'At #2: consecutive fifths',
 'At #9: missing melodic cadence'
 }  (0/2)
-      [  input = SpeciesAnalysis(import_score('Species/2-034-C_zawang2.musicxml'), 2).submit_to_grading()  ]  your_output = {
-'At #10: forbidden weak beat dissonance',
-'At #12: forbidden weak beat dissonance',
-'At #14: direct fifths',
-'At #14: forbidden weak beat dissonance',
-'At #15: consecutive fifths in cantus firmus notes',
-'At #17: consecutive fifths in cantus firmus notes',
-'At #17: forbidden strong beat dissonance',
-'At #18: missing melodic cadence'
-}  desired_output = {
+      [  input = SpeciesAnalysis(import_score('Species/2-034-C_zawang2.musicxml'), 2).submit_to_grading()  ]  your_output = $exception$  desired_output = {
 'At #10: forbidden weak beat dissonance',
 'At #12: forbidden weak beat dissonance',
 'At #13: consecutive fifths in cantus firmus notes',
@@ -299,7 +231,10 @@
 'At #17: forbidden strong beat dissonance',
 'At #18: missing melodic cadence'
 }  (0/2)
-      [  input = SpeciesAnalysis(import_score('Species/1-011-B_weikeng2.musicxml'), 1).submit_to_grading()  ]  your_output = {'At #8: missing reverse by step recovery'}  desired_output = {'At #8: dissonant melodic interval'}  (0/2)
+      [  input = SpeciesAnalysis(import_score('Species/1-011-B_weikeng2.musicxml'), 1).submit_to_grading()  ]  your_output = {
+'At #8: dissonant melodic interval',
+'At #8: missing reverse by step recovery'
+}  desired_output = {'At #8: dissonant melodic interval'}  (0/2)
       [  input = SpeciesAnalysis(import_score('Species/2-029-A_hanzhiy2.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #13: missing reverse by step recovery',
 'At #13: too many consecutive leaps',
@@ -356,6 +291,7 @@
 }  (0/2)
       [  input = SpeciesAnalysis(import_score('Species/2-009-B_mamn2.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #13: forbidden weak beat dissonance',
+'At #16: dissonant melodic interval',
 'At #16: missing reverse by step recovery',
 'At #1: forbidden duration',
 'At #1: too many melodic unisons',
@@ -394,10 +330,10 @@
 'At #7: forbidden weak beat dissonance',
 'At #7: too many melodic unisons'
 }  (0/2)
-Total raw score: (5/43)
+Total raw score: (7/43)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 1
 Extra credit (if applicable): 0
-Adjusted score (Final): 4/42
+Adjusted score (Final): 6/42
 
