@@ -477,7 +477,9 @@ class DirectFifthsRule(Rule):
         if not self.success:
             format_string = result_strings[index]
             for note in self.incorrect_notes:
-                self.analysis.results.append(format_string.format(note))
+                consec_fifths_string = result_strings[1].format(note)
+                if self.analysis.results.count(consec_fifths_string) == 0:
+                    self.analysis.results.append(format_string.format(note))
 
 
 class DirectOctavesRule(Rule):
