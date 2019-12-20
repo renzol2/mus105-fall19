@@ -850,7 +850,7 @@ class DissonantMelodicIntervalRule(Rule):
         self.incorrect_notes = []
 
     def apply(self):
-        is_consonant = [i.is_consonant() or i.lines_and_spaces() for i in self.analysis.cp_intervals_melody]
+        is_consonant = [i.is_consonant() or i.lines_and_spaces() == 2 for i in self.analysis.cp_intervals_melody]
         self.success = not (False in is_consonant)
         if not self.success:
             self.incorrect_notes = [i + 1 for i in range(len(is_consonant)) if is_consonant[i] is False]
