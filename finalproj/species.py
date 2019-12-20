@@ -913,7 +913,7 @@ class MelodicFourthsRule(Rule):
                 if leaps[i][INTERVAL_INDEX] == 4:
                     num_fourths += 1
                     if num_fourths > self.max_fourths:
-                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX]))
+                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX] + 1))
 
 
 class MelodicFifthsRule(Rule):
@@ -936,11 +936,11 @@ class MelodicFifthsRule(Rule):
                      if self.analysis.cp_intervals_melody[i].lines_and_spaces() > 3]
             num_fifths = 0
             for i in range(len(leaps)):
-                err_msg = format_string if i + 1 < max_leaps else result_strings[26]
+                err_msg = format_string if i + 1 <= max_leaps else result_strings[26]
                 if leaps[i][INTERVAL_INDEX] == 5:
                     num_fifths += 1
                     if num_fifths > self.max_fifths:
-                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX]))
+                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX] + 1))
 
 
 class MelodicSixthRule(Rule):
@@ -967,7 +967,7 @@ class MelodicSixthRule(Rule):
                 if leaps[i][INTERVAL_INDEX] == 6:
                     num_sixths += 1
                     if num_sixths > self.max_sixths:
-                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX]))
+                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX] + 1))
 
 
 class MelodicSeventhRule(Rule):
@@ -994,7 +994,7 @@ class MelodicSeventhRule(Rule):
                 if leaps[i][INTERVAL_INDEX] == 7:
                     num_sevenths += 1
                     if num_sevenths > self.max_fifths:
-                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX]))
+                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX] + 1))
 
 
 class MelodicOctaveRule(Rule):
@@ -1021,7 +1021,7 @@ class MelodicOctaveRule(Rule):
                 if leaps[i][INTERVAL_INDEX] == 8:
                     num_octs += 1
                     if num_octs > self.max_fifths:
-                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX]))
+                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX] + 1))
 
 
 class LargeLeapsRule(Rule):
