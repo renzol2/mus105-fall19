@@ -50,7 +50,6 @@
 'At #17: forbidden strong beat dissonance',
 'At #17: too many consecutive intervals in same direction',
 'At #18: direct octaves',
-'At #1: missing reverse by step recovery',
 'At #2: forbidden weak beat dissonance',
 'At #3: forbidden strong beat dissonance',
 'At #8: direct octaves',
@@ -172,7 +171,6 @@
 'At #6: too many large leaps'
 }  (0/2)
       [  input = SpeciesAnalysis(import_score('Species/1-019-A_ajyanez2.musicxml'), 1).submit_to_grading()  ]  your_output = {
-'At #1: missing reverse by step recovery',
 'At #4: too many consecutive intervals in same direction',
 'At #4: voice crossing',
 'At #5: voice crossing',
@@ -287,12 +285,11 @@
 }  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/1-030_C_chchang6.musicxml'), 1).submit_to_grading()  ]  your_output = {
 'At #2: consecutive fifths',
-'At #2: direct fifths',
 'At #9: missing melodic cadence'
 }  desired_output = {
 'At #2: consecutive fifths',
 'At #9: missing melodic cadence'
-}  (0/2)
+}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/2-034-C_zawang2.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #10: forbidden weak beat dissonance',
 'At #12: forbidden weak beat dissonance',
@@ -312,10 +309,7 @@
 'At #17: forbidden strong beat dissonance',
 'At #18: missing melodic cadence'
 }  (0/2)
-      [  input = SpeciesAnalysis(import_score('Species/1-011-B_weikeng2.musicxml'), 1).submit_to_grading()  ]  your_output = {
-'At #8: dissonant melodic interval',
-'At #8: missing reverse by step recovery'
-}  desired_output = {'At #8: dissonant melodic interval'}  (0/2)
+      [  input = SpeciesAnalysis(import_score('Species/1-011-B_weikeng2.musicxml'), 1).submit_to_grading()  ]  your_output = {'At #8: dissonant melodic interval'}  desired_output = {'At #8: dissonant melodic interval'}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/2-029-A_hanzhiy2.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #13: missing reverse by step recovery',
 'At #13: too many consecutive leaps',
@@ -348,8 +342,6 @@
       [  input = SpeciesAnalysis(import_score('Species/1-037-A_sz18.musicxml'), 1).submit_to_grading()  ]  your_output = {
 'At #2: consecutive fifths',
 'At #3: consecutive fifths',
-'At #3: direct fifths',
-'At #3: missing reverse by step recovery',
 'At #4: consecutive fifths',
 'At #5: consecutive fifths'
 }  desired_output = {
@@ -357,23 +349,18 @@
 'At #3: consecutive fifths',
 'At #4: consecutive fifths',
 'At #5: consecutive fifths'
-}  (0/2)
-      [  input = SpeciesAnalysis(import_score('Species/1-012-B_erf3.musicxml'), 1).submit_to_grading()  ]  your_output = {
-'At #1: forbidden starting pitch',
-'At #1: missing reverse by step recovery'
-}  desired_output = {'At #1: forbidden starting pitch'}  (0/2)
+}  (2/2)
+      [  input = SpeciesAnalysis(import_score('Species/1-012-B_erf3.musicxml'), 1).submit_to_grading()  ]  your_output = {'At #1: forbidden starting pitch'}  desired_output = {'At #1: forbidden starting pitch'}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/1-030-C_cjrosas2.musicxml'), 1).submit_to_grading()  ]  your_output = {
 'At #2: consecutive fifths',
-'At #2: direct fifths',
 'At #9: missing melodic cadence'
 }  desired_output = {
 'At #2: consecutive fifths',
 'At #9: missing melodic cadence'
-}  (0/2)
+}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/2-009-B_mamn2.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #13: forbidden weak beat dissonance',
 'At #16: dissonant melodic interval',
-'At #16: missing reverse by step recovery',
 'At #1: forbidden duration',
 'At #1: too many melodic unisons',
 'At #9: forbidden weak beat dissonance',
@@ -385,7 +372,7 @@
 'At #1: too many melodic unisons',
 'At #9: forbidden weak beat dissonance',
 'At #9: too many melodic unisons'
-}  (0/2)
+}  (2/2)
       [  input = SpeciesAnalysis(import_score('Species/2-021-C_erf3.musicxml'), 2).submit_to_grading()  ]  your_output = {
 'At #10: too many consecutive intervals in same direction',
 'At #11: forbidden weak beat dissonance',
@@ -411,10 +398,10 @@
 'At #7: forbidden weak beat dissonance',
 'At #7: too many melodic unisons'
 }  (0/2)
-Total raw score: (13/43)
+Total raw score: (25/43)
 
 ----------------------
 Base score (if you do nothing but just turn in the starter code): 1
 Extra credit (if applicable): 0
-Adjusted score (Final): 12/42
+Adjusted score (Final): 24/42
 
