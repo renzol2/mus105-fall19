@@ -85,7 +85,7 @@ result_strings = [
     'At #{}: too many leaps of a sixth',  # 'MAX_6TH' setting
     'At #{}: too many leaps of a seventh',  # 'MAX_7TH' setting
     'At #{}: too many leaps of an octave',  # 'MAX_8VA' setting
-    'At #{}: too many large leaps',  # 'MAX_LRG' setting
+    'At #{}: too many large leaps',  # 'MAX_LRG' setting 26
     'At #{}: too many consecutive leaps',  # 'MAX_CONSEC_LEAP' setting
     'At #{}: too many consecutive intervals in same direction',  # 'MAX_SAMEDIR' setting
     'At #{}: missing reverse by step recovery',  # 'STEP_THRESHOLD' setting
@@ -393,7 +393,7 @@ class ConsecutiveFifthsRule(Rule):
                 weak_to_downbeat = True
             if is_consecutive and weak_to_downbeat:
                 self.success = False
-                self.incorrect_notes.append(i + 1)
+                self.incorrect_notes.append(i)
 
     def display(self, index):
         if not self.success:
@@ -657,9 +657,10 @@ class StrongBeatDissonanceRule(Rule):
             interval_test = interval if self.analysis.species == 1 else interval[INTERVAL_INDEX]
             if interval_test.is_dissonant() or interval_test.is_fourth():
                 self.success = False
-                interval_index = self.analysis.intervals.index(interval_test) \
-                    if self.analysis.species == 1 \
-                    else interval_test[NOTE_INDEX]
+                interval_index = \
+                    [i is interval_test for i in intervals_list].index(True) \
+                    if self.analysis.species == 1 else \
+                    [i[INTERVAL_INDEX] is interval_test for i in intervals_list].index(True)
                 self.incorrect_notes.append(interval_index + 1)
 
     def display(self, index):
@@ -854,7 +855,8 @@ class DissonantMelodicIntervalRule(Rule):
         self.incorrect_notes = []
 
     def apply(self):
-        is_consonant = [i.is_consonant() or i.lines_and_spaces() == 2 for i in self.analysis.cp_intervals_melody]
+        valid_seconds = [Interval('m2'), Interval('-m2'), Interval('M2'), Interval('-M2')]
+        is_consonant = [i.is_consonant() or i in valid_seconds for i in self.analysis.cp_intervals_melody]
         self.success = not (False in is_consonant)
         if not self.success:
             self.incorrect_notes = [i + 1 for i in range(len(is_consonant)) if is_consonant[i] is False]
@@ -891,19 +893,26 @@ class MelodicFourthsRule(Rule):
         super().__init__(analysis, "Tests that there are not too many melodic fourths")
         self.success = True
         self.incorrect_notes = []
+        self.max_fourths = self.analysis.settings['MAX_4TH']
 
     def apply(self):
-        max_unisons = s1_settings['MAX_4TH'] if self.analysis.species == 1 else s2_settings['MAX_4TH']
         is_fourth = [i.lines_and_spaces() == 4 for i in self.analysis.cp_intervals_melody]
-        self.success = is_fourth.count(True) <= max_unisons
-        if not self.success:
-            self.incorrect_notes = [i + 1 for i in range(len(is_fourth)) if is_fourth[i] is True][max_unisons:]
+        self.success = is_fourth.count(True) <= self.max_fourths
 
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            for note in self.incorrect_notes:
-                self.analysis.results.append(format_string.format(note))
+            max_leaps = s1_settings['MAX_LRG'] if self.analysis.species == 1 else s2_settings['MAX_LRG']
+            leaps = [(self.analysis.cp_intervals_melody[i].lines_and_spaces(), i)
+                     for i in range(len(self.analysis.cp_intervals_melody))
+                     if self.analysis.cp_intervals_melody[i].lines_and_spaces() > 3]
+            num_fourths = 0
+            for i in range(len(leaps)):
+                err_msg = format_string if i + 1 < max_leaps else result_strings[26]
+                if leaps[i][INTERVAL_INDEX] == 4:
+                    num_fourths += 1
+                    if num_fourths > self.max_fourths:
+                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX]))
 
 
 class MelodicFifthsRule(Rule):
@@ -911,19 +920,26 @@ class MelodicFifthsRule(Rule):
         super().__init__(analysis, "Tests that there are not too many melodic fifths")
         self.success = True
         self.incorrect_notes = []
+        self.max_fifths = self.analysis.settings['MAX_5TH']
 
     def apply(self):
-        max_unisons = s1_settings['MAX_5TH'] if self.analysis.species == 1 else s2_settings['MAX_5TH']
         is_fifth = [i.lines_and_spaces() == 5 for i in self.analysis.cp_intervals_melody]
-        self.success = is_fifth.count(True) <= max_unisons
-        if not self.success:
-            self.incorrect_notes = [i + 1 for i in range(len(is_fifth)) if is_fifth[i] is True][max_unisons:]
+        self.success = is_fifth.count(True) <= self.max_fifths
 
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            for note in self.incorrect_notes:
-                self.analysis.results.append(format_string.format(note))
+            max_leaps = s1_settings['MAX_LRG'] if self.analysis.species == 1 else s2_settings['MAX_LRG']
+            leaps = [(self.analysis.cp_intervals_melody[i].lines_and_spaces(), i)
+                     for i in range(len(self.analysis.cp_intervals_melody))
+                     if self.analysis.cp_intervals_melody[i].lines_and_spaces() > 3]
+            num_fifths = 0
+            for i in range(len(leaps)):
+                err_msg = format_string if i + 1 < max_leaps else result_strings[26]
+                if leaps[i][INTERVAL_INDEX] == 5:
+                    num_fifths += 1
+                    if num_fifths > self.max_fifths:
+                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX]))
 
 
 class MelodicSixthRule(Rule):
@@ -931,19 +947,26 @@ class MelodicSixthRule(Rule):
         super().__init__(analysis, "Tests that there are not too many melodic sixths")
         self.success = True
         self.incorrect_notes = []
+        self.max_sixths = self.analysis.settings['MAX_6TH']
 
     def apply(self):
-        max_unisons = s1_settings['MAX_6TH'] if self.analysis.species == 1 else s2_settings['MAX_6TH']
         is_sixth = [i.lines_and_spaces() == 6 for i in self.analysis.cp_intervals_melody]
-        self.success = is_sixth.count(True) <= max_unisons
-        if not self.success:
-            self.incorrect_notes = [i + 1 for i in range(len(is_sixth)) if is_sixth[i] is True][max_unisons:]
+        self.success = is_sixth.count(True) <= self.max_sixths
 
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            for note in self.incorrect_notes:
-                self.analysis.results.append(format_string.format(note))
+            max_leaps = s1_settings['MAX_LRG'] if self.analysis.species == 1 else s2_settings['MAX_LRG']
+            leaps = [(self.analysis.cp_intervals_melody[i].lines_and_spaces(), i)
+                     for i in range(len(self.analysis.cp_intervals_melody))
+                     if self.analysis.cp_intervals_melody[i].lines_and_spaces() > 3]
+            num_sixths = 0
+            for i in range(len(leaps)):
+                err_msg = format_string if i + 1 < max_leaps else result_strings[26]
+                if leaps[i][INTERVAL_INDEX] == 6:
+                    num_sixths += 1
+                    if num_sixths > self.max_sixths:
+                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX]))
 
 
 class MelodicSeventhRule(Rule):
@@ -951,19 +974,26 @@ class MelodicSeventhRule(Rule):
         super().__init__(analysis, "Tests that there are not too many melodic sevenths")
         self.success = True
         self.incorrect_notes = []
+        self.max_sevenths = self.analysis.settings['MAX_7TH']
 
     def apply(self):
-        max_unisons = s1_settings['MAX_7TH'] if self.analysis.species == 1 else s2_settings['MAX_7TH']
         is_seventh = [i.lines_and_spaces() == 7 for i in self.analysis.cp_intervals_melody]
-        self.success = is_seventh.count(True) <= max_unisons
-        if not self.success:
-            self.incorrect_notes = [i + 1 for i in range(len(is_seventh)) if is_seventh[i] is True][max_unisons:]
+        self.success = is_seventh.count(True) <= self.max_sevenths
 
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            for note in self.incorrect_notes:
-                self.analysis.results.append(format_string.format(note))
+            max_leaps = s1_settings['MAX_LRG'] if self.analysis.species == 1 else s2_settings['MAX_LRG']
+            leaps = [(self.analysis.cp_intervals_melody[i].lines_and_spaces(), i)
+                     for i in range(len(self.analysis.cp_intervals_melody))
+                     if self.analysis.cp_intervals_melody[i].lines_and_spaces() > 3]
+            num_sevenths = 0
+            for i in range(len(leaps)):
+                err_msg = format_string if i + 1 < max_leaps else result_strings[26]
+                if leaps[i][INTERVAL_INDEX] == 7:
+                    num_sevenths += 1
+                    if num_sevenths > self.max_fifths:
+                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX]))
 
 
 class MelodicOctaveRule(Rule):
@@ -971,19 +1001,26 @@ class MelodicOctaveRule(Rule):
         super().__init__(analysis, "Tests that there are not too many melodic octaves")
         self.success = True
         self.incorrect_notes = []
+        self.max_octs = self.analysis.settings['MAX_8VA']
 
     def apply(self):
-        max_unisons = s1_settings['MAX_8VA'] if self.analysis.species == 1 else s2_settings['MAX_8VA']
-        is_octave = [i.lines_and_spaces() == 8 for i in self.analysis.cp_intervals_melody]
-        self.success = is_octave.count(True) <= max_unisons
-        if not self.success:
-            self.incorrect_notes = [i + 1 for i in range(len(is_octave)) if is_octave[i] is True][max_unisons:]
+        is_oct = [i.lines_and_spaces() == 8 for i in self.analysis.cp_intervals_melody]
+        self.success = is_oct.count(True) <= self.max_octs
 
     def display(self, index):
         format_string = result_strings[index]
         if not self.success:
-            for note in self.incorrect_notes:
-                self.analysis.results.append(format_string.format(note))
+            max_leaps = s1_settings['MAX_LRG'] if self.analysis.species == 1 else s2_settings['MAX_LRG']
+            leaps = [(self.analysis.cp_intervals_melody[i].lines_and_spaces(), i)
+                     for i in range(len(self.analysis.cp_intervals_melody))
+                     if self.analysis.cp_intervals_melody[i].lines_and_spaces() > 3]
+            num_octs = 0
+            for i in range(len(leaps)):
+                err_msg = format_string if i + 1 < max_leaps else result_strings[26]
+                if leaps[i][INTERVAL_INDEX] == 8:
+                    num_octs += 1
+                    if num_octs > self.max_fifths:
+                        self.analysis.results.append(err_msg.format(leaps[i][NOTE_INDEX]))
 
 
 class LargeLeapsRule(Rule):

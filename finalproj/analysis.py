@@ -7,7 +7,7 @@ def int_from_err(s):
 
 
 for sample in samples:
-    if sample == '1-018-C_ajyanez2.musicxml':
+    if True:
         print(sample)
         sc = import_score(root_dir + sample)
         a = SpeciesAnalysis(sc, int(sample[0]))
@@ -22,7 +22,7 @@ for sample in samples:
 # 2-000-B_sz18.musicxml TODO consec octs, direct octs
 # 2-003-A_cjrosas2.musicxml TODO dissonant melodic interval
 # 2-021-B_erf3.musicxml
-# 1-018-C_ajyanez2.musicxml TODO reverse step recov change index, missing strong beat diss
+# 1-018-C_ajyanez2.musicxml
 # 2-003_A_chchang6.musicxml TODO reverse step recov, missing non diatonic pitch, diss mel int
 # 1-019-A_ajyanez2.musicxml TODO change reverse step, check cross and overlap
 # 2-009-C_mamn2.musicxml TODO missing diss melodic interval
